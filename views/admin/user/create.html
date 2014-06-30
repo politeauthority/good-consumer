@@ -1,0 +1,50 @@
+<div class="container-fluid main_box">
+  <div class="row-fluid">
+
+    <div class="span4 well">
+      <ul>
+        <li><a href="/admin/user/">Users</a></li>
+        <li><a href="/admin/user/create/">Create A User</a></li>
+        <li><a href="/admin/user/acl/">Access Control List</a></li>
+      </ul>
+    </div>
+
+    <div class="span8 container-fluid">
+      <div class="row-fluid">
+        <div class="span12">
+          Users >> Create
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span12">
+          <form action="/admin/user/add/" method="POST">
+            <table class="table table-striped">
+              <tr>
+                <td>User Name</td>
+                <td><input class="input" name="user_name"></td>
+              </tr>
+              <tr>
+                <td>Email</td>
+                <td><input class="input" name="email"></td>
+              </tr>
+              <tr>
+                <td>Password</td>
+                <td><input type="password" class="input" name="password_1"></td>
+              </tr>
+              <tr>
+                <td>Password Confirm</td>
+                <td><input type="password" class="input" name="password_2"></td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <input type="submit" class="btn btn-success">
+                </td>
+              </tr>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end row -->
+</div><!-- end container -->

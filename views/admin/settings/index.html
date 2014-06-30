@@ -1,0 +1,142 @@
+<_h>
+  <script type="text/javascript">
+    $(document).ready( function(){
+      $('.edit_meta_btn').click( function(event){
+        var btn = $(this),
+            row = btn.closest('tr');
+
+        $('#edit_meta_key').val( row.find('td')[0].outerText )
+        $('#edit_meta_value').val( row.find('td')[1].outerText )
+        $('#edit_meta_id').val( btn.attr('value') )
+        delete_url = $('#delete_meta').attr( 'href' ) + btn.attr('value')
+        $('#delete_meta').attr( 'href', delete_url )
+      });
+    });
+  </script>
+</_h>
+<_b>
+  <!-- Modal -->
+  <!-- Modal :: Add Setting -->
+  <form action="/admin/settings/update" method="POST">    
+    <div id="modal_addSetting" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Add Setting</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tr>
+            <td>Meta Key</td>
+            <td><input name="meta_key" type="input" class="input" value=""></td>
+          </tr>
+          <tr>
+            <td>Meta Value</td>
+            <td><input name="meta_value" type="input" class="input" value=""></td>
+          </tr>
+        </table>
+        <input name="meta_id" type="hidden" value="">
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Modal :: Edit Setting -->
+  <form action="/admin/settings/update" method="POST">    
+    <div id="modal_editSetting" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Edit Setting</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tr>
+            <td>Meta Key</td>
+            <td><input id="edit_meta_key" name="meta_key" type="input" class="input" value=""></td>
+          </tr>
+          <tr>
+            <td>Meta Value</td>
+            <td><input id="edit_meta_value" name="meta_value" type="input" class="input" value=""></td>
+          </tr>
+          <tr>
+            <td colspan="2"><a id="delete_meta" href="/admin/settings_delete/" class="btn btn-danger">Delete</a><td>
+          </tr>
+        </table>
+        <input id="edit_meta_id" name="meta_id" type="hidden" value="">
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </form>  
+  <!-- End Modal -->
+</_b>
+
+<div class="container-fluid main_box">
+  <div class="row-fluid">
+
+    <div class="span4 well">
+      <ul>
+        <li>Settings</li>
+      </ul>
+    </div>
+
+    <div class="span8 container-fluid">
+      <div class="row-fluid">
+        <div class="span8">
+          Settings
+        </div>
+        <div class="span4">
+          <div class="btn-group">
+            <a class="btn btn-primary pull-right dropdown-toggle" data-toggle="dropdown" href="#">
+              Options
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#modal_addSetting" role="button" data-toggle="modal">Add Setting</a></li>              
+            </ul>
+          </div>             
+        </div>        
+      </div>
+      <div class="row-fluid">
+        <div class="span12">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Setting</th>
+                <th>Value</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+        		  {% if d['options'] %}
+        		    {% for option in d['options'] %}
+        		      <tr>
+        		        <td>{{option[1]}}</td>
+        		        <td>{{option[2]}}</td>
+        		        <td>
+                      <a href="#modal_editSetting" role="button" data-toggle="modal">
+                        <button value="{{option[0]}}" class="btn btn-primary btn-mini edit_meta_btn">Edit
+                        </button>
+                      </a>
+        		        </td>
+        		      </tr>
+        		    {% endfor %}
+        		  {% else %}
+        		    <tr>
+        		      <td colspan="3">
+                No settings yet bro
+        		      </td>
+        		    </tr>
+        		  {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end row -->
+</div><!-- end container -->

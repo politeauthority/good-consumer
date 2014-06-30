@@ -1,0 +1,132 @@
+<_b>
+  <!-- Modal -->
+  <!-- Modal :: Add Role -->
+  <form action="/admin/user/acl_role_update" method="POST">
+    <div id="modal_addRole" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Add Role</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tr>
+            <td>Role Name</td>
+            <td><input name="role_name" type="input" class="input" value=""></td>
+          </tr>
+        </table>
+        <input name="role_id" type="hidden" value="">
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Modal :: Add Perm -->
+  <form action="/admin/acl/perm_update" method="POST">
+    <div id="modal_addPerm" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Add Permission</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tr>
+            <td>Permission Name</td>
+            <td><input name="perm_name" type="input" class="input" value=""></td>
+          </tr>
+          <tr>
+            <td>Add Permission to Role</td>
+            <td>
+              <select name="role_id">
+                <option value=""></option>
+                {% if d['roles'] %}
+                  {% for role in d['roles'] %}
+                    <option value="{{role['role_id']}}">{{role['name']}}</option>
+                  {% endfor %}
+                {% endif %}
+              </select>
+            </td>
+          </tr>
+        </table>
+        <input name="perm_id" type="hidden" value="">
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- END Modal -->  
+</_b>
+<div class="container-fluid main_box">
+  <div class="row-fluid">
+
+    <div class="span4 well">
+      <ul>
+        <li><a href="/admin/user/">Users</a></li>            
+        <li><a href="/admin/user/create/">Create A User</a></li>
+        <li><a href="/admin/user/acl/">Access Control List</a></li>
+      </ul>
+    </div>
+
+    <div class="span8 container-fluid">
+      <div class="row-fluid">
+        <div class="span8">
+          <a href="/admin/user">Users</a> >> Access Control
+        </div>
+        <div class="span4">
+          <div class="btn-group">
+            <a class="btn btn-primary pull-right dropdown-toggle" data-toggle="dropdown" href="#">
+              Options
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#modal_addRole" role="button" data-toggle="modal">Add Roll</a></li>
+              <li><a href="#modal_addPerm" role="button" data-toggle="modal">Add Permission</a></li>
+            </ul>
+          </div>             
+        </div>        
+      </div>
+      <div class="row-fluid">
+        <div class="span12">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Role Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if d['roles'] %}
+                {% for role in d['roles'] %}
+                  <tr>
+                    <td>{{role['role_id']}}</td>
+                    <td>{{role['name']}}</td>
+                    <td></td>
+                  </tr>
+                  {% if role['perms'] %}
+                    {% for perm in role['perms'] %}
+                      <tr>
+                        <td></td>
+                        <td>{{perm['perm_key']}}</td>
+                        <td></td>
+                      </tr>
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                <tr colspan="2">
+                  <td></td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end row -->
+</div><!-- end container -->

@@ -1,0 +1,43 @@
+<div class="container-fluid main_box">
+  <div class="row-fluid">
+
+    <div class="span4 well">
+      <ul>
+        <li><a href="/admin/user/">Users</a></li>            
+        <li><a href="/admin/user/create/">Create A User</a></li>
+        <li><a href="/admin/user/acl/">Access Control List</a></li>
+      </ul>
+    </div>
+
+    <div class="span8 container-fluid">
+      <div class="row-fluid">
+        <div class="span12">
+          Users
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span12">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User</th>
+                <th>Last Login</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in d['users'] %}
+                <tr>
+                  <td>{{user[0]}}</td>
+                  <td><a href="/admin/user/info/{{user[0]}}">{{user[1]}}</a></td>
+                  <td></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end row -->
+</div><!-- end container -->

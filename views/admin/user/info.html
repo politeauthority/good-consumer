@@ -1,0 +1,306 @@
+<_h>
+  <script type="text/javascript">
+    $(document).ready( function(){
+      $('.edit_meta_btn').click( function(event){
+        var btn = $(this),
+            row = btn.closest('tr');
+        $('#edit_meta_key').val( row.find('td')[0].outerText )
+        $('#edit_meta_value').val( row.find('td')[1].outerText )
+        $('#edit_meta_id').val( btn.attr('value') )
+        $('#meta_delete').attr( 'href', $('#meta_delete').attr('href') + btn.attr('value') + '/' )
+      });
+    });
+  </script>
+</_h>
+<_b>
+  <!-- Modal -->
+  <!-- Modal :: Edit User -->
+  <form action="/admin/user/edit" method="POST">    
+    <div id="modal_editUser" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Edit User</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tr>
+            <td>User Name</td>
+            <td><input name="user_name" type="input" class="input" value="{{d['user']['user']}}"></td>
+          </tr>
+          <tr>
+            <td>Email</td>
+            <td><input name="email" type="input" class="input" value="{{d['user']['email']}}"></td>
+          </tr>
+        </table>
+        <input name="user_id" type="hidden" value="{{d['user']['id']}}">
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Modal :: Change Password -->
+  <form action="/admin/user/password_edit" method="POST">    
+    <div id="modal_changePassword" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Change Password</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tr>
+            <td>New Password</td>
+            <td><input name="password_1" type="password" class="input"></td>
+          </tr>
+          <tr>
+            <td>Confirm</td>
+            <td><input name="password_2" type="password" class="input"></td>
+          </tr>
+        </table>
+        <input name="user_id" type="hidden" value="{{d['user']['id']}}">
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Modal :: Add User Meta -->
+  <form action="/admin/user/meta_create" method="POST">   
+    <div id="modal_addMeta" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Add User Meta</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tr>
+            <td>Meta Key</td>
+            <td><input name="meta_key" type="input" class="input" class="input"></td>
+          </tr>
+          <tr>
+            <td>Meta Value</td>
+            <td><textarea name="meta_value" type="input" class="input"></textarea></td>
+          </tr>      
+        </table>
+        <input name="pretty_name" type="hidden" value="">          
+        <input name="user_id" type="hidden" value="{{d['user']['id']}}">
+        
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Modal :: Edit User Meta -->
+  <form action="/admin/user/meta_edit" method="POST">   
+    <div id="modal_editMeta" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Edit User Meta</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tr>
+            <td>Meta Key</td>
+            <td><input id="edit_meta_key" name="meta_key" type="input" class="input" class="input"></td>
+          </tr>
+          <tr>
+            <td>Meta Value</td>
+            <td><textarea id="edit_meta_value" name="meta_value" type="input" class="input"></textarea></td>
+          </tr> 
+          <tr>
+            <td colspan="2">
+              <a id="meta_delete" href="/admin/user/meta_delete/{{d['user']['id']}}/" class="btn btn-danger">Delete</a>
+            </td>
+          </tr>    
+        </table>
+        <input name="pretty_name" type="hidden" class="input">          
+        <input name="user_id" type="hidden" value="{{d['user']['id']}}">
+        <input id="edit_meta_id" name="meta_id" type="hidden">
+        
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Modal :: Edit Permissions -->
+  <style text="type/css">
+    .table-indent{
+      padding-left: 25px !important;
+    }
+  </style>
+  <form action="/admin/user/perms_edit" method="POST">
+    <div id="modal_editPermission" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Add Permissions</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          {% if d['roles'] %}
+            {% for role in d['roles'] %}
+              <thead>
+                <th>
+                  <input name="acl_roles[]" value="{{role['role_id']}}" {% if role['role_id'] in d['user']['perms'].user_roles %}checked{% endif %} type="checkbox" >
+                </th>
+                <th>{{role['name']}}</th>
+                <th>{{role['role_id']}}</th>
+              </thead>
+              <tbody>
+                {% if role['perms'] %}
+                  {% for perm in role['perms'] %}
+                    <tr>
+                      <td><input name="acl_perms[]" value="{{perm['id']}}" {% if d['user']['perms'].hasPerm( perm['perm_key'] ) %}checked{% endif %} type="checkbox"></td>
+                      <td class="table-indent">{{perm['name']}}</td>
+                      <td>{{d['user']['perms'].hasPerm( perm['perm_key'] )}}</td>
+                    </tr>
+                  {% endfor %}
+                {% endif %}
+              </tbody>
+            {% endfor %}
+          {% endif %}
+        </table>
+        <input name="user_id" type="hidden" value="{{ d['user']['id'] }}">
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <a href="/admin/delete_user/{{d['user']['id']}}">
+        <a href="/admin/delete_user/{{d['user']['id']}}">
+          <button class="btn btn-primary">Save changes</button>
+        </a>
+      </div>
+    </div>
+  </form>
+
+  <!-- Modal :: Delete User -->
+  <div id="modal_deleteUser" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 id="myModalLabel">Delete User</h3>
+    </div>
+    <div class="modal-body">
+      Are you sure you want to delete user {{d['user']['user']}}?
+    </div>
+    <div class="modal-footer">
+      <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+      <a href="/admin/user/delete/{{d['user']['id']}}">
+        <button class="btn btn-danger">Delete</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- End Modal -->
+</_b>
+
+<div class="container-fluid main_box">
+  <div class="row-fluid">
+
+    <div class="span4 well">
+      <ul>
+        <li><a href="/admin/user/">Users</a></li>            
+        <li><a href="/admin/user/create/">Create A User</a></li>
+        <li><a href="/admin/user/acl/">Access Control List</a></li>
+      </ul>
+    </div>
+
+    <div class="span8 container-fluid">
+      <div class="row-fluid">
+        <div class="span8">
+          <a href="/admin/users/">Users</a> >> Info
+        </div>
+        <div class="span4">
+          <div class="btn-group">
+            <a class="btn btn-primary pull-right dropdown-toggle" data-toggle="dropdown" href="#">
+              Options
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="#modal_addMeta" role="button" data-toggle="modal">Add Meta</a></li>
+              <li><a href="#modal_editUser" role="button" data-toggle="modal">Edit</a></li>
+              <li><a href="#modal_editPermission" role="button" data-toggle="modal">Edit Permissions</a></li>
+              <li><a href="#modal_changePassword" role="button" data-toggle="modal">Change Password</a></li>
+              <li><a href="#modal_deleteUser" role="button" data-toggle="modal">Delete</a></li>
+            </ul>
+          </div>             
+        </div>
+      </div>
+
+      <div class="row-fluid">
+        <div class="span2">
+          <img src="http://www.gravatar.com/avatar/asdasdasdasdaasdasda" >
+        </div>
+        <div class="span10">
+          <h2>{{d['user']['user']}}</h2>
+
+          <table class="table table-striped">
+            <tr>
+              <td>User Name</td>
+              <td>{{d['user']['user']}}</td>
+            </tr>
+            <tr>
+              <td>Email</td>
+              <td>{{d['user']['email']}}</td>
+            </tr>
+          </table>
+
+        </div>
+      </div>
+
+      <div class="row-fluid">
+
+        <div class="span6">
+          <h4>Meta</h4>
+          {% if d['user']['meta'] %}
+            <table class="table table-striped">
+              <thead>
+                <th>Key</th>
+                <th>Value</th>
+                <th></th>
+              </thead>
+              <tbody>
+                {% for meta in d['user']['meta'].iteritems() %}
+                  <tr>
+                    <td>{{meta[0]}}</td>
+                    <td>{{meta[1]['value']}}</td>
+                    <td>
+                      <a class="edit_meta_btn" href="#modal_editMeta" role="button" data-toggle="modal" value="{{meta[1]['id']}}">
+                        <button class="btn btn-primary btn-mini">
+                          <span class"icon caret">edit</span>
+                        </button>
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            No meta info for user.
+          {% endif %}
+
+        </div>
+
+        <div class="span6">
+          <h4>Permissions</h4>
+          {% if d['user']['perms'].perms|length > 0  %}
+            <p>Here are the users permissions</p>
+          {% else %}
+            <a href="#modal_editPermission" role="button" data-toggle="modal">
+              <button class="btn btn-primary">Add Permission</button>
+            </a>
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end row -->
+</div><!-- end container -->

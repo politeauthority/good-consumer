@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>FrameWork Admin</title>
+
+    <link rel="stylesheet" type="text/css" href="/libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/bootstrap/css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/default.css">
+
+    <script type="text/javascript" src="/libs/jQuery/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="/libs/bootstrap/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row-fluid move_box">
+        <div class="span4 offset4" style="text-align:center;">
+          <form action="/admin/auth/" method="POST">
+            <h2>Login</h2>
+            <input name="user_name" type="text" class="input">
+            <br />
+
+            <input name="password" type="password" cass="input">
+
+            <br />
+
+            <input type="submit" value="login" class="btn btn-submit btn-primary">
+          </form>
+        </div>
+      </div><!-- end row -->
+    </div><!-- end container -->
+
+  </body>
+</html>
