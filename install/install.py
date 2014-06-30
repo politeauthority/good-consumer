@@ -18,32 +18,31 @@ subprocess.call( "apt-get install python-bs4",   shell=True )
 Mysql = MVC.loadDriver('Mysql')
 Mysql.ex( 'CREATE DATABASE IF NOT EXISTS `%s`;' % MVC.db['name'] )
 
-
 if( sys.argv[1] == 'cleanup' ):
-  dropTable_options              = "DROP TABLE `%s`.`options`; "              % MVC.db['name']
-  dropTable_users                = "DROP TABLE `%s`.`users`; "                % MVC.db['name']
-  dropTable_usermeta             = "DROP TABLE `%s`.`usermeta`; "             % MVC.db['name']
-  dropTable_acl_roles            = "DROP TABLE `%s`.`acl_roles`; "            % MVC.db['name']
-  dropTable_user_acl_permissions = "DROP TABLE `%s`.`user_acl_permissions`; " % MVC.db['name']
-  dropTable_user_acl_role_perms  = "DROP TABLE `%s`.`user_acl_role_perms`; "  % MVC.db['name']
-  dropTable_user_acl_user_perms  = "DROP TABLE `%s`.`user_acl_user_perms`; "  % MVC.db['name']
-  dropTable_user_acl_user_roles  = "DROP TABLE `%s`.`user_acl_user_roles`; "  % MVC.db['name']
-  dropTable_companies            = "DROP TABLE `%s`.`companies`; "            % MVC.db['name']
+  dropTable_options         = "DROP TABLE IF EXISTS `%s`.`options`; "         % MVC.db['name']
+  dropTable_users           = "DROP TABLE IF EXISTS `%s`.`users`; "           % MVC.db['name']
+  dropTable_usermeta        = "DROP TABLE IF EXISTS `%s`.`usermeta`; "        % MVC.db['name']
+  dropTable_acl_roles       = "DROP TABLE IF EXISTS `%s`.`acl_roles`; "       % MVC.db['name']
+  dropTable_acl_permissions = "DROP TABLE IF EXISTS `%s`.`acl_permissions`; " % MVC.db['name']
+  dropTable_acl_role_perms  = "DROP TABLE IF EXISTS `%s`.`acl_role_perms`; "  % MVC.db['name']
+  dropTable_acl_user_perms  = "DROP TABLE IF EXISTS `%s`.`acl_user_perms`; "  % MVC.db['name']
+  dropTable_acl_user_roles  = "DROP TABLE IF EXISTS `%s`.`acl_user_roles`; "  % MVC.db['name']
+  dropTable_companies       = "DROP TABLE IF EXISTS `%s`.`companies`; "       % MVC.db['name']
+  dropTable_company_meta    = "DROP TABLE IF EXISTS `%s`.`company_meta`; "    % MVC.db['name']
   Mysql.ex( dropTable_options )
   Mysql.ex( dropTable_users )
   Mysql.ex( dropTable_usermeta )
   Mysql.ex( dropTable_acl_roles )
-  Mysql.ex( dropTable_user_acl_permissions )
-  Mysql.ex( dropTable_user_acl_role_perms )
-  Mysql.ex( dropTable_user_acl_user_perms )
-  Mysql.ex( dropTable_user_acl_user_roles )
+  Mysql.ex( dropTable_acl_permissions )
+  Mysql.ex( dropTable_acl_role_perms )
+  Mysql.ex( dropTable_acl_user_perms )
+  Mysql.ex( dropTable_acl_user_roles )
   Mysql.ex( dropTable_companies )
+  Mysql.ex( dropTable_company_meta )
 
 # Base Website tables
 createTable_options = """
-CREATE TABLE `%s`.`options` ( """
-
-createTable_options += """
+  CREATE TABLE `%s`.`options` (
   `id`              int(9) NOT NULL AUTO_INCREMENT,
   `meta_key`        varchar(200) NOT NULL,
   `meta_value`      varchar(200) NOT NULL,
@@ -76,7 +75,7 @@ CREATE TABLE `%s`.`usermeta` (
   PRIMARY KEY (`id`)
 ); """ % MVC.db['name']
 
-createTable_user_acl_roles       = """
+createTable_acl_roles       = """
 CREATE TABLE `%s`.`acl_roles` ( 
   `id`             int(10) unsigned NOT NULL AUTO_INCREMENT,
   `role_name`      varchar(20) NOT NULL,
@@ -84,7 +83,7 @@ CREATE TABLE `%s`.`acl_roles` (
   UNIQUE KEY `role_name` (`role_name`)
 ); """ % MVC.db['name']
 
-createTable_user_acl_permissions = """
+createTable_acl_permissions = """
 CREATE TABLE `%s`.`acl_permissions` (
   `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `perm_key`  varchar(30) NOT NULL,
@@ -93,7 +92,7 @@ CREATE TABLE `%s`.`acl_permissions` (
   UNIQUE KEY `perm_key` (`perm_key`)
 ); """ % MVC.db['name']
 
-createTable_user_acl_role_perms  = """
+createTable_acl_role_perms  = """
 CREATE TABLE `%s`.`acl_role_perms` (
   `id`      bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `role_id` bigint(20) NOT NULL,
@@ -104,7 +103,7 @@ CREATE TABLE `%s`.`acl_role_perms` (
   UNIQUE KEY `role_id` (`role_id`,`perm_id`)
 ); """ % MVC.db['name']
 
-createTable_user_acl_user_perms  = """
+createTable_acl_user_perms  = """
 CREATE TABLE `%s`.`acl_user_perms` ( 
   `id`              bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id`         bigint(20) NOT NULL,
@@ -115,7 +114,7 @@ CREATE TABLE `%s`.`acl_user_perms` (
   UNIQUE KEY `user_id` (`user_id`,`perm_id`)
  ); """ % MVC.db['name']
 
-createTable_user_acl_user_roles  = """
+createTable_acl_user_roles  = """
 CREATE TABLE `%s`.`acl_user_roles` (
   `user_id`   bigint(20) NOT NULL,
   `role_id`   bigint(20) NOT NULL,
@@ -133,15 +132,28 @@ CREATE TABLE `%s`.`companies` (
   PRIMARY KEY (`id`)
 )""" % MVC.db['name']
 
+createTable_company_meta = """
+CREATE TABLE `%s`.`company_meta` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `company_id` int(10) NOT NULL,
+  `parent` int(10) NOT NULL,
+  `meta_key` varchar(200) NOT NULL,
+  `meta_value` varchar(200) NOT NULL,
+  `pretty_name` varchar(250) DEFAULT NULL,
+  `help_text` varchar(250) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+); """ % MVC.db['name']
+
 Mysql.ex( createTable_options )
 Mysql.ex( createTable_users )
 Mysql.ex( createTable_usermeta )
-Mysql.ex( createTable_user_acl_roles )
-Mysql.ex( createTable_user_acl_permissions )
-Mysql.ex( createTable_user_acl_role_perms)
-Mysql.ex( createTable_user_acl_user_perms )
-Mysql.ex( createTable_user_acl_user_roles )
+Mysql.ex( createTable_acl_roles )
+Mysql.ex( createTable_acl_permissions )
+Mysql.ex( createTable_acl_role_perms)
+Mysql.ex( createTable_acl_user_perms )
+Mysql.ex( createTable_acl_user_roles )
 Mysql.ex( createTable_companies )
+Mysql.ex( createTable_company_meta )
 
 User = MVC.loadModel( 'User' )
 ACL  = MVC.loadHelper( 'ACL' )
