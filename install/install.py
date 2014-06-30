@@ -18,60 +18,83 @@ subprocess.call( "apt-get install python-bs4",   shell=True )
 Mysql = MVC.loadDriver('Mysql')
 Mysql.ex( 'CREATE DATABASE IF NOT EXISTS `%s`;' % MVC.db['name'] )
 
-# Base Website tables                                                                                                                                         
-createTable_options = """
-CREATE TABLE `"""+ MVC.db['name'] +"""`.`options` (                                                                                  
-  `id`              int(9) NOT NULL AUTO_INCREMENT,                                                                                       
-  `meta_key`        varchar(200) NOT NULL,                                                                                                                
-  `meta_value`      varchar(200) NOT NULL,                                                                                                                        
-  `parent`          int(10) DEFAULT 0,                                                                                                                            
-  `pretty_name`     varchar(250) DEFAULT NULL,                                                                                                                    
-  `help_text`       varchar(250) DEFAULT NULL,                                                                                                                    
-  PRIMARY KEY (`id`)                                                                                                                                          
-); """
 
-# User tables                                                                                                                                                 
+if( sys.argv[1] == 'cleanup' ):
+  dropTable_options              = "DROP TABLE `%s`.`options`; "              % MVC.db['name']
+  dropTable_users                = "DROP TABLE `%s`.`users`; "                % MVC.db['name']
+  dropTable_usermeta             = "DROP TABLE `%s`.`usermeta`; "             % MVC.db['name']
+  dropTable_acl_roles            = "DROP TABLE `%s`.`acl_roles`; "            % MVC.db['name']
+  dropTable_user_acl_permissions = "DROP TABLE `%s`.`user_acl_permissions`; " % MVC.db['name']
+  dropTable_user_acl_role_perms  = "DROP TABLE `%s`.`user_acl_role_perms`; "  % MVC.db['name']
+  dropTable_user_acl_user_perms  = "DROP TABLE `%s`.`user_acl_user_perms`; "  % MVC.db['name']
+  dropTable_user_acl_user_roles  = "DROP TABLE `%s`.`user_acl_user_roles`; "  % MVC.db['name']
+  dropTable_companies            = "DROP TABLE `%s`.`companies`; "            % MVC.db['name']
+  Mysql.ex( dropTable_options )
+  Mysql.ex( dropTable_users )
+  Mysql.ex( dropTable_usermeta )
+  Mysql.ex( dropTable_acl_roles )
+  Mysql.ex( dropTable_user_acl_permissions )
+  Mysql.ex( dropTable_user_acl_role_perms )
+  Mysql.ex( dropTable_user_acl_user_perms )
+  Mysql.ex( dropTable_user_acl_user_roles )
+  Mysql.ex( dropTable_companies )
+
+# Base Website tables
+createTable_options = """
+CREATE TABLE `%s`.`options` ( """
+
+createTable_options += """
+  `id`              int(9) NOT NULL AUTO_INCREMENT,
+  `meta_key`        varchar(200) NOT NULL,
+  `meta_value`      varchar(200) NOT NULL,
+  `parent`          int(10) DEFAULT 0,
+  `pretty_name`     varchar(250) DEFAULT NULL,
+  `help_text`       varchar(250) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+); """ % MVC.db['name']
+
+# User tables
 createTable_users  = """
-CREATE TABLE `"""+ MVC.db['name'] +"""`.`users` (                                                                                     
-  `id`              int(9)       NOT NULL AUTO_INCREMENT,                                                                                 
-  `user`            varchar(100) NOT NULL,                                                                                                
-  `email`           varchar(250) NOT NULL,                                                                                                        
-  `pass`            varchar(250) NOT NULL,                                                                                                
-  `last_login`      varchar(15) DEFAULT NULL,                                                                                                                     
-  PRIMARY KEY (`id`)                                                                                                                                          
-);"""
+CREATE TABLE `%s`.`users` ( 
+  `id`              int(9)       NOT NULL AUTO_INCREMENT,
+  `user`            varchar(100) NOT NULL,
+  `email`           varchar(250) NOT NULL,
+  `pass`            varchar(250) NOT NULL,
+  `last_login`      varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);""" % MVC.db['name']
 
 createTable_usermeta = """
-CREATE TABLE `"""+ MVC.db['name'] +"""`.`usermeta` (                                                                                
-  `id`              int(9) NOT NULL AUTO_INCREMENT,                                                                                       
-  `user_id`         int(10) NOT NULL,                                                                                                                     
-  `parent`          int(10) NOT NULL,                                                                                                             
-  `meta_key`        varchar(200) NOT NULL,                                                                                                                
-  `meta_value`      varchar(200) NOT NULL,                                                                                                                        
-  `pretty_name`     varchar(250) DEFAULT NULL,                                                                                                                    
-  `help_text`       varchar(250) DEFAULT NULL,                                                                                                            
-  PRIMARY KEY (`id`)                                                                                                                                          
-); """
+CREATE TABLE `%s`.`usermeta` (
+  `id`              int(9) NOT NULL AUTO_INCREMENT,
+  `user_id`         int(10) NOT NULL,
+  `parent`          int(10) NOT NULL,
+  `meta_key`        varchar(200) NOT NULL,
+  `meta_value`      varchar(200) NOT NULL,
+  `pretty_name`     varchar(250) DEFAULT NULL,
+  `help_text`       varchar(250) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+); """ % MVC.db['name']
 
 createTable_user_acl_roles       = """
-CREATE TABLE `"""+ MVC.db['name'] +"""`.`acl_roles` (                                                                   
-  `id`             int(10) unsigned NOT NULL AUTO_INCREMENT,                                                                                     
-  `role_name`      varchar(20) NOT NULL,                                                                                                                         
-  PRIMARY KEY (`id`),                                                                                                                                         
-  UNIQUE KEY `role_name` (`role_name`)                                                                                                                          
-); """
+CREATE TABLE `%s`.`acl_roles` ( 
+  `id`             int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `role_name`      varchar(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `role_name` (`role_name`)
+); """ % MVC.db['name']
 
 createTable_user_acl_permissions = """
-CREATE TABLE `"""+ MVC.db['name'] +"""`.`acl_permissions` (
+CREATE TABLE `%s`.`acl_permissions` (
   `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `perm_key`  varchar(30) NOT NULL,
   `perm_name` varchar(30) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `perm_key` (`perm_key`)
-); """
+); """ % MVC.db['name']
 
 createTable_user_acl_role_perms  = """
-CREATE TABLE `"""+ MVC.db['name'] +"""`.`acl_role_perms` (
+CREATE TABLE `%s`.`acl_role_perms` (
   `id`      bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `role_id` bigint(20) NOT NULL,
   `perm_id` bigint(20) NOT NULL,
@@ -79,27 +102,36 @@ CREATE TABLE `"""+ MVC.db['name'] +"""`.`acl_role_perms` (
   `added` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `role_id` (`role_id`,`perm_id`)
-); """
+); """ % MVC.db['name']
 
 createTable_user_acl_user_perms  = """
-CREATE TABLE `"""+ MVC.db['name'] +"""`.`acl_user_perms` (                                                              
-  `id`              bigint(20) unsigned NOT NULL AUTO_INCREMENT,                                                                                      
-  `user_id`         bigint(20) NOT NULL,                                                                                                                      
-  `perm_id`         bigint(20) NOT NULL,                                                                                                                      
-  `value`           tinyint(1) NOT NULL DEFAULT '0',                                                                                                          
-  `added`           datetime NOT NULL,                                                                                                                                
-  PRIMARY KEY (`ID`),                                                                                                                                         
-  UNIQUE KEY `user_id` (`user_id`,`perm_id`)                                                                                                                     
- ); """
+CREATE TABLE `%s`.`acl_user_perms` ( 
+  `id`              bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id`         bigint(20) NOT NULL,
+  `perm_id`         bigint(20) NOT NULL,
+  `value`           tinyint(1) NOT NULL DEFAULT '0',
+  `added`           datetime NOT NULL,
+  PRIMARY KEY (`ID`), 
+  UNIQUE KEY `user_id` (`user_id`,`perm_id`)
+ ); """ % MVC.db['name']
 
 createTable_user_acl_user_roles  = """
-CREATE TABLE `"""+ MVC.db['name'] +"""`.`acl_user_roles` (                                                              
-  `user_id`   bigint(20) NOT NULL,                                                                                                                          
-  `role_id`   bigint(20) NOT NULL,                                                                                                                          
-  `added`     datetime NOT NULL,                                                                                                                            
-  UNIQUE KEY `user_id` (`user_id`,`role_id`)                                                                                                                     
-); """
+CREATE TABLE `%s`.`acl_user_roles` (
+  `user_id`   bigint(20) NOT NULL,
+  `role_id`   bigint(20) NOT NULL,
+  `added`     datetime NOT NULL,
+  UNIQUE KEY `user_id` (`user_id`,`role_id`) 
+); """ % MVC.db['name']
 
+# Create Good Consumer tables
+createTable_companies = """
+CREATE TABLE `%s`.`companies` (
+  `id`        int(11) NOT NULL,
+  `name`      varchar(250) DEFAULT NULL,
+  `symbol`    varchar(10) DEFAULT NULL,
+  `wikipedia` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+)""" % MVC.db['name']
 
 Mysql.ex( createTable_options )
 Mysql.ex( createTable_users )
@@ -109,6 +141,7 @@ Mysql.ex( createTable_user_acl_permissions )
 Mysql.ex( createTable_user_acl_role_perms)
 Mysql.ex( createTable_user_acl_user_perms )
 Mysql.ex( createTable_user_acl_user_roles )
+Mysql.ex( createTable_companies )
 
 User = MVC.loadModel( 'User' )
 ACL  = MVC.loadHelper( 'ACL' )
