@@ -20,11 +20,9 @@ class DriverRenderer( object ):
     self.parse_html = True
     self.layout_h   = False
     self.layout_f   = False
-    self.view_dir   = False
     self.env = Environment( loader=FileSystemLoader( MVC.app_dir + 'views') )
 
   def make( self, view, data = None, header = None, footer = None ):
-    self.__set_paths( )
     html_source = ''
     if self.layout_h != False:
       if header != False:
@@ -82,10 +80,5 @@ class DriverRenderer( object ):
       return source.prettify()
     else:
       return source
-
-  def __set_paths( self ):
-    if self.view_dir:
-      slef.layout_h = self.view_dir + '/' + self.layout_h
-      slef.layout_f = self.view_dir + '/' + self.layout_f
 
 # End File: driver/DriverRenderer.py

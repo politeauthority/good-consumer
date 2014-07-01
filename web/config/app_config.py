@@ -3,8 +3,8 @@
 settings = { 
     'database': {
         'host'       : "localhost",
-        'user'       : "user",
-        'pass'       : "password",
+        'user'       : "root",
+        'pass'       : "cleancut",
         'name'       : "good_consumer",
     }
 }

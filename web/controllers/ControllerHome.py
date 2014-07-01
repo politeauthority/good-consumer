@@ -16,16 +16,15 @@ class ControllerHome( object ):
 
   def __init__( self ):
     self.Renderer          = MVC.loadDriver('Renderer')
-    self.Renderer.view_dir = 'frontend'
-    self.Renderer.layout_h = 'layout/header.html'
-    self.Renderer.layout_f = 'layout/footer.html'
+    self.Renderer.layout_h = 'frontend/layout/header.html'
+    self.Renderer.layout_f = 'frontend/layout/footer.html'
 
   """
     Index
     Main home page.
   """
   def index( self ):
-    return self.Renderer.make('index.html')
+    return self.Renderer.make('frontend/index.html')
   index.exposed = True
 
   """
