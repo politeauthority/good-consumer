@@ -1,7 +1,8 @@
 #!/usr/bin/python                                                   
-# Renderer Driver 
-# This driver helps build an html page 
-# 
+"""
+  Renderer Driver 
+  This driver helps build an html page 
+"""
 
 import sys
 import os
@@ -17,19 +18,21 @@ class DriverRenderer( object ):
 
   def __init__( self ):
     self.parse_html = True
-    self.layout_h = ''
-    self.layout_f = ''
+    self.layout_h   = False
+    self.layout_f   = False
+    self.view_dir   = False
     self.env = Environment( loader=FileSystemLoader( MVC.app_dir + 'views') )
 
   def make( self, view, data = None, header = None, footer = None ):
+    self.__set_paths( )
     html_source = ''
-    if self.layout_h != '':
+    if self.layout_h != False:
       if header != False:
         html_source = self.__draw( self.layout_h, header )
     
     html_source = html_source + self.__draw( view, data )
 
-    if self.layout_f != '' or header == False:
+    if self.layout_f != False or header == False:
       if header != False:
         html_source = html_source + self.__draw( self.layout_f, footer )
 
@@ -79,5 +82,10 @@ class DriverRenderer( object ):
       return source.prettify()
     else:
       return source
+
+  def __set_paths( self ):
+    if self.view_dir:
+      slef.layout_h = self.view_dir + '/' + self.layout_h
+      slef.layout_f = self.view_dir + '/' + self.layout_f
 
 # End File: driver/DriverRenderer.py

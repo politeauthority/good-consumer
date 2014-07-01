@@ -16,11 +16,13 @@ class ControllerHome( object ):
 
   def __init__( self ):
     self.Renderer          = MVC.loadDriver('Renderer')
-    #self.Renderer.layout_h = 'admin/layout/header.html'
-    #self.Renderer.layout_f = 'admin/layout/footer.html'
+    self.Renderer.view_dir = 'frontend'
+    self.Renderer.layout_h = 'layout/header.html'
+    self.Renderer.layout_f = 'layout/footer.html'
 
   """
     Index
+    Main home page.
   """
   def index( self ):
     return self.Renderer.make('index.html')
@@ -28,13 +30,14 @@ class ControllerHome( object ):
 
   """
     Companies
+    List of all companies.
   """
   def companies( self ):
     Compaines = MVC.loadModel( 'Companies' )
     data = {
       'companies' : Compaines.getAll()
     }
-    return self.Renderer.make( 'companies.html', data )
+    return self.Renderer.make( 'frontend/companies.html', data )
   companies.exposed = True
 
   """
