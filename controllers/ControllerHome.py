@@ -19,10 +19,27 @@ class ControllerHome( object ):
     #self.Renderer.layout_h = 'admin/layout/header.html'
     #self.Renderer.layout_f = 'admin/layout/footer.html'
 
+  """
+    Index
+  """
   def index( self ):
     return self.Renderer.make('index.html')
   index.exposed = True
 
+  """
+    Companies
+  """
+  def companies( self ):
+    Compaines = MVC.loadModel( 'Companies' )
+    data = {
+      'companies' : Compaines.getAll()
+    }
+    return self.Renderer.make( 'companies.html', data )
+  companies.exposed = True
+
+  """
+    Error Page 404
+  """
   def error_page_404( status, message, traceback, version ):
     Renderer = MVC.loadDriver('Renderer')
     return Renderer.make( 'errors/404.html', header = False )

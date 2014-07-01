@@ -44,11 +44,11 @@ if( sys.argv[1] == 'cleanup' ):
 createTable_options = """
   CREATE TABLE `%s`.`options` (
   `id`              int(9) NOT NULL AUTO_INCREMENT,
-  `meta_key`        varchar(200) NOT NULL,
-  `meta_value`      varchar(200) NOT NULL,
+  `meta_key`        varchar(255) NOT NULL,
+  `meta_value`      varchar(255) NOT NULL,
   `parent`          int(10) DEFAULT 0,
-  `pretty_name`     varchar(250) DEFAULT NULL,
-  `help_text`       varchar(250) DEFAULT NULL,
+  `pretty_name`     varchar(255) DEFAULT NULL,
+  `help_text`       varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ); """ % MVC.db['name']
 
@@ -126,8 +126,9 @@ CREATE TABLE `%s`.`acl_user_roles` (
 createTable_companies = """
 CREATE TABLE `%s`.`companies` (
   `id`        int(11) NOT NULL,
-  `name`      varchar(250) DEFAULT NULL,
+  `name`      varchar(255) DEFAULT NULL,
   `symbol`    varchar(10) DEFAULT NULL,
+  `slug`      varchar(255) DEFAULT NULL,
   `wikipedia` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 )""" % MVC.db['name']
@@ -137,10 +138,10 @@ CREATE TABLE `%s`.`company_meta` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `company_id` int(10) NOT NULL,
   `parent` int(10) NOT NULL,
-  `meta_key` varchar(200) NOT NULL,
-  `meta_value` varchar(200) NOT NULL,
-  `pretty_name` varchar(250) DEFAULT NULL,
-  `help_text` varchar(250) DEFAULT NULL,
+  `meta_key` varchar(255) NOT NULL,
+  `meta_value` varchar(255) NOT NULL,
+  `pretty_name` varchar(255) DEFAULT NULL,
+  `help_text` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ); """ % MVC.db['name']
 

@@ -1,0 +1,9 @@
+Current ompanies list
+
+<table>
+	{% for company in d['companies'] %}
+		<tr>
+			<td>{{ company[1] }}</td>
+		</tr>
+	{% endfor %}
+</table>
