@@ -29,4 +29,32 @@ class ModelCompany( object ):
     companies = Mysql.ex( qry )
     return companies
 
+  """
+    Create
+    Stores a new company if it does not already exist.
+    params:
+      company : {
+        'name' : 'company name'
+      }
+    returns:
+      False or new company_id
+  """
+  def create( self, company ):
+    if 'name' not in company:
+      return False
+    qry = """SELECT * FROM `%s`.`companies` WHERE name = "%s";""" % ( self.db_name, company['name'] )
+    exists = Mysql.ex( qry )
+    if len( exists ) != 0:
+      return False
+    if 'symbol' not in company:
+      company['symbol'] = ''
+    if 'slug' not in company:
+      Misc = loadHelper( 'Misc' )
+      company['slug'] = Misc.slug( company['name'] )
+    if 'wikipedia' not in company:
+      company['wikipedia'] = ''
+    qry = """INSERT INTO `%s`.`companies` 
+      ( `name`, `symbol`, `slug`, `wikipedia` ) 
+      VALUES ( "%s", "%s", "%s", "%s" );""" % ( self.db_name )
+
 # End File: models/ModelCompany.py

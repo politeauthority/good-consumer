@@ -40,6 +40,20 @@ class ControllerHome( object ):
   companies.exposed = True
 
   """
+    Info
+    General Information page for a single company
+  """
+  def info( self, slug_name ):
+    CompanyModel = MVC.loadModel( 'Company' )
+    Company = CompanyModel.getBySlug( slug_name )
+    if Company:
+      data = { 'company' : Company }
+      return Renderer.make( 'frontend/info.html', data )
+    else:
+      return Renderer.make( 'errors/company_not_found.html')
+
+
+  """
     Error Page 404
   """
   def error_page_404( status, message, traceback, version ):
