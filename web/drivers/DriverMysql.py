@@ -1,7 +1,8 @@
 #!/usr/bin/python
-#!/usr/bin/python                                                                                                
-# Mysql DB Driver
-# This driver simplifies some of the MySQL interactions
+"""
+  Mysql DB Driver
+  This driver simplifies some of the MySQL interactions
+"""
 
 import sys
 import os
@@ -15,25 +16,28 @@ import MySQLdb as mdb
 
 class DriverMysql( object ):
 
-  def __init__( self ):
+  def __init__( self, connect = True ):
     self.host     = MVC.db['host']
     self.dbname   = MVC.db['name']
     self.user     = MVC.db['user']
     self.password = MVC.db['pass']
+    if connect:
+      self.conn = mdb.connect( self.host, self.user, self.password )
+      self.cur  = False
 
-  def ex(self, query):
-    conn = mdb.connect( self.host, self.user, self.password)
-    cur = conn.cursor()
-    cur.execute( query )
-    conn.commit()
-    return cur.fetchall()
+  def ex( self, query ):
+    self.cur = self.conn.cursor()
+    self.cur.execute( query )
+    self.conn.commit()
+    return self.cur.fetchall()
 
-  def insert(self, table, items ):
+  def insert( self, table, items ):
     columns = []
     values  = []
     for column, value in items.items():
-      columns.append(column)
-      values.append( str(value) )
+      if value:
+        columns.append(column)
+        values.append( str( value.encode('utf8') ) )
     column_sql = ''
     for column in columns:
       column_sql = column_sql + "`%s`," % column
@@ -44,6 +48,7 @@ class DriverMysql( object ):
     value_sql = value_sql.rstrip( value_sql[-1:] )
 
     sql = """INSERT INTO `%s`.`%s` (%s) VALUES(%s);""" % ( self.dbname, table, column_sql, value_sql )
+    print sql
     self.ex( sql )
 
   def update( self, table, items, where, limit = 1 ):
@@ -67,5 +72,8 @@ class DriverMysql( object ):
     self.dbname   = dbname
     self.user     = dbuser
     self.password = dbpass
+  
+  def __close( self ):
+    self.conn.close()    
 
 # End File: driver/DriverMysql

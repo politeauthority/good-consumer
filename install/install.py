@@ -130,10 +130,14 @@ createTable_acl_user_roles  = """
 # Create Good Consumer tables
 createTable_companies = """
   CREATE TABLE `%s`.`companies` (
-    `company_id`   int(10) NOT NULL,
+    `company_id`   int(10) NOT NULL AUTO_INCREMENT,
     `name`         varchar(255) DEFAULT NULL,
     `symbol`       varchar(10) DEFAULT NULL,
     `slug`         varchar(255) DEFAULT NULL,
+    `type`         varchar(255) DEFAULT NULL,
+    `industry`     varchar(255) DEFAULT NULL,
+    `headquarters` varchar(255) DEFAULT NULL,
+    `founded`      TIMESTAMP DEFAULT 0,
     `wikipedia`    varchar(255) DEFAULT NULL,
     `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`company_id`)
@@ -186,6 +190,6 @@ Mysql.ex( createTable_people_meta )
 User = MVC.loadModel( 'User' )
 ACL  = MVC.loadHelper( 'ACL' )
 
-User.create( 'admin', '', 'password' )
+# User.create( 'admin', '', 'password' )
 
 # End File install/install.py

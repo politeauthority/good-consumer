@@ -19,13 +19,16 @@ class HelperMisc( object ):
 
   # Allows, ('.', '-', '_' )
   def slug( self, butterfly ):
-    chars_to_remove = [ '!', '@', '#', '$', '%', '^','&','*',
-                     '(', ')', '+', '=', '?', ',', ';', '"',
-                     "'", "`", '[', ']', '(', ')']
+    chars_to_remove = [ '!', '@', '#', '$', '%', '^','*',
+      '(', ')', '+', '=', '?', ',', ';', '"', "'", "`",
+      '[', ']', '(', ')', '.']
+    chars_to_translate = { '&' : 'and' }
     slug = butterfly.lower()
     slug = slug.replace( ' ', '-' )
     for char in chars_to_remove:
       slug = slug.replace( char, '' )
+    for key, trans in chars_to_translate.iteritems():
+      slug = slug.replace( key, trans )
     return slug
 
 # End File: helpers/HelperMisc.py

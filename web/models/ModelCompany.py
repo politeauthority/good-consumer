@@ -40,21 +40,26 @@ class ModelCompany( object ):
       False or new company_id
   """
   def create( self, company ):
-    if 'name' not in company:
+    new_company = {}
+    if 'name' not in company or company['name'] == '':
       return False
     qry = """SELECT * FROM `%s`.`companies` WHERE name = "%s";""" % ( self.db_name, company['name'] )
     exists = Mysql.ex( qry )
     if len( exists ) != 0:
       return False
+
+    new_company['name'] = company['name']
     if 'symbol' not in company:
-      company['symbol'] = ''
+      new_company['symbol'] = None
     if 'slug' not in company:
-      Misc = loadHelper( 'Misc' )
-      company['slug'] = Misc.slug( company['name'] )
+      Misc = MVC.loadHelper( 'Misc' )
+      new_company['slug'] = Misc.slug( company['name'] )
     if 'wikipedia' not in company:
-      company['wikipedia'] = ''
-    qry = """INSERT INTO `%s`.`companies` 
-      ( `name`, `symbol`, `slug`, `wikipedia` ) 
-      VALUES ( "%s", "%s", "%s", "%s" );""" % ( self.db_name )
+      new_company['wikipedia'] = ''
+    else:
+      new_company['wikipedia'] = company['wikipedia']
+
+    Mysql.insert( 'companies', new_company )
+
 
 # End File: models/ModelCompany.py
