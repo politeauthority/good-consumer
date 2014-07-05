@@ -1,6 +1,9 @@
-#!/usr/bin/python                                                                                                
-# Company
-# This model controls interactions for a single company
+#!/usr/bin/python
+"""
+  Company
+  This model controls interactions for a single company
+"""
+
 import sys
 import os
 
@@ -8,6 +11,7 @@ sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
 # End file header
+
 Mysql    = MVC.loadDriver('Mysql')
 Settings = MVC.loadHelper('Settings')
 
@@ -19,8 +23,11 @@ class ModelCompany( object ):
   def getById( self, company_id ):
   	print company_id
 
+  """
+    getBySlug
+    @todo: sanitize the input properly!
+  """
   def getBySlug( self, company_slug ):
-  	# @todo: sanitize the input properly!
   	qry = """SELECT * FROM ``.`companies` WHERE `slug` = "%s"; """ % ( self.db_name, company_slug )
   	print company_slug
 
@@ -32,11 +39,13 @@ class ModelCompany( object ):
   """
     Create
     Stores a new company if it does not already exist.
-    params:
+    @params:
       company : {
-        'name' : 'company name'
+        'name'    : 'company name',
+        'symbol'  : 'CMPY',
+        'slug'    : 'company-name',
       }
-    returns:
+    @return:
       False or new company_id
   """
   def create( self, company ):
@@ -46,8 +55,9 @@ class ModelCompany( object ):
     qry = """SELECT * FROM `%s`.`companies` WHERE name = "%s";""" % ( self.db_name, company['name'] )
     exists = Mysql.ex( qry )
     if len( exists ) != 0:
+      self.update_diff( company, exists[0] )
       return False
-
+    
     new_company['name'] = company['name']
     if 'symbol' not in company:
       new_company['symbol'] = None
@@ -61,5 +71,8 @@ class ModelCompany( object ):
 
     Mysql.insert( 'companies', new_company )
 
+    def update_diff( self, company_new, company_rec ):
+      print company_new
+      print company_rec
 
 # End File: models/ModelCompany.py

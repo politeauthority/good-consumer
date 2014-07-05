@@ -6,15 +6,24 @@ import MVC as MVC
 
 MVC = MVC.MVC()
 
+def get_soup( url ):
+  try:
+    wiki = urllib2.urlopen( url  )
+    soup = BeautifulSoup( wiki )
+    return soup
+  except urllib2.HTTPError:
+    print '404 Error Fetching: ', url
+    return False  
+
 def find_companies():
-  wiki = urllib2.urlopen( 'http://en.wikipedia.org/wiki/List_of_companies_of_the_United_States' )
-  soup = BeautifulSoup( wiki )
-  content_divs =  soup.find_all( 'div', { 'class' : 'div-col' } )
-  for div in content_divs:
-    for li in div.find_all('li'):
-      company_name = li.text
-      wiki_url     = li.find( 'a', { 'href': True } )['href']
-      find_company( company_name, wiki_url )
+  soup = get_soup( 'http://en.wikipedia.org/wiki/List_of_companies_of_the_United_States' )
+  if soup:
+    content_divs =  soup.find_all( 'div', { 'class' : 'div-col' } )
+    for div in content_divs:
+      for li in div.find_all('li'):
+        company_name = li.text
+        wiki_url     = li.find( 'a', { 'href': True } )['href']
+        find_company( company_name, wiki_url )
 
 def find_company( company_name, wiki_url ):
   company = {
@@ -24,24 +33,28 @@ def find_company( company_name, wiki_url ):
   
   info = find_company_info( wiki_url )
   
-  for key,value in info.iteritems():
-    if 'headquarters' in key.lower():
-      company['headquarters'] = value
-    elif 'founded' in key.lower():
-      company['founded'] = value
-    elif 'industry' in key.lower():
-      company['industry'] = value
+  if info:
+    for key,value in info.iteritems():
+      if 'headquarters' in key.lower():
+        company['headquarters'] = value
+      elif 'founded' in key.lower():
+        company['founded'] = value
+      elif 'industry' in key.lower():
+        company['industry'] = value
 
-  CompanyModel = MVC.loadModel( 'Company' )
+    CompanyModel = MVC.loadModel( 'Company' )
 
-  CompanyModel.create( company )
+    CompanyModel.create( company )
   # print info
   # for key,value in company.iteritems():
   #   print key + ' ' + value
 
 def find_company_info( wiki_url ):
-  url = 'http://en.wikipedia.org/' + wiki_url
-  # print url
+  url = 'http://en.wikipedia.org' + wiki_url
+  print url
+  soup = get_soup( url )
+  if not soup:
+    return False
   company_page = urllib2.urlopen( 'http://en.wikipedia.org' + wiki_url )
   soup = BeautifulSoup( company_page )
 

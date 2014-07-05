@@ -25,9 +25,9 @@ class DriverMysql( object ):
       self.conn = mdb.connect( self.host, self.user, self.password )
       self.cur  = False
 
-  def ex( self, query ):
-    self.cur = self.conn.cursor()
-    self.cur.execute( query )
+  def ex( self, query, args = None ):
+    self.cur = mdb.cursors.DictCursor( self.conn ) 
+    self.cur.execute( query, args )
     self.conn.commit()
     return self.cur.fetchall()
 
@@ -44,7 +44,11 @@ class DriverMysql( object ):
     column_sql = column_sql.rstrip( column_sql[-1:] )
     value_sql = ''
     for value in values:
-      value_sql = value_sql + '"%s",' % self.escape_string( value )
+      if isinstance( value, int ):
+        value_sql += '%s,' % value
+      else:
+        value_sql += '"%s",' % self.escape_string( value )
+
     value_sql = value_sql.rstrip( value_sql[-1:] )
 
     sql = """INSERT INTO `%s`.`%s` (%s) VALUES(%s);""" % ( self.dbname, table, column_sql, value_sql )
