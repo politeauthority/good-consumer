@@ -55,7 +55,8 @@ createTable_options = """
     `pretty_name`     varchar(255) DEFAULT NULL,
     `help_text`       varchar(255) DEFAULT NULL,
     PRIMARY KEY (`id`)
-  ); """ % MVC.db['name']
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 # User tables
 createTable_users  = """
@@ -66,7 +67,8 @@ createTable_users  = """
     `pass`            varchar(250) NOT NULL,
     `last_login`      varchar(15) DEFAULT NULL,
     PRIMARY KEY (`id`)
-  );""" % MVC.db['name']
+  )
+  DEFAULT CHARSET = utf8;""" % MVC.db['name']
 
 createTable_usermeta = """
   CREATE TABLE `%s`.`usermeta` (
@@ -78,15 +80,17 @@ createTable_usermeta = """
     `pretty_name`     varchar(250) DEFAULT NULL,
     `help_text`       varchar(250) DEFAULT NULL,
     PRIMARY KEY (`id`)
-    ); """ % MVC.db['name']
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_acl_roles       = """
   CREATE TABLE `%s`.`acl_roles` ( 
     `id`            int(10) unsigned NOT NULL AUTO_INCREMENT,
     `role_name`     varchar(20) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `role_name` (`role_name`)
-  ); """ % MVC.db['name']
+    UNIQUE KEY `role_name` (`role_name`)        
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_acl_permissions = """
   CREATE TABLE `%s`.`acl_permissions` (
@@ -94,30 +98,33 @@ createTable_acl_permissions = """
     `perm_key`   varchar(30) NOT NULL,
     `perm_name`  varchar(30) NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `perm_key` (`perm_key`)
-  ); """ % MVC.db['name']
+    UNIQUE KEY `perm_key` (`perm_key`)        
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_acl_role_perms  = """
-CREATE TABLE `%s`.`acl_role_perms` (
-  `id`        int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `role_id`   int(10) NOT NULL,
-  `perm_id`   int(10) NOT NULL,
-  `value`     tinyint(1) NOT NULL DEFAULT '0',
-  `added` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `role_id` (`role_id`,`perm_id`)
-); """ % MVC.db['name']
+  CREATE TABLE `%s`.`acl_role_perms` (
+    `id`        int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `role_id`   int(10) NOT NULL,
+    `perm_id`   int(10) NOT NULL,
+    `value`     tinyint(1) NOT NULL DEFAULT '0',
+    `added` datetime NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `role_id` (`role_id`,`perm_id`)
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_acl_user_perms  = """
-CREATE TABLE `%s`.`acl_user_perms` ( 
-  `id`         int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id`    int(10) NOT NULL,
-  `perm_id`    int(10) NOT NULL,
-  `value`      tinyint(1) NOT NULL DEFAULT '0',
-  `added`      datetime NOT NULL,
-  PRIMARY KEY (`ID`), 
-  UNIQUE KEY `user_id` (`user_id`,`perm_id`)
- ); """ % MVC.db['name']
+  CREATE TABLE `%s`.`acl_user_perms` ( 
+    `id`         int(10) unsigned NOT NULL AUTO_INCREMENT,
+    `user_id`    int(10) NOT NULL,
+    `perm_id`    int(10) NOT NULL,
+    `value`      tinyint(1) NOT NULL DEFAULT '0',
+    `added`      datetime NOT NULL,
+    PRIMARY KEY (`ID`), 
+    UNIQUE KEY `user_id` (`user_id`,`perm_id`)
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_acl_user_roles  = """
   CREATE TABLE `%s`.`acl_user_roles` (
@@ -125,7 +132,8 @@ createTable_acl_user_roles  = """
     `role_id`   int(10) NOT NULL,
     `added`     datetime NOT NULL,
     UNIQUE KEY `user_id` (`user_id`,`role_id`)
-  ); """ % MVC.db['name']
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 # Create Good Consumer tables
 createTable_companies = """
@@ -141,7 +149,8 @@ createTable_companies = """
     `wikipedia`    varchar(255) DEFAULT NULL,
     `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`company_id`)
-  )""" % MVC.db['name']
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_company_meta = """
   CREATE TABLE `%s`.`company_meta` (
@@ -153,7 +162,8 @@ createTable_company_meta = """
     `help_text`   varchar(255) DEFAULT NULL,
     `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    
     PRIMARY KEY (`meta_id`)
-  ); """ % MVC.db['name']
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_people = """ 
   CREATE TABLE `%s`.`people` (
@@ -161,8 +171,9 @@ createTable_people = """
     `name`         varchar(255) DEFAULT NULL,
     `wikipedia`    varchar(255) DEFAULT NULL,
     `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`person_id`)    
-  ); """ % MVC.db['name']
+    PRIMARY KEY (`person_id`)
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_people_meta = """
   CREATE TABLE `%s`.`people_meta` (
@@ -172,8 +183,9 @@ createTable_people_meta = """
     `meta_value`  varchar(255) NOT NULL,
     `pretty_name` varchar(255) DEFAULT NULL,
     `help_text` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`meta_id`)
-); """ % MVC.db['name']
+    PRIMARY KEY (`meta_id`) 
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 Mysql.ex( createTable_options )
 Mysql.ex( createTable_users )

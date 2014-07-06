@@ -1,9 +1,15 @@
-Current companies list
+<h1>All Indexed Companies</h1>
 
-<table>
-	{% for company in d['companies'] %}
-		<tr>
-			<td>{{ company[1] }}</td>
-		</tr>
-	{% endfor %}
-</table>
+<div class="container-fluid">
+  <div class="row-fluid">
+      <table class="table table-striped">
+      	{% for company in d['companies'] %}
+      		<tr>
+      			<td>
+              <a href="/info/{{ company['slug'] }}">{{ company['name'] }}</a>
+            </td>
+      		</tr>
+      	{% endfor %}
+      </table>
+  </div>
+</div>

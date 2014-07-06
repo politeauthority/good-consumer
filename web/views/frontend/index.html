@@ -1,24 +1,16 @@
 <div class="container-fluid">
   <div class="row-fluid">
-    <div class="col-sm-3 col-md-2 sidebar">
-      <ul class="nav nav-sidebar">
-        <li><a href="#">Companies</li>
-        <li><a href="#">People</a></li>
-        <li><a href="#">Analytics</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="col-sm-9 col-sm-offset-3 cold-md-10 col-md-offset-2">
-    <div>
-      <p>Know how you consume</p>
-    </div>
-
-    <div>
-      <h1>Random: <a href="/info/{{d['random_company']['slug']}}">{{d['random_company']['name']}}</a></h1>
-    </div>
-
+    <h1>Random: <a href="/info/{{d['random_company']['slug']}}">{{d['random_company']['name']}}</a></h1>
+    <ul>
+      {% if d['random_company']['headquarters'] %}
+        <li>{{d['random_company']['headquarters'] }}</li>
+      {% endif %}
+    </ul>
   </div>
 </div>  
-
-Welcome to Good Consumer.org the very very very Beta version.xd
-{{d}}
+<div class="container-fluid">
+  <div class="row-fluid">
+    <h1>Stats</h1>
+    Currently indexing <b>{{d['stats']['company_count']}}</b> companies
+  </div>
+</div>

@@ -1,3 +1,10 @@
+#!/usr/bin/python
+"""
+  Get Companies
+  Primary to kick off initial database creation and find NEW companies, 
+  however this can be used to update base level company content aswell.
+"""
+
 import sys
 import urllib2
 from bs4 import BeautifulSoup
@@ -30,9 +37,7 @@ def find_company( company_name, wiki_url ):
     'name'      : company_name,
     'wikipedia' : 'http://en.wikipedia.org' + wiki_url
   }
-  
   info = find_company_info( wiki_url )
-  
   if info:
     for key,value in info.iteritems():
       if 'headquarters' in key.lower():
@@ -41,10 +46,11 @@ def find_company( company_name, wiki_url ):
         company['founded'] = value
       elif 'industry' in key.lower():
         company['industry'] = value
-
     CompanyModel = MVC.loadModel( 'Company' )
-
-    CompanyModel.create( company )
+    try:
+      CompanyModel.create( company )
+    except UnicodeEncodeError:
+      print 'UnicodeEncodeError, cannot create company'
   # print info
   # for key,value in company.iteritems():
   #   print key + ' ' + value

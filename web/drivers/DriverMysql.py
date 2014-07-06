@@ -25,12 +25,25 @@ class DriverMysql( object ):
       self.conn = mdb.connect( self.host, self.user, self.password, charset = 'utf8' )
       self.cur  = False
 
+  """
+    ex
+    Executes commands, creates a dictionary cursor
+  """
   def ex( self, query, args = None ):
-    self.cur = mdb.cursors.DictCursor( self.conn ) 
+    self.cur = mdb.cursors.DictCursor( self.conn )
     self.cur.execute( query, args )
     self.conn.commit()
     return self.cur.fetchall()
-
+  
+  """
+    insert
+    Simple insert statement
+    @params:
+      table : str()
+      items : dict{
+        'table_cell' : 'value',
+      }
+  """
   def insert( self, table, items ):
     columns = []
     values  = []
@@ -65,8 +78,10 @@ class DriverMysql( object ):
     sql = """UPDATE `%s`.`%s` SET %s WHERE %s LIMIT %s;""" % ( self.dbname, table, set_sql, where_sql, limit )
     self.ex( sql )
 
-  def escape_string( self, string ):
-    return mdb.escape_string( string )
+  def escape_string( self, string_ ):    
+    if not isinstance( string_, unicode ):
+      string_ = unicode( string_, errors='ignore')
+    return mdb.escape_string( string_ )
 
   def list_to_string( self, the_list ):
     string = ''
@@ -75,12 +90,17 @@ class DriverMysql( object ):
     string = string[ : len(string) - 1 ]
     return string
 
+  """
+    now
+    Gives out a basic MySQL timestamp
+    @return str() ex: 2014-07-02 23:31:23
+  """
   def now( self, format = None ):
     import time
     if format:
-      return time.strftime('%Y-%m-%d %H:%M:%S')      
+      return time.strftime( format )      
     else:
-      return time.strftime( format )
+      return time.strftime('%Y-%m-%d %H:%M:%S')
 
   def alt_con( self, host, dbname, dbuser, dbpass ):
     self.host     = host

@@ -39,11 +39,6 @@ class ModelCompany( object ):
     company = Mysql.ex( qry )
     return company[0]    
 
-  def getAll( self ):
-    qry = """SELECT * FROM `%s`.`companies` LIMIT %s OFFSET %s;""" % ( self.db_name, '100', '0' )
-    companies = Mysql.ex( qry )
-    return companies
-
   def getRandom( self ):
     import random    
     count = Mysql.ex( "SELECT count(*) AS c FROM `%s`.`companies`;" % self.db_name )
@@ -108,27 +103,35 @@ class ModelCompany( object ):
     Updates a company record by a diff of the values
   """
   def updateDiff( self, company_new, company_rec ):
-    import time
     company_id = company_rec['company_id']
     diff = {}
-    if 'symbol' in company_new['symbol'] and company_new['symbol'] != company_rec['symbol']:
+    if 'symbol' in company_new and company_new['symbol'] != company_rec['symbol']:
       diff['symbol'] = company_new['symbol']
-    if 'slug' in company_new['slug'] and company_new['slug'] != company_rec['slug']:
+    if 'slug' in company_new and company_new['slug'] != company_rec['slug']:
       diff['slug'] = company_new['slug']
-    if 'type' in company_new['type'] and company_new['type'] != company_rec['type']:
+    if 'type' in company_new and company_new['type'] != company_rec['type']:
       diff['type'] = company_new['type']
-    if 'industry' in company_new['industry'] and company_new['industry'] != company_rec['industry']:
+    if 'industry' in company_new and company_new['industry'] != company_rec['industry']:
       diff['industry'] = company_new['industry']
-    if 'headquarters' in company_new['headquarters'] and company_new['headquarters'] != company_rec['headquarters']:
+    if 'headquarters' in company_new and company_new['headquarters'] != company_rec['headquarters']:
       diff['headquarters'] = company_new['headquarters']  
-    if 'founded' in company_new['founded'] and company_new['founded'] != company_rec['founded']:
+    if 'founded' in company_new and company_new['founded'] != company_rec['founded']:
       diff['founded'] = company_new['founded']
-    if 'wikipedia' in company_new['wikipedia'] and company_new['wikipedia'] != company_rec['wikipedia']:
+    if 'wikipedia' in company_new and company_new['wikipedia'] != company_rec['wikipedia']:
       diff['wikipedia'] = company_new['wikipedia']
     if len( diff ) > 0:
-      diff['date_updated'] = time.strftime('%Y-%m-%d %H:%M:%S')
-      Mysql.update( 'company', diff, { 'company_id' : company_id } )
+      diff['date_updated'] = Mysql.now()
+      Mysql.update( 'companies', diff, { 'company_id' : company_id } )
 
+  """
+    createMeta
+    @params:
+      company_id : int
+      meta       : dict {
+        'meta_key' : 'meta_value',
+        'meta_key' : 'meta_value',
+      }
+  """
   def createMeta( self, company_id, metas ):
     company_meta = self.getMeta( company_id )
     update_meta = []
@@ -144,7 +147,6 @@ class ModelCompany( object ):
         the_insert = {
           'meta_key'     : key,
           'meta_value'   : value,
-          'date_updated' : Mysql.now()
         }
         Mysql.insert( 'company_meta', the_insert )
     for meta in update_meta:
@@ -155,7 +157,5 @@ class ModelCompany( object ):
         }
         the_where = { 'meta_key': key }
         Mysql.update( 'company_meta', the_update, the_where )
-      print meta_key
-      print meta_value
 
 # End File: models/ModelCompany.py

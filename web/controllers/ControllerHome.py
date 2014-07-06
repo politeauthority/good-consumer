@@ -1,6 +1,8 @@
-#!/usr/bin/python                                                                                                      
-# Admin Controller                                                                                                     
-# This model controls interactions with the indoor and outdoor weather actions which need to occur                     
+#!/usr/bin/python
+"""                                                                                                    
+  Home Controller                                                                                                     
+  Primary web controller
+"""
 import sys
 import os
 
@@ -8,6 +10,7 @@ sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
 # End file header
+
 import cherrypy
 
 class ControllerHome( object ):
@@ -16,8 +19,7 @@ class ControllerHome( object ):
 
   def __init__( self ):
     self.Renderer          = MVC.loadDriver('Renderer')
-    self.Renderer.layout_h = 'frontend/layout/header.html'
-    self.Renderer.layout_f = 'frontend/layout/footer.html'
+    self.Renderer.layout   = 'frontend/layout.html'
 
   """
     Index
@@ -25,8 +27,14 @@ class ControllerHome( object ):
   """
   def index( self ):
     Company = MVC.loadModel( 'Company' )
-    data = { 'random_company' : Company.getRandom() }
-    return self.Renderer.make( 'frontend/index.html', data )
+    SimpleStats = MVC.loadModel( 'SimpleStats' )
+    data = { 
+      'random_company' : Company.getRandom(),
+      'stats'          : {
+        'company_count' : SimpleStats.countOfCompanies()
+      }
+    }
+    return self.Renderer.build( 'frontend/index.html', data )
   index.exposed = True
 
   """
@@ -38,7 +46,7 @@ class ControllerHome( object ):
     data = {
       'companies' : Compaines.getAll()
     }
-    return self.Renderer.make( 'frontend/companies.html', data )
+    return self.Renderer.build( 'frontend/companies.html', data )
   companies.exposed = True
 
   """
@@ -50,11 +58,35 @@ class ControllerHome( object ):
     Company = CompanyModel.getBySlug( slug_name )
     if Company:
       data = { 'company' : Company }
-      return self.Renderer.make( 'frontend/info.html', data )
+      return self.Renderer.build( 'frontend/info.html', data )
     else:
       data = { 'searched_for' : slug_name }
-      return self.Renderer.make( 'errors/company_not_found.html', data )
+      return self.Renderer.build( 'errors/company_not_found.html', data )
   info.exposed = True
+
+  """
+    About
+    Static page for about information
+  """
+  def about( self ):
+    return 'About'
+  about.exposed = True
+  
+  """
+    Donate
+    Static page for about information
+  """
+  def donate( self ):
+    return 'Donate'
+  donate.exposed = True
+  
+  """
+    Contact
+    Static page for about information
+  """
+  def contact( self ):
+    return 'Contact'
+  contact.exposed = True
 
   """
     Error Page 404

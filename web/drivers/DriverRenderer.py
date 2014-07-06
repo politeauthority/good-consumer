@@ -20,7 +20,19 @@ class DriverRenderer( object ):
     self.parse_html = True
     self.layout_h   = False
     self.layout_f   = False
+    self.layout     = False
     self.env = Environment( loader=FileSystemLoader( MVC.app_dir + 'views') )
+
+  def build( self, view, data = None, layout = None ):
+    html_source = self.__draw( view, data )
+    if layout:
+      self.layout = layout
+    if self.layout:
+      layout_data = { 'page_yield' : html_source }
+      if 'layout' in data:
+        layout_data['layout'] = data['layout']
+      html_source = self.__draw( self.layout, layout_data )
+    return html_source
 
   def make( self, view, data = None, header = None, footer = None ):
     html_source = ''
@@ -35,7 +47,6 @@ class DriverRenderer( object ):
         html_source = html_source + self.__draw( self.layout_f, footer )
 
     html_source = self.__parse_html( html_source )
-    #print html_source
     return html_source
   
   def __draw( self, view, data = None ):
