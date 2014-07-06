@@ -19,7 +19,10 @@ class ModelCompanies( object ):
   def getAll( self ):
     qry = """SELECT * FROM `%s`.`companies` LIMIT %s OFFSET %s;""" % ( self.db_name, '100', '0' )
     companies = Mysql.ex( qry )
-
     return companies
 
+  def getUpdateSet( self ):
+    qry = "SELECT * FROM `%s`.`companies` ORDER BY date_updated ASC LIMIT 200;" % MVC.db['name']    
+    return Mysql.ex( qry )
+    
 # End File: models/ModelCompanies.py

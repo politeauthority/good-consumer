@@ -1,11 +1,36 @@
-<h2>{{d['company']['name']}}</h2>
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="col-sm-3 col-md-2 sidebar">
+      <ul class="nav nav-sidebar">
+        <li><a href="#">Companies</li>
+        <li><a href="#">People</a></li>
+        <li><a href="#">Analytics</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-sm-9 col-sm-offset-3 cold-md-10 col-md-offset-2">
+    <h2>{{d['company']['name']}}</h2>
+    <p>Here will go the description of the company. It might be long, or really short, I dont fucking know.</p>
+    <table>
+      <tr>
+        {% if d['company']['industry'] %}
+          <td>Industry</td>
+          <td>{{d['company']['industry']}}</td>
+        {%endif%}
+      </tr>
+    <table>
+    {% if d['company']['wikipedia'] %}
+      <small>
+        <a href="{{d['company']['wikipedia']}}" target="_new">Wikpedia Article</a>
+      </small>
+      <br />
+      <small>
+        Last Updated: {{d['company']['date_updated'].strftime('%Y-%m-%d')}}
+      </small>
+      <br />
+    {% endif %}
+  </div>
+</div>  
 
-<table>
-  <tr>
-    {% if d['company']['industry'] %}
-      <td>Industry</td>
-      <td>{{d['company']['industry']}}</td>
-    {%endif%}
-  </tr>
-<table>
-{{d['company']}}
+Welcome to Good Consumer.org the very very very Beta version.xd
+{{d}}

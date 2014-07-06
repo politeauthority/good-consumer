@@ -34,6 +34,11 @@ class ModelCompany( object ):
     company = Mysql.ex( qry )
     return company[0]
 
+  def getByName( self, company_name ):
+    qry = """SELECT * FROM `%s`.`companies` WHERE `name` = "%s"; """ % ( self.db_name, Mysql.escape_string( company_name ) )
+    company = Mysql.ex( qry )
+    return company[0]    
+
   def getAll( self ):
     qry = """SELECT * FROM `%s`.`companies` LIMIT %s OFFSET %s;""" % ( self.db_name, '100', '0' )
     companies = Mysql.ex( qry )
@@ -46,6 +51,16 @@ class ModelCompany( object ):
     company = self.getByID( the_id )
     return company
 
+  def getMeta( self, company_id, metas = None ):
+    qry = """SELECT * FROM `%s`.`company_meta` WHERE `company_id`="%s" """
+    if metas:
+      if isinstance( metas, str ):
+        metas = [ metas ]
+      meta  = Mysql.list_to_string( metas )
+      qry  += "AND meta_value IN( %s );"
+    else:
+      qry += ";"
+    the_meta = Mysql.ex( qry )
 
   """
     Create
@@ -55,7 +70,10 @@ class ModelCompany( object ):
         'name'      : 'company name',
         'symbol'    : 'CMPY',
         'slug'      : 'company-name',
-        'wikipedia' : 'http://en.wikipedia.org/wiki/Mondel%C4%93z_International'
+        'wikipedia' : 'http://en.wikipedia.org/wiki/Mondel%C4%93z_International',
+        'meta'      : {
+          'desc'  : 'The company was founded on values.'
+        }
       }
     @return:
       False or new company_id
@@ -67,7 +85,8 @@ class ModelCompany( object ):
     qry = """SELECT * FROM `%s`.`companies` WHERE name = "%s";""" % ( self.db_name, company['name'] )
     exists = Mysql.ex( qry )
     if len( exists ) != 0:
-      self.update_diff( company, exists[0] )
+      self.updateDiff( company, exists[0] )
+      company_id = ''
     else:
       new_company['name'] = company['name']
       if 'symbol' not in company:
@@ -80,12 +99,16 @@ class ModelCompany( object ):
       else:
         new_company['wikipedia'] = company['wikipedia']
       Mysql.insert( 'companies', new_company )
+      company_id = self.getByName( company['name'] )['company_id']
+    if 'meta' in company:
+      self.createMeta( company_id, company['meta'] )
 
   """
-    update_diff
+    updateDiff
     Updates a company record by a diff of the values
   """
-  def update_diff( self, company_new, company_rec ):
+  def updateDiff( self, company_new, company_rec ):
+    import time
     company_id = company_rec['company_id']
     diff = {}
     if 'symbol' in company_new['symbol'] and company_new['symbol'] != company_rec['symbol']:
@@ -101,7 +124,38 @@ class ModelCompany( object ):
     if 'founded' in company_new['founded'] and company_new['founded'] != company_rec['founded']:
       diff['founded'] = company_new['founded']
     if 'wikipedia' in company_new['wikipedia'] and company_new['wikipedia'] != company_rec['wikipedia']:
-      diff['wikipedia'] = company_new['wikipedia']  
-    Mysql.update( 'company', diff, { 'company_id' : company_id } )
+      diff['wikipedia'] = company_new['wikipedia']
+    if len( diff ) > 0:
+      diff['date_updated'] = time.strftime('%Y-%m-%d %H:%M:%S')
+      Mysql.update( 'company', diff, { 'company_id' : company_id } )
+
+  def createMeta( self, company_id, metas ):
+    company_meta = self.getMeta( company_id )
+    update_meta = []
+    new_meta    = []
+    for meta_key, meta_value in metas.iteritems():
+      if meta_key in company_meta:
+        if meta_value != company_meta[ meta_key ]:
+          update_meta.append( metas[ meta_key ] )
+      else:
+        new_meta.append( metas[ meta_key ] )
+    for meta in new_meta:
+      for key, value in meta.iteritems():
+        the_insert = {
+          'meta_key'     : key,
+          'meta_value'   : value,
+          'date_updated' : Mysql.now()
+        }
+        Mysql.insert( 'company_meta', the_insert )
+    for meta in update_meta:
+      for key, value, in meta.iteritems():
+        the_update = {
+          'meta_value'   : value,
+          'date_updated' : Mysql.now()
+        }
+        the_where = { 'meta_key': key }
+        Mysql.update( 'company_meta', the_update, the_where )
+      print meta_key
+      print meta_value
 
 # End File: models/ModelCompany.py

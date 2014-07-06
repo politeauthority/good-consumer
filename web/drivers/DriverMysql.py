@@ -68,6 +68,20 @@ class DriverMysql( object ):
   def escape_string( self, string ):
     return mdb.escape_string( string )
 
+  def list_to_string( self, the_list ):
+    string = ''
+    for thing in the_list:
+      string += '"' + thing + '",'
+    string = string[ : len(string) - 1 ]
+    return string
+
+  def now( self, format = None ):
+    import time
+    if format:
+      return time.strftime('%Y-%m-%d %H:%M:%S')      
+    else:
+      return time.strftime( format )
+
   def alt_con( self, host, dbname, dbuser, dbpass ):
     self.host     = host
     self.dbname   = dbname

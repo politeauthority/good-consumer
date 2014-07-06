@@ -25,7 +25,6 @@ class ControllerHome( object ):
   """
   def index( self ):
     Company = MVC.loadModel( 'Company' )
-
     data = { 'random_company' : Company.getRandom() }
     return self.Renderer.make( 'frontend/index.html', data )
   index.exposed = True

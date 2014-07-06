@@ -148,9 +148,10 @@ createTable_company_meta = """
     `meta_id`     int(10) NOT NULL AUTO_INCREMENT,
     `parent`      int(10) NOT NULL,
     `meta_key`    varchar(255) NOT NULL,
-    `meta_value`  varchar(255) NOT NULL,
+    `meta_value`  text DEFAULT NULL,
     `pretty_name` varchar(255) DEFAULT NULL,
     `help_text`   varchar(255) DEFAULT NULL,
+    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    
     PRIMARY KEY (`meta_id`)
   ); """ % MVC.db['name']
 
