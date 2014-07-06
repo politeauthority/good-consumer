@@ -20,21 +20,32 @@ class ModelCompany( object ):
   def __init__( self ):
     self.db_name = MVC.db['name']
 
-  def getById( self, company_id ):
-  	print company_id
+  def getByID( self, company_id ):
+    if isinstance( company_id, int ):
+      qry = """SELECT * FROM `%s`.`companies` WHERE `company_id` = %s; """ % ( self.db_name, company_id )
+      company = Mysql.ex( qry )[0]
+      return company
 
   """
     getBySlug
-    @todo: sanitize the input properly!
   """
   def getBySlug( self, company_slug ):
-  	qry = """SELECT * FROM ``.`companies` WHERE `slug` = "%s"; """ % ( self.db_name, company_slug )
-  	print company_slug
+    qry = """SELECT * FROM `%s`.`companies` WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( company_slug ) )
+    company = Mysql.ex( qry )
+    return company[0]
 
   def getAll( self ):
     qry = """SELECT * FROM `%s`.`companies` LIMIT %s OFFSET %s;""" % ( self.db_name, '100', '0' )
     companies = Mysql.ex( qry )
     return companies
+
+  def getRandom( self ):
+    import random    
+    count = Mysql.ex( "SELECT count(*) AS c FROM `%s`.`companies`;" % self.db_name )
+    the_id = random.randint( 1, count[0]['c'] )
+    company = self.getByID( the_id )
+    return company
+
 
   """
     Create

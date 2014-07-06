@@ -24,7 +24,10 @@ class ControllerHome( object ):
     Main home page.
   """
   def index( self ):
-    return self.Renderer.make('frontend/index.html')
+    Company = MVC.loadModel( 'Company' )
+
+    data = { 'random_company' : Company.getRandom() }
+    return self.Renderer.make( 'frontend/index.html', data )
   index.exposed = True
 
   """
@@ -48,17 +51,18 @@ class ControllerHome( object ):
     Company = CompanyModel.getBySlug( slug_name )
     if Company:
       data = { 'company' : Company }
-      return Renderer.make( 'frontend/info.html', data )
+      return self.Renderer.make( 'frontend/info.html', data )
     else:
-      return Renderer.make( 'errors/company_not_found.html')
-
+      data = { 'searched_for' : slug_name }
+      return self.Renderer.make( 'errors/company_not_found.html', data )
+  info.exposed = True
 
   """
     Error Page 404
   """
-  def error_page_404( status, message, traceback, version ):
-    Renderer = MVC.loadDriver('Renderer')
-    return Renderer.make( 'errors/404.html', header = False )
-  cherrypy.config.update({'error_page.404': error_page_404})
+  # def error_page_404( status, message, traceback, version ):
+  #   Renderer = MVC.loadDriver('Renderer')
+  #   return Renderer.make( 'errors/404.html', header = False )
+  # cherrypy.config.update({'error_page.404': error_page_404})
 
 # End File: controllers/ControllerHome.py

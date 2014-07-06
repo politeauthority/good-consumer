@@ -1,0 +1,11 @@
+<h2>{{d['company']['name']}}</h2>
+
+<table>
+  <tr>
+    {% if d['company']['industry'] %}
+      <td>Industry</td>
+      <td>{{d['company']['industry']}}</td>
+    {%endif%}
+  </tr>
+<table>
+{{d['company']}}
