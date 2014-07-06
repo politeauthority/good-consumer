@@ -41,9 +41,10 @@ class ModelCompany( object ):
     Stores a new company if it does not already exist.
     @params:
       company : {
-        'name'    : 'company name',
-        'symbol'  : 'CMPY',
-        'slug'    : 'company-name',
+        'name'      : 'company name',
+        'symbol'    : 'CMPY',
+        'slug'      : 'company-name',
+        'wikipedia' : 'http://en.wikipedia.org/wiki/Mondel%C4%93z_International'
       }
     @return:
       False or new company_id
@@ -56,23 +57,40 @@ class ModelCompany( object ):
     exists = Mysql.ex( qry )
     if len( exists ) != 0:
       self.update_diff( company, exists[0] )
-      return False
-    
-    new_company['name'] = company['name']
-    if 'symbol' not in company:
-      new_company['symbol'] = None
-    if 'slug' not in company:
-      Misc = MVC.loadHelper( 'Misc' )
-      new_company['slug'] = Misc.slug( company['name'] )
-    if 'wikipedia' not in company:
-      new_company['wikipedia'] = ''
     else:
-      new_company['wikipedia'] = company['wikipedia']
+      new_company['name'] = company['name']
+      if 'symbol' not in company:
+        new_company['symbol'] = None
+      if 'slug' not in company:
+        Misc = MVC.loadHelper( 'Misc' )
+        new_company['slug'] = Misc.slug( company['name'] )
+      if 'wikipedia' not in company:
+        new_company['wikipedia'] = ''
+      else:
+        new_company['wikipedia'] = company['wikipedia']
+      Mysql.insert( 'companies', new_company )
 
-    Mysql.insert( 'companies', new_company )
-
-    def update_diff( self, company_new, company_rec ):
-      print company_new
-      print company_rec
+  """
+    update_diff
+    Updates a company record by a diff of the values
+  """
+  def update_diff( self, company_new, company_rec ):
+    company_id = company_rec['company_id']
+    diff = {}
+    if 'symbol' in company_new['symbol'] and company_new['symbol'] != company_rec['symbol']:
+      diff['symbol'] = company_new['symbol']
+    if 'slug' in company_new['slug'] and company_new['slug'] != company_rec['slug']:
+      diff['slug'] = company_new['slug']
+    if 'type' in company_new['type'] and company_new['type'] != company_rec['type']:
+      diff['type'] = company_new['type']
+    if 'industry' in company_new['industry'] and company_new['industry'] != company_rec['industry']:
+      diff['industry'] = company_new['industry']
+    if 'headquarters' in company_new['headquarters'] and company_new['headquarters'] != company_rec['headquarters']:
+      diff['headquarters'] = company_new['headquarters']  
+    if 'founded' in company_new['founded'] and company_new['founded'] != company_rec['founded']:
+      diff['founded'] = company_new['founded']
+    if 'wikipedia' in company_new['wikipedia'] and company_new['wikipedia'] != company_rec['wikipedia']:
+      diff['wikipedia'] = company_new['wikipedia']  
+    Mysql.update( 'company', diff, { 'company_id' : company_id } )
 
 # End File: models/ModelCompany.py

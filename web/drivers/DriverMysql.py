@@ -22,7 +22,7 @@ class DriverMysql( object ):
     self.user     = MVC.db['user']
     self.password = MVC.db['pass']
     if connect:
-      self.conn = mdb.connect( self.host, self.user, self.password )
+      self.conn = mdb.connect( self.host, self.user, self.password, charset = 'utf8' )
       self.cur  = False
 
   def ex( self, query, args = None ):
@@ -48,11 +48,8 @@ class DriverMysql( object ):
         value_sql += '%s,' % value
       else:
         value_sql += '"%s",' % self.escape_string( value )
-
     value_sql = value_sql.rstrip( value_sql[-1:] )
-
     sql = """INSERT INTO `%s`.`%s` (%s) VALUES(%s);""" % ( self.dbname, table, column_sql, value_sql )
-    print sql
     self.ex( sql )
 
   def update( self, table, items, where, limit = 1 ):
