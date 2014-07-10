@@ -13,7 +13,8 @@ class MVC( object ):
 
   def __init__( self ):
     self.app_name     = 'Framework 1'
-    self.app_dir      = os.path.abspath( os.path.dirname(__file__) ) + '/'
+    self.app_dir      = os.path.abspath( os.path.dirname('../') ) + '/'
+    self.web_dir      = os.path.abspath( os.path.dirname(__file__) ) + '/'
     self.logging      = True
     self.raspberry_pi = True
     self.db           = {
@@ -50,9 +51,9 @@ class MVC( object ):
     if '/' in name:
       folder = name[ 0 : name.find('/') ]
       name   = name[ name.find('/') + 1 : len( name ) ]
-      path.insert( 1, self.app_dir + type.lower() + 's/' + folder )
+      path.insert( 1, self.web_dir + type.lower() + 's/' + folder )
     else:
-      path.insert( 1, self.app_dir + type.lower() + 's' )
+      path.insert( 1, self.web_dir + type.lower() + 's' )
 
     item_name = type + name
     __import__( item_name )

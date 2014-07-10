@@ -20,7 +20,7 @@ class DriverRenderer( object ):
     self.layout_h   = False
     self.layout_f   = False
     self.layout     = False
-    self.env = Environment( loader=FileSystemLoader( MVC.app_dir + 'views') )
+    self.env = Environment( loader=FileSystemLoader( MVC.web_dir + 'views') )
 
   def build( self, view, data = None, layout = None ):
     html_source = self.__draw( view, data )
