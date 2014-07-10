@@ -12,11 +12,8 @@ from config.app_config import settings as app_config
 class MVC( object ):
 
   def __init__( self ):
-    self.app_name     = 'Framework 1'
     self.app_dir      = os.path.abspath( os.path.dirname('../') ) + '/'
     self.web_dir      = os.path.abspath( os.path.dirname(__file__) ) + '/'
-    self.logging      = True
-    self.raspberry_pi = True
     self.db           = {
       'host' : app_config['database']['host'],
       'name' : app_config['database']['name'],
