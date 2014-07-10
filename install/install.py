@@ -30,8 +30,10 @@ if( sys.argv[1] and sys.argv[1] == 'cleanup' ):
   dropTable_acl_user_roles  = "DROP TABLE IF EXISTS `%s`.`acl_user_roles`; "  % MVC.db['name']
   dropTable_companies       = "DROP TABLE IF EXISTS `%s`.`companies`; "       % MVC.db['name']
   dropTable_company_meta    = "DROP TABLE IF EXISTS `%s`.`company_meta`; "    % MVC.db['name']
+  dropTable_company_types   = "DROP TABLE IF EXISTS `%s`.`company_types`; "   % MVC.db['name']
   dropTable_people          = "DROP TABLE IF EXISTS `%s`.`people`; "          % MVC.db['name']
   dropTable_people_meta     = "DROP TABLE IF EXISTS `%s`.`people_meta`; "     % MVC.db['name']
+
   Mysql.ex( dropTable_options )
   Mysql.ex( dropTable_users )
   Mysql.ex( dropTable_usermeta )
@@ -42,8 +44,10 @@ if( sys.argv[1] and sys.argv[1] == 'cleanup' ):
   Mysql.ex( dropTable_acl_user_roles )
   Mysql.ex( dropTable_companies )
   Mysql.ex( dropTable_company_meta )
+  Mysql.ex( dropTable_company_types )
   Mysql.ex( dropTable_people )
   Mysql.ex( dropTable_people_meta )
+
 
 # Base Website tables
 createTable_options = """
@@ -165,6 +169,16 @@ createTable_company_meta = """
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
+createTable_company_types = """
+  CREATE TABLE `%s`.`company_types` (
+    `company_type_id` int(10) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL,
+    `desc` VARCHAR(255) NULL,
+    `wiki` VARCHAR(255) NULL,
+    PRIMARY KEY(`company_type_id`)
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
+
 createTable_people = """ 
   CREATE TABLE `%s`.`people` (
     `person_id`    int(10) NOT NULL AUTO_INCREMENT,
@@ -197,12 +211,13 @@ Mysql.ex( createTable_acl_user_perms )
 Mysql.ex( createTable_acl_user_roles )
 Mysql.ex( createTable_companies )
 Mysql.ex( createTable_company_meta )
+Mysql.ex( createTable_company_types )
 Mysql.ex( createTable_people )
 Mysql.ex( createTable_people_meta )
 
-User = MVC.loadModel( 'User' )
-ACL  = MVC.loadHelper( 'ACL' )
-
+# FIRST USER CREATION 
+# User = MVC.loadModel( 'User' )
+# ACL  = MVC.loadHelper( 'ACL' )
 # User.create( 'admin', '', 'password' )
 
 # End File install/install.py
