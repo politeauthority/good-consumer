@@ -69,7 +69,7 @@ class ControllerHome( object ):
     Static page for about information
   """
   def about( self ):
-    return 'About'
+    return self.Renderer.build( 'frontend/about.html' )
   about.exposed = True
   
   """
@@ -77,7 +77,7 @@ class ControllerHome( object ):
     Static page for about information
   """
   def donate( self ):
-    return 'Donate'
+    return self.Renderer.build( 'frontend/donate.html' )
   donate.exposed = True
   
   """
@@ -85,7 +85,7 @@ class ControllerHome( object ):
     Static page for about information
   """
   def contact( self ):
-    return 'Contact'
+    return self.Renderer.build( 'frontend/contact.html' )
   contact.exposed = True
 
   """

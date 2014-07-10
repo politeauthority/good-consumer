@@ -6,7 +6,6 @@
 
 import sys
 import os
-
 sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
@@ -29,8 +28,11 @@ class DriverRenderer( object ):
       self.layout = layout
     if self.layout:
       layout_data = { 'page_yield' : html_source }
-      if 'layout' in data:
-        layout_data['layout'] = data['layout']
+      if data:
+        if 'layout' in data:
+          layout_data['layout'] = data['layout']
+      else:
+        layout_data['layout'] = ''
       html_source = self.__draw( self.layout, layout_data )
     return html_source
 

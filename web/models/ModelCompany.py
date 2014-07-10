@@ -28,17 +28,32 @@ class ModelCompany( object ):
 
   """
     getBySlug
+    Get a company by the slugged name
+    @params:
+      company_slug : str( ) ex: oscar-myer
+    return company
   """
   def getBySlug( self, company_slug ):
     qry = """SELECT * FROM `%s`.`companies` WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( company_slug ) )
     company = Mysql.ex( qry )
     return company[0]
 
+  """
+    getByName
+    Get a company by the exact name
+    @params : str( ) Oscar Myer
+    @return company
+  """
   def getByName( self, company_name ):
     qry = """SELECT * FROM `%s`.`companies` WHERE `name` = "%s"; """ % ( self.db_name, Mysql.escape_string( company_name ) )
     company = Mysql.ex( qry )
     return company[0]    
 
+  """
+    getRandom
+    Gets a random company
+    @return company
+  """
   def getRandom( self ):
     import random    
     count = Mysql.ex( "SELECT count(*) AS c FROM `%s`.`companies`;" % self.db_name )
@@ -46,6 +61,16 @@ class ModelCompany( object ):
     company = self.getByID( the_id )
     return company
 
+  """
+    getMeta
+    @params:
+      company_id : int()
+      metas : list() meta keys
+    @return: 
+      dict{ 
+        'meta_key': 'meta_value'
+      }
+  """
   def getMeta( self, company_id, metas = None ):
     qry = """SELECT * FROM `%s`.`company_meta` WHERE `company_id`="%s" """
     if metas:
@@ -56,6 +81,10 @@ class ModelCompany( object ):
     else:
       qry += ";"
     the_meta = Mysql.ex( qry )
+    export_meta = {}
+    for meta in the_meta.iteritems():
+      export_meta[meta['meta_key']] = export_meta['meta_value']
+    return export_meta
 
   """
     Create

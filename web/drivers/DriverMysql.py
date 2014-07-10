@@ -28,6 +28,9 @@ class DriverMysql( object ):
   """
     ex
     Executes commands, creates a dictionary cursor
+    @params:
+      query : str() query to be executed
+      args  : str(), list() or dict{} for paramaterized queries
   """
   def ex( self, query, args = None ):
     self.cur = mdb.cursors.DictCursor( self.conn )
@@ -65,7 +68,7 @@ class DriverMysql( object ):
     sql = """INSERT INTO `%s`.`%s` (%s) VALUES(%s);""" % ( self.dbname, table, column_sql, value_sql )
     self.ex( sql )
 
-  def update( self, table, items, where, limit = 1 ):
+  def update( self, table, items, where, limit = None ):
     set_sql = ''
     for column, value in items.items():
       set_sql = set_sql + '`%s`="%s", ' % ( column, value )
@@ -74,8 +77,10 @@ class DriverMysql( object ):
     for column, value in where.items():
       where_sql = where_sql + '`%s`="%s" AND ' % ( column, value )
     where_sql = where_sql.rstrip( where_sql[-4:] )
-
-    sql = """UPDATE `%s`.`%s` SET %s WHERE %s LIMIT %s;""" % ( self.dbname, table, set_sql, where_sql, limit )
+    limit_sql = ''
+    if limit:
+      limit_sql = ' LIMIT = "%s"' % limit
+    sql = """UPDATE `%s`.`%s` SET %s WHERE %s %s;""" % ( self.dbname, table, set_sql, where_sql, limit_sql )
     self.ex( sql )
 
   def escape_string( self, string_ ):    
