@@ -1,10 +1,17 @@
-#Primary config file, before install this is the only file you must modify
+"""
+    Primary config file, before install this is the only file you must modify.
+"""
 
-settings = { 
+settings = {
+    'server' : {
+        'cdn'            : True,
+        'template_cache' : True,
+        'production'     : False,
+    },
     'database': {
         'host'       : "localhost",
-        'user'       : "root",
-        'pass'       : "cleancut",
+        'user'       : "user",
+        'pass'       : "pass",
         'name'       : "good_consumer",
     }
 }
