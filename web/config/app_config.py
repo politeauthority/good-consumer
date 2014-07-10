@@ -7,6 +7,7 @@ settings = {
         'cdn'            : True,
         'template_cache' : True,
         'production'     : False,
+        'debug'          : True
     },
     'database': {
         'host'       : "localhost",

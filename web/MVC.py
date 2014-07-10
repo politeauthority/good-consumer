@@ -22,6 +22,12 @@ class MVC( object ):
       'user' : app_config['database']['user'],
       'pass' : app_config['database']['pass'],
     }
+    self.server        ={
+      'cdn'            : app_config['server']['cdn'],
+      'template_cache' : app_config['server']['template_cache'],
+      'production'     : app_config['server']['production'],
+      'debug'          : app_config['server']['debug']
+    }
 
     self.cherrypy_config = cherrypy_config
     #self.cherrypy_config['global']['server.sock_port'] = garden_pi_config['webserver']['host_port']
