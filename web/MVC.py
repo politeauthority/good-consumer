@@ -1,11 +1,12 @@
 #!/usr/bin/python
-# Model View Controller Class
-# A relativly simple class to help connect and unify the Garden Pi web and hardware aspects
+"""
+  Model View Controller Class
+  A relativly simple class to help connect and unify the whole project
+"""
 
 import sys
 from sys import path
 import os
-
 from config.webserver_config import settings as cherrypy_config
 from config.app_config import settings as app_config
 
@@ -45,12 +46,16 @@ class MVC( object ):
     return self.__load( 'Helper', helper_name, args = args, callable = callable  )
 
   def __load( self, type, name, args = None, callable = False ):
+    if type.lower() == 'controller':
+      load_dir = self.web_dir
+    else:
+      load_dir = self.app_dir + 'includes/'
     if '/' in name:
       folder = name[ 0 : name.find('/') ]
       name   = name[ name.find('/') + 1 : len( name ) ]
-      path.insert( 1, self.web_dir + type.lower() + 's/' + folder )
+      path.insert( 1, load_dir + type.lower() + 's/' + folder )
     else:
-      path.insert( 1, self.web_dir + type.lower() + 's' )
+      path.insert( 1, load_dir + type.lower() + 's' )
 
     item_name = type + name
     __import__( item_name )
@@ -63,4 +68,4 @@ class MVC( object ):
         item = getattr( sys.modules[ "%s" % item_name ], "%s" % item_name )( )        
     return item
 
-# Endfile: MVC.py
+# Endfile: web/MVC.py

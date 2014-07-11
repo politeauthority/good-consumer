@@ -1,7 +1,7 @@
 #!/usr/bin/python
 """
-  Company
-  This model controls interactions for a single company
+  Person
+  This model controls interactions for a single person
 """
 
 import sys
@@ -25,53 +25,52 @@ class ModelPerson( object ):
       person = Mysql.ex( qry )[0]
       return person
 
-  """
-    getBySlug
-    Get a company by the slugged name
-    @params:
-      company_slug : str( ) ex: oscar-myer
-    return company
-  """
   def getBySlug( self, person_slug ):
+    """
+      getBySlug
+      Get a person by the slugged name
+      @params:
+        slug : str( ) ex: donald-trump
+      return person
+    """
     qry = """SELECT * FROM `%s`.`person` WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( person_slug ) )
     person = Mysql.ex( qry )
-    return company[0]
+    return person[0]
 
   def getByName( self, person_name ):
     """
       getByName
-      Get a company by the exact name
+      Get a person by the exact name
       @params : str( ) Oscar Myer
-      @return company
+      @return person
     """
     qry = """SELECT * FROM `%s`.`people` WHERE `name` = "%s"; """ % ( self.db_name, Mysql.escape_string( person_name ) )
     person = Mysql.ex( qry )
     return person[0]    
 
-  """
-    getRandom
-    Gets a random company
-    @return company
-  """
   def getRandom( self ):
+    """
+      getRandom
+      Gets a random person
+      @return person
+    """
     import random    
-    count = Mysql.ex( "SELECT count(*) AS c FROM `%s`.`companies`;" % self.db_name )
+    count = Mysql.ex( "SELECT count(*) AS c FROM `%s`.`people`;" % self.db_name )
     the_id = random.randint( 1, count[0]['c'] )
-    company = self.getByID( the_id )
-    return company
+    people = self.getByID( the_id )
+    return people
 
-  """
-    getMeta
-    @params:
-      company_id : int()
-      metas : list() meta keys
-    @return: 
-      dict{ 
-        'meta_key': 'meta_value'
-      }
-  """
-  def getMeta( self, company_id, metas = None ):
-    qry = """SELECT * FROM `%s`.`company_meta` WHERE `company_id`="%s" """
+  def getMeta( self, person_id, metas = None ):
+    """
+      @params:
+        person_id : int()
+        metas : list() meta keys
+      @return: 
+        dict{ 
+          'meta_key': 'meta_value'
+        }
+    """
+    qry = """SELECT * FROM `%s`.`people_meta` WHERE `people_id`="%s";"""
     if metas:
       if isinstance( metas, str ):
         metas = [ metas ]
@@ -92,17 +91,17 @@ class ModelPerson( object ):
         person : {
           'name'      : 'Donald Trump',
           'slug'      : 'donald-trump',
-          'wikipedia' : 'http://en.wikipedia.org/wiki/Mondel%C4%93z_International',
+          'wikipedia' : 'http://en.wikipedia.org/wiki/Donald_Trump',
           'meta'      : {
-            'desc'  : 'The company was founded on values.'
+            'desc'  : 'The person was founded on values.'
          }
         }
       @return:
-        False or new company_id
+        False or new person_id
     """
     Misc = MVC.loadHelper( 'Misc' )
     new_person = {}
-    if 'name' not in person or person['name'] == '':
+    if 'wikipedia' not in person or person['wikipedia'] == '':
       return False
     qry = """SELECT * FROM `%s`.`people` WHERE name = "%s";""" % ( self.db_name, person['name'] )
     exists = Mysql.ex( qry )
@@ -121,12 +120,12 @@ class ModelPerson( object ):
       person_id = self.getByName( new_person['name'] )['person_id']
     if 'meta' in person:
       self.createMeta( person_id, person['meta'] )
+    return person_id
 
-  """
-    updateDiff
-    Updates a company record by a diff of the values
-  """
   def updateDiff( self, person_new, person_rec ):
+    """
+      Updates a person record by a diff of the values
+    """
     person_id = person_rec['person_id']
     diff = {}
     if 'slug' in person_new and person_new['slug'] != person_rec['slug']:
@@ -137,22 +136,21 @@ class ModelPerson( object ):
       diff['date_updated'] = Mysql.now()
       Mysql.update( 'people', diff, { 'person_id' : person_id } )
 
-  """
-    createMeta
-    @params:
-      company_id : int
-      meta       : dict {
-        'meta_key' : 'meta_value',
-        'meta_key' : 'meta_value',
-      }
-  """
-  def createMeta( self, company_id, metas ):
-    company_meta = self.getMeta( company_id )
+  def createMeta( self, person_id, metas ):
+    """
+      @params:
+        person_id : int
+        meta       : dict {
+          'meta_key' : 'meta_value',
+          'meta_key' : 'meta_value',
+        }
+    """
+    person_meta = self.getMeta( person_id )
     update_meta = []
     new_meta    = []
     for meta_key, meta_value in metas.iteritems():
-      if meta_key in company_meta:
-        if meta_value != company_meta[ meta_key ]:
+      if meta_key in person_meta:
+        if meta_value != person_meta[ meta_key ]:
           update_meta.append( metas[ meta_key ] )
       else:
         new_meta.append( metas[ meta_key ] )
@@ -162,7 +160,7 @@ class ModelPerson( object ):
           'meta_key'     : key,
           'meta_value'   : value,
         }
-        Mysql.insert( 'company_meta', the_insert )
+        Mysql.insert( 'people_meta', the_insert )
     for meta in update_meta:
       for key, value, in meta.iteritems():
         the_update = {
@@ -170,6 +168,6 @@ class ModelPerson( object ):
           'date_updated' : Mysql.now()
         }
         the_where = { 'meta_key': key }
-        Mysql.update( 'company_meta', the_update, the_where )
+        Mysql.update( 'people_meta', the_update, the_where )
 
-# End File: models/ModelCompany.py
+# End File: models/ModelPerson.py

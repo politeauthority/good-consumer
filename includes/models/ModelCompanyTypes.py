@@ -1,6 +1,8 @@
 #!/usr/bin/python                                                                                                
-# Company Types
-# This model controls interactions with company types
+"""
+  Company Types
+  This model controls interactions with company types
+"""
 import sys
 import os
 
@@ -31,7 +33,7 @@ class ModelCompanyTypes( object ):
       qry = """SELECT * FROM `%s`.`company_types` WHERE `name` = "%s";  """ % ( self.db_name, name['name'] )
       result = Mysql.ex( qry )
       if len( result ) == 0:
-        type_id = self.create( name['name'], name['wiki'] )
+        type_id = self.create( name['name'], name['wikipedia'] )
       else:
         type_id = result[0]['company_type_id']
       company_type_ids.append( type_id )
@@ -46,6 +48,7 @@ class ModelCompanyTypes( object ):
     }
     Mysql.insert( 'company_types', args );
     qry = """SELECT * FROM `%s`.`company_types` WHERE `name`="%s";""" % ( self.db_name, name )
-    id = Mysql.ex( qry )[0]['company_type_id']
-    return id
+    company_type_id = Mysql.ex( qry )[0]['company_type_id']
+    return company_type_id
+
 # End File: models/ModelCompanyTypes.py

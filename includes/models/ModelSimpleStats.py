@@ -24,4 +24,8 @@ class ModelSimpleStats( object ):
     qry = "SELECT count(*) as c FROM `%s`.`companies`;" % self.db_name
     return Mysql.ex( qry )[0]['c']
 
+  def countOfPeople( self ):
+  	qry = "SELECT count(*) as c FROM `%s`.`people`;" % self.db_name
+  	return Mysql.ex(qry)[0]['c']
+ 
 # End File: models/ModelSimpleStats.py

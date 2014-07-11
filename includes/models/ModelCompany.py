@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-  Company
+  Company Model
   This model controls interactions for a single company
 """
 
@@ -26,52 +26,46 @@ class ModelCompany( object ):
       company = Mysql.ex( qry )[0]
       return company
 
-  """
-    getBySlug
-    Get a company by the slugged name
-    @params:
-      company_slug : str( ) ex: oscar-myer
-    return company
-  """
   def getBySlug( self, company_slug ):
+    """
+      Get a company by the slugged name
+      @params:
+        company_slug : str( ) ex: oscar-myer
+      return company
+    """
     qry = """SELECT * FROM `%s`.`companies` WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( company_slug ) )
     company = Mysql.ex( qry )
     return company[0]
 
-  """
-    getByName
-    Get a company by the exact name
-    @params : str( ) Oscar Myer
-    @return company
-  """
   def getByName( self, company_name ):
+    """
+      Get a company by the exact name
+      @params : str( ) Oscar Myer
+      @return company
+    """
     qry = """SELECT * FROM `%s`.`companies` WHERE `name` = "%s"; """ % ( self.db_name, Mysql.escape_string( company_name ) )
     company = Mysql.ex( qry )
     return company[0]    
 
-  """
-    getRandom
-    Gets a random company
-    @return company
-  """
   def getRandom( self ):
+    """
+      Gets a random company
+      @return company
+    """
     import random    
     count = Mysql.ex( "SELECT count(*) AS c FROM `%s`.`companies`;" % self.db_name )
     the_id = random.randint( 1, count[0]['c'] )
     company = self.getByID( the_id )
     return company
 
-  """
-    getMeta
-    @params:
-      company_id : int()
-      metas : list() meta keys
-    @return: 
-      dict{ 
-        'meta_key': 'meta_value'
-      }
-  """
   def getMeta( self, company_id, metas = None ):
+    """
+      @params:
+        company_id : int()
+        metas : list() meta keys
+      @return: 
+        dict{  'meta_key': 'meta_value' }
+    """
     qry = """SELECT * FROM `%s`.`company_meta` WHERE `company_id`="%s" """
     if metas:
       if isinstance( metas, str ):
@@ -86,23 +80,22 @@ class ModelCompany( object ):
       export_meta[meta['meta_key']] = export_meta['meta_value']
     return export_meta
 
-  """
-    Create
-    Stores a new company if it does not already exist.
-    @params:
-      company : {
-        'name'      : 'company name',
-        'symbol'    : 'CMPY',
-        'slug'      : 'company-name',
-        'wikipedia' : 'http://en.wikipedia.org/wiki/Mondel%C4%93z_International',
-        'meta'      : {
-          'desc'  : 'The company was founded on values.'
-        }
-      }
-    @return:
-      False or new company_id
-  """
   def create( self, company ):
+    """
+      Stores a new company if it does not already exist.
+      @params:
+        company : {
+          'name'      : 'company name',
+          'symbol'    : 'CMPY',
+          'slug'      : 'company-name',
+          'wikipedia' : 'http://en.wikipedia.org/wiki/Mondel%C4%93z_International',
+          'meta'      : {
+            'desc'  : 'The company was founded on values.'
+          }
+        }
+      @return:
+        False or new company_id
+    """
     new_company = {}
     if 'name' not in company or company['name'] == '':
       return False
@@ -127,11 +120,10 @@ class ModelCompany( object ):
     if 'meta' in company:
       self.createMeta( company_id, company['meta'] )
 
-  """
-    updateDiff
-    Updates a company record by a diff of the values
-  """
   def updateDiff( self, company_new, company_rec ):
+    """
+      Updates a company record by a diff of the values
+    """
     company_id = company_rec['company_id']
     diff = {}
     if 'symbol' in company_new and company_new['symbol'] != company_rec['symbol']:
@@ -152,16 +144,15 @@ class ModelCompany( object ):
       diff['date_updated'] = Mysql.now()
       Mysql.update( 'companies', diff, { 'company_id' : company_id } )
 
-  """
-    createMeta
-    @params:
-      company_id : int
-      meta       : dict {
-        'meta_key' : 'meta_value',
-        'meta_key' : 'meta_value',
-      }
-  """
   def createMeta( self, company_id, metas ):
+    """
+      @params:
+        company_id : int
+        meta       : dict {
+          'meta_key' : 'meta_value',
+          'meta_key' : 'meta_value',
+        }
+    """
     company_meta = self.getMeta( company_id )
     update_meta = []
     new_meta    = []
