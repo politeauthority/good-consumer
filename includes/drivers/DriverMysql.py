@@ -6,7 +6,6 @@
 
 import sys
 import os
-
 sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
@@ -25,29 +24,28 @@ class DriverMysql( object ):
       self.conn = mdb.connect( self.host, self.user, self.password, charset = 'utf8' )
       self.cur  = False
 
-  """
-    ex
-    Executes commands, creates a dictionary cursor
-    @params:
-      query : str() query to be executed
-      args  : str(), list() or dict{} for paramaterized queries
-  """
   def ex( self, query, args = None ):
+    """
+      Executes commands, creates a dictionary cursor
+      @params:
+        query : str() query to be executed
+        args  : str(), list() or dict{} for paramaterized queries
+      @return tuple of dicts ( {} , {} ) 
+    """
     self.cur = mdb.cursors.DictCursor( self.conn )
     self.cur.execute( query, args )
     self.conn.commit()
     return self.cur.fetchall()
   
-  """
-    insert
-    Simple insert statement
-    @params:
-      table : str()
-      items : dict{
-        'table_cell' : 'value',
-      }
-  """
   def insert( self, table, items ):
+    """
+      Simple insert statement
+      @params:
+        table : str()
+        items : dict{
+          'table_cell' : 'value',
+        }
+    """
     columns = []
     values  = []
     for column, value in items.items():
@@ -69,6 +67,18 @@ class DriverMysql( object ):
     self.ex( sql )
 
   def update( self, table, items, where, limit = None ):
+    """
+      Simpe update statement.
+      @params:
+        table  : str()
+        items  : dict {
+          'table_cell' : 'value'
+        }
+        where : dict {
+          table_cell : 'value'
+        }
+        limit  : int()
+    """
     set_sql = ''
     for column, value in items.items():
       set_sql = set_sql + '`%s`="%s", ' % ( column, value )
@@ -83,24 +93,35 @@ class DriverMysql( object ):
     sql = """UPDATE `%s`.`%s` SET %s WHERE %s %s;""" % ( self.dbname, table, set_sql, where_sql, limit_sql )
     self.ex( sql )
 
-  def escape_string( self, string_ ):    
+  def escape_string( self, string_ ):
+    """
+      Escapes a string for safe Mysql use.
+      @params:
+        string_ : str()
+      @return : str()
+    """
     if not isinstance( string_, unicode ):
       string_ = unicode( string_, errors='ignore')
     return mdb.escape_string( string_ )
 
   def list_to_string( self, the_list ):
+    """
+      Converts a list to a SQL ready string
+      @parms:
+        the_list : list[]
+      @return str()
+    """
     string = ''
     for thing in the_list:
-      string += '"' + thing + '",'
+      string += '"' + self.escape_string( thing ) + '",'
     string = string[ : len(string) - 1 ]
     return string
 
-  """
-    now
-    Gives out a basic MySQL timestamp
-    @return str() ex: 2014-07-02 23:31:23
-  """
   def now( self, format = None ):
+    """
+      Gives out a basic MySQL timestamp
+      @return str() ex: 2014-07-02 23:31:23
+    """
     import time
     if format:
       return time.strftime( format )      

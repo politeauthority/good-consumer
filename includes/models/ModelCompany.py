@@ -66,12 +66,12 @@ class ModelCompany( object ):
       @return: 
         dict{  'meta_key': 'meta_value' }
     """
-    qry = """SELECT * FROM `%s`.`company_meta` WHERE `company_id`="%s" """
+    qry = """SELECT * FROM `%s`.`company_meta` WHERE `company_id`="%s" """ % ( self.db_name, company_id )
     if metas:
       if isinstance( metas, str ):
         metas = [ metas ]
       meta  = Mysql.list_to_string( metas )
-      qry  += "AND meta_value IN( %s );"
+      qry  += "AND meta_value IN( %s );" % meta
     else:
       qry += ";"
     the_meta = Mysql.ex( qry )
@@ -123,6 +123,9 @@ class ModelCompany( object ):
   def updateDiff( self, company_new, company_rec ):
     """
       Updates a company record by a diff of the values
+      @params:
+        company_new : dict{ }
+        company_rec : dict{ }
     """
     company_id = company_rec['company_id']
     diff = {}
@@ -140,9 +143,8 @@ class ModelCompany( object ):
       diff['founded'] = company_new['founded']
     if 'wikipedia' in company_new and company_new['wikipedia'] != company_rec['wikipedia']:
       diff['wikipedia'] = company_new['wikipedia']
-    if len( diff ) > 0:
-      diff['date_updated'] = Mysql.now()
-      Mysql.update( 'companies', diff, { 'company_id' : company_id } )
+    diff['date_updated'] = Mysql.now()
+    Mysql.update( 'companies', diff, { 'company_id' : company_id } )
 
   def createMeta( self, company_id, metas ):
     """
@@ -175,7 +177,10 @@ class ModelCompany( object ):
           'meta_value'   : value,
           'date_updated' : Mysql.now()
         }
-        the_where = { 'meta_key': key }
+        the_where = { 
+          'meta_key'   : key, 
+          'company_id' : company_id
+        }
         Mysql.update( 'company_meta', the_update, the_where )
 
 # End File: models/ModelCompany.py
