@@ -10,11 +10,13 @@ from bs4 import BeautifulSoup
 sys.path.append( '../web/' )
 import MVC as MVC
 
-MVC            = MVC.MVC()
-ModelCompanies = MVC.loadModel('Companies')
-ModelCompany   = MVC.loadModel('Company')
+MVC               = MVC.MVC()
+ModelCompany      = MVC.loadModel('Company')
+ModelCompanies    = MVC.loadModel('Companies')
+ModelCompanyTypes = MVC.loadModel('CompanyTypes')
+ModelPerson       = MVC.loadModel('Person')
 
-
+Debug             = MVC.loadHelper('Debug')
 
 class Fetcher( object ):
 
@@ -38,21 +40,22 @@ class Fetcher( object ):
 		if self.verbosity:
 			print 'Updating Current Companies'
 		update_companies = ModelCompanies.getUpdateSet()
-		
 		c = 0
 		for company in update_companies:
 			if self.verbosity:
 				print '  ', company['name']
-				c_info = {}
 				print company['wikipedia']
-				soup = self.__get_soup( company['wikipedia'] )
-				if soup:
-					infobox = soup.find( 'table', { 'class' : 'infobox' } )
-					if infobox == None:
-						continue
-						infobox_content = self.__parse_infobox( infobox )
-			if c == 5:
-				sys.exit()
+			c_info = {}
+			soup = self.__get_soup( company['wikipedia'] )
+			if soup:
+				infobox = soup.find( 'table', { 'class' : 'infobox' } )
+				if infobox == None:
+					continue
+				infobox_content = self.__parse_infobox( infobox )
+				print infobox_content
+                                c = c + 1
+                                if c == 10:
+                                        sys.exit()
 
 	def __get_soup( self, url ):
 		try:
@@ -64,19 +67,52 @@ class Fetcher( object ):
 			return False
 
 	def __parse_infobox( self, soup ):
-		infobox_rows =  infobox.find_all( 'tr' )
+                info = { }
+		infobox_rows =  soup.find_all( 'tr' )
 		for row in infobox_rows:
 			if row.find_all('a', { 'title': 'Types of business entity' } ):
 				o_types = row.find( 'td' ).find_all( 'a' )
 				c_types = []
-				print row
-				print o_types
 				for o in o_types:
-					print o
-					c_types.append( o_types.text )
-					print c_types
-					sys.exit()
-					c = c + 1
+					the_type = {
+						'name'      : o.text,
+						'wikipedia' : 'http://en.wikipedia.org' + o['href']
+					}
+					c_types.append( the_type )
+				type_ids = ModelCompanyTypes.getIDsByName( c_types, create_if_not_exists = True )
+                                info['type'] = type_ids
+                        elif 'Founder' in str( row.th ):
+                                print row.td
+                                info['people'] = []
+                                for person in row.td.findAll( 'a' ):
+                                        p = {
+                                                'name'      : person.text,
+                                                'wikipedia' : 'http://en.wikipedia.org' + person['href']
+                                        }
+                                        info['people'].append( p )
+                                        #person_id = ModelPerson.create( p )
+                                        #print person_id
+                                        #info['people'].append( person_id )
+                        elif 'Key People' in str( row.th ):
+                                if 'people' not in info:
+                                        info['people'] = []
+                                print row.td
+                        #else:
+                                #print ''
+                                #print str( row.th )
+                                #print ''
+                                #print row.td
+                        people = [ ]
+                        if 'people' in info:
+                                print info['people']
+                                #Debug.write( 'check', info['people'] )
+                                for person in info['people']:
+                                        person_id = ModelPerson.create( person )
+                                        people.append( person_id )
+                                info['people'] = people
+
+                        print ' '
+                return info
 
 
 if __name__ == "__main__":

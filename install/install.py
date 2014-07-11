@@ -183,6 +183,7 @@ createTable_people = """
   CREATE TABLE `%s`.`people` (
     `person_id`    int(10) NOT NULL AUTO_INCREMENT,
     `name`         varchar(255) DEFAULT NULL,
+    `slug`         varchar(255) DEFAULT NULL,
     `wikipedia`    varchar(255) DEFAULT NULL,
     `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`person_id`)

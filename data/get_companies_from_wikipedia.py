@@ -87,6 +87,7 @@ def find_company_info( wiki_url ):
         info[ table_head.text ] = table_value.text
   return info
 
-find_companies()
+if __name__ == "__main__":
+  find_companies()
 
 # End File: data/get_companies_from_wikipedia.py 
