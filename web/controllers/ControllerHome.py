@@ -65,6 +65,14 @@ class ControllerHome( object ):
       return self.Renderer.build( 'errors/company_not_found.html', data )
   info.exposed = True
 
+  def people( self ):
+    """
+    Roster page of people
+    """
+    PeopleModel = MVC.loadModel('People')
+    data = { 'people' : PeopleModel.getAll() }
+    return self.Renderer.build( 'frontend/people.html' )
+
   """
     About
     Static page for about information

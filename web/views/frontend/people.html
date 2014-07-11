@@ -1,0 +1,15 @@
+<h1>All Indexed People</h1>
+
+<div class="container-fluid">
+  <div class="row-fluid">
+      <table class="table table-striped">
+      	{% for person in d['people'] %}
+      		<tr>
+      			<td>
+              <a href="#">{{ person['name'] }}</a>
+            </td>
+      		</tr>
+      	{% endfor %}
+      </table>
+  </div>
+</div>

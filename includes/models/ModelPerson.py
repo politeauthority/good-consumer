@@ -103,7 +103,7 @@ class ModelPerson( object ):
     new_person = {}
     if 'wikipedia' not in person or person['wikipedia'] == '':
       return False
-    qry = """SELECT * FROM `%s`.`people` WHERE name = "%s";""" % ( self.db_name, person['name'] )
+    qry = """SELECT * FROM `%s`.`people` WHERE `wikipedia` = "%s";""" % ( self.db_name, person['wikipedia'] )
     exists = Mysql.ex( qry )
     if len( exists ) != 0:
       self.updateDiff( person, exists[0] )

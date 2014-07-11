@@ -1,6 +1,8 @@
-#!/usr/bin/python                                                                                                
-# User Companies
-# This model controls interactions for collections of companies
+#!/usr/bin/python
+"""                                                                                                
+  Model Companies
+  This model controls interactions for collections of companies
+"""
 import sys
 import os
 
@@ -9,7 +11,6 @@ from MVC import MVC
 MVC = MVC()
 # End file header
 Mysql    = MVC.loadDriver('Mysql')
-Settings = MVC.loadHelper('Settings')
 
 class ModelCompanies( object ):
 
