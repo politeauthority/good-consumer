@@ -14,6 +14,7 @@ ModelCompanies    = MVC.loadModel('Companies')
 ModelCompanyTypes = MVC.loadModel('CompanyTypes')
 ModelPerson       = MVC.loadModel('Person')
 Wikipedia         = MVC.loadDriver('Wikipedia')
+GoogleNews        = MVC.loadDriver('GoogleNews')
 
 Debug             = MVC.loadHelper('Debug')
 
@@ -22,9 +23,10 @@ class Fetcher( object ):
 	def __init__( self ):
 		self.verbosity = True
 		self.run_arguments = {
-			'find_new_companies'       : True,
-			'update_current_companies' : True,
-			'update_current_people'    : True
+			'find_new_companies'       : False,
+			'update_current_companies' : False,
+			'update_current_people'    : False,
+			'fetch_company_news'       : True,
 		}
 
 	def go( self ):
@@ -34,6 +36,8 @@ class Fetcher( object ):
 			self.update_current_companies( )
 		if self.run_arguments['update_current_people']:
 			self.update_current_people( )
+		if self.run_arguments['fetch_company_news']:
+			self.fetch_company_news()
 
 	def find_new_companies( self ):
 		print 'Finding new companies'
@@ -74,6 +78,10 @@ class Fetcher( object ):
 	def update_current_people( self ):
 		print 'Updating current people'
 		print 'Nothing to do here right now ... sorry'
+
+	def fetch_company_news( self ):
+		print 'Fetching Company News'
+		GoogleNews.get( 'Equifax' )
 
 if __name__ == "__main__":
 	Fetcher().go()
