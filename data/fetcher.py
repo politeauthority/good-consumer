@@ -43,8 +43,8 @@ class Fetcher( object ):
 	def update_current_companies( self ):
 		if self.verbosity:
 			print 'Updating Current Companies'
-		# update_companies = ModelCompanies.getUpdateSet()
-		update_companies = [ ModelCompany.getBySlug( 'irobot' ) ]
+		update_companies = ModelCompanies.getUpdateSet()
+		#update_companies = [ ModelCompany.getBySlug( 'irobot' ) ]
 		c = 0
 		for company in update_companies:
 			if self.verbosity:
@@ -56,12 +56,12 @@ class Fetcher( object ):
 				'name' : company['name'],
 				'meta' : { }
 			}
-			print 'people'
 			if 'people' in wiki_info['infobox']:
-				people_ids = [ ]
+				people_ids = ''
 				for person in wiki_info['infobox']['people']:
-					person_id = ModelPerson.create( person )
-					people_ids.append( person_id )
+					person_id   = ModelPerson.create( person )
+					people_ids += str( person_id ) + ','
+				people_ids = people_ids[:-1]
 				the_company['meta']['people'] = people_ids
 			if 'type' in wiki_info:
 				company_type_ids = [ ]

@@ -76,8 +76,8 @@ class ModelCompany( object ):
       qry += ";"
     the_meta = Mysql.ex( qry )
     export_meta = {}
-    for meta in the_meta.iteritems():
-      export_meta[meta['meta_key']] = export_meta['meta_value']
+    for meta in the_meta:
+      export_meta[ meta['meta_key'] ] = meta['meta_value']
     return export_meta
 
   def create( self, company ):
@@ -158,12 +158,13 @@ class ModelCompany( object ):
     company_meta = self.getMeta( company_id )
     update_meta = []
     new_meta    = []
+    print company_meta
     for meta_key, meta_value in metas.iteritems():
       if meta_key in company_meta:
         if meta_value != company_meta[ meta_key ]:
-          update_meta.append( metas[ meta_key ] )
+          update_meta.append( { meta_key : meta_value } )
       else:
-        new_meta.append( metas[ meta_key ] )
+        new_meta.append( {  meta_key : meta_value } )
     for meta in new_meta:
       for key, value in meta.iteritems():
         the_insert = {
@@ -171,7 +172,7 @@ class ModelCompany( object ):
           'meta_value'   : value,
         }
         Mysql.insert( 'company_meta', the_insert )
-    for meta in update_meta:
+    for meta in update_meta: 
       for key, value, in meta.iteritems():
         the_update = {
           'meta_value'   : value,
