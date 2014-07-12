@@ -24,6 +24,7 @@ class MVC( object ):
     self.server        ={
       'cdn'            : app_config['server']['cdn'],
       'template_cache' : app_config['server']['template_cache'],
+      'ga_tracker'     : '',
       'production'     : app_config['server']['production'],
       'debug'          : app_config['server']['debug']
     }

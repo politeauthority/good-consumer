@@ -26,7 +26,7 @@ class ModelCompany( object ):
       company = Mysql.ex( qry )[0]
       return company
 
-  def getBySlug( self, company_slug ):
+  def getBySlug( self, company_slug, load_level = 'light' ):
     """
       Get a company by the slugged name
       @params:
@@ -35,9 +35,12 @@ class ModelCompany( object ):
     """
     qry = """SELECT * FROM `%s`.`companies` WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( company_slug ) )
     company = Mysql.ex( qry )
-    return company[0]
+    if len( company ) == 0:
+      return False
+    company = self.getLoadLevel( company[0], load_level )
+    return company
 
-  def getByName( self, company_name ):
+  def getByName( self, company_name, load_level = 'light' ):
     """
       Get a company by the exact name
       @params : str( ) Oscar Myer
@@ -79,6 +82,12 @@ class ModelCompany( object ):
     for meta in the_meta:
       export_meta[ meta['meta_key'] ] = meta['meta_value']
     return export_meta
+
+  def getLoadLevel( self, company, load_level = 'light' ):
+    if load_level == 'full':
+      company['meta'] = self.getMeta( company['company_id'] )
+    return company
+
 
   def create( self, company ):
     """

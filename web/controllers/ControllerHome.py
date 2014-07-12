@@ -18,14 +18,18 @@ class ControllerHome( object ):
   admin = MVC.loadController('admin/AdminHome')
 
   def __init__( self ):
-    self.Renderer          = MVC.loadDriver('Renderer')
-    self.Renderer.layout   = 'frontend/layout.html'
+    self.Renderer             = MVC.loadDriver('Renderer')
+    self.Renderer.layout      = 'frontend/layout.html'
+    self.Renderer.layout_args = {
+      'ga_tracker' : '',
+      'cdn'        : MVC.server['cdn'],
+      'production' : MVC.server['production']
+    } 
 
-  """
-    Index
-    Main home page.
-  """
   def index( self ):
+    """
+      Main home page.
+    """
     Company = MVC.loadModel( 'Company' )
     SimpleStats = MVC.loadModel( 'SimpleStats' )
     data = { 
@@ -38,11 +42,10 @@ class ControllerHome( object ):
     return self.Renderer.build( 'frontend/index.html', data )
   index.exposed = True
 
-  """
-    Companies
-    List of all companies.
-  """
   def companies( self ):
+    """
+      List of all companies.
+    """
     Compaines = MVC.loadModel( 'Companies' )
     data = {
       'companies' : Compaines.getAll()
@@ -50,13 +53,12 @@ class ControllerHome( object ):
     return self.Renderer.build( 'frontend/companies.html', data )
   companies.exposed = True
 
-  """
-    Info
-    General Information page for a single company
-  """
   def info( self, slug_name ):
+    """
+      General Information page for a single company
+    """    
     CompanyModel = MVC.loadModel( 'Company' )
-    Company = CompanyModel.getBySlug( slug_name )
+    Company = CompanyModel.getBySlug( slug_name, 'full' )
     if Company:
       data = { 'company' : Company }
       return self.Renderer.build( 'frontend/info.html', data )
@@ -67,33 +69,30 @@ class ControllerHome( object ):
 
   def people( self ):
     """
-    Roster page of people
+      Roster page of people
     """
     PeopleModel = MVC.loadModel('People')
     data = { 'people' : PeopleModel.getAll() }
     return self.Renderer.build( 'frontend/people.html' )
 
-  """
-    About
-    Static page for about information
-  """
   def about( self ):
+    """
+      Static page for about information
+    """
     return self.Renderer.build( 'frontend/about.html' )
   about.exposed = True
   
-  """
-    Donate
-    Static page for about information
-  """
   def donate( self ):
+    """
+      Static page for about information
+    """    
     return self.Renderer.build( 'frontend/donate.html' )
   donate.exposed = True
   
-  """
-    Contact
-    Static page for about information
-  """
   def contact( self ):
+    """
+      Static page for about information
+    """    
     return self.Renderer.build( 'frontend/contact.html' )
   contact.exposed = True
 
