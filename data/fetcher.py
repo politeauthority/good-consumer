@@ -9,6 +9,7 @@ sys.path.append( '../web/' )
 import MVC as MVC
 
 MVC               = MVC.MVC()
+JobLog            = MVC.loadModel('JobLog')
 ModelCompany      = MVC.loadModel('Company')
 ModelCompanies    = MVC.loadModel('Companies')
 ModelCompanyTypes = MVC.loadModel('CompanyTypes')
@@ -33,8 +34,8 @@ class Fetcher( object ):
 	def go( self ):
 		if self.run_arguments['find_new_companies']:
 			self.find_new_companies( )
-		if self.run_arguments['update_current_companies']:
-			self.update_current_companies( )
+		# if self.run_arguments['update_current_companies']:
+		# 	self.update_current_companies( )
 		if self.run_arguments['update_current_people']:
 			self.update_current_people( )
 		if self.run_arguments['fetch_company_news']:
@@ -48,6 +49,7 @@ class Fetcher( object ):
 	def update_current_companies( self ):
 		if self.verbosity:
 			print 'Updating Current Companies'
+		job_id = JobLog.start( 'update_current_companies' )			
 		update_companies = ModelCompanies.getUpdateSet()
 		#update_companies = [ ModelCompany.getBySlug( 'irobot' ) ]
 		c = 0
@@ -75,6 +77,7 @@ class Fetcher( object ):
 				the_company['type'] = company_type_ids
 			print the_company
 			ModelCompany.create( the_company )
+			JobLog.stop( job_id )
 
 	def update_current_people( self ):
 		print 'Updating current people'
@@ -82,14 +85,19 @@ class Fetcher( object ):
 
 	def fetch_company_news( self ):
 		print 'Fetching Company News'
+		job_id = JobLog.start( 'fetch_company_news' )
 		update_companies = ModelCompanies.getUpdateSet()
-
+		companies_count = 0
+		articles_count  = 0
 		for company in update_companies:
 			print '  Downloading news articles for ', company['name']
 			company_news = GoogleNews.get( company['name'] )
 			for article in company_news:
 				ModelCompanyNews.create( company['company_id'], article )
+				articles_count = articles_count + 1
 			ModelCompany.setUpdateTime( company['company_id'] )
+			companies_count = companies_count + 1
+		JobLog.stop( job_id, "Ran %s companies and %s articles" % ( companies_count, articles_count ) )
 
 if __name__ == "__main__":
 	Fetcher().go()

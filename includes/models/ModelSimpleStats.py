@@ -6,14 +6,12 @@
 
 import sys
 import os
-
 sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
 # End file header
 
 Mysql    = MVC.loadDriver('Mysql')
-Settings = MVC.loadHelper('Settings')
 
 class ModelSimpleStats( object ):
 

@@ -15,30 +15,31 @@ import urllib
 import urllib2
 from bs4 import BeautifulSoup
 
+TorScrape = MVC.loadDriver('TorScrape')
+
 class DriverGoogleNews( object ):
 
 	def get( self, search_query ):
 		articles = []
 		news_url = 'https://news.google.com/news/feeds?q=%s&output=rss' % urllib.quote( search_query ).lower()
-		soup     = self.__get_soup( news_url, 'xml' )
-
-		for item in soup.find_all('item'):
-			print item.title.text
-			full_article = self.get_article_content( item.link.text )
-			if not full_article:
-				continue
-			article = {
-				'headline' : item.title.text,
-				'url'      : item.link.text,
-				'pubDate'  : item.pubDate.text,
-				'content'     : full_article,				
-			}
-			articles.append( article )
-			break
+		soup     = TorScrape.get_soup( news_url, 'xml' )
+		if soup:
+			for item in soup.find_all('item'):
+				print item.title.text
+				full_article = self.get_article_content( item.link.text )
+				if not full_article:
+					continue
+				article = {
+					'headline' : item.title.text,
+					'url'      : item.link.text,
+					'pubDate'  : item.pubDate.text,
+					'content'  : full_article,				
+				}
+				articles.append( article )
 		return articles
 
 	def get_article_content( self, article_url ):
-		full_article = self.__get_soup( article_url )
+		full_article = TorScrape.get_soup( article_url )
 		if not full_article:
 			return False
 		counter = 0

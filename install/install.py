@@ -35,6 +35,7 @@ if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
   dropTable_company_news     = "DROP TABLE IF EXISTS `%s`.`company_news`;"     % MVC.db['name']
   dropTable_people           = "DROP TABLE IF EXISTS `%s`.`people`; "          % MVC.db['name']
   dropTable_people_meta      = "DROP TABLE IF EXISTS `%s`.`people_meta`; "     % MVC.db['name']
+  dropTable_job_log          = "DROP TABLE IF EXISTS `%s`.`job_log`; "         % MVC.db['name']
 
   Mysql.ex( dropTable_options )
   Mysql.ex( dropTable_users )
@@ -50,7 +51,7 @@ if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
   Mysql.ex( dropTable_company_industry )
   Mysql.ex( dropTable_people )
   Mysql.ex( dropTable_people_meta )
-
+  Mysql.ex( dropTable_job_log )
 
 # Base Website tables
 createTable_options = """
@@ -233,6 +234,18 @@ createTable_people_meta = """
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
+createTable_job_log = """
+  CREATE TABLE `good_consumer`.`job_log` (
+    `id`         INT(10) NOT NULL AUTO_INCREMENT,
+    `job`        VARCHAR(255) NOT NULL,
+    `start`      TIMESTAMP DEFAULT '0000-00-00 00:00:00',
+    `end`        TIMESTAMP DEFAULT '0000-00-00 00:00:00',
+    `message`    TEXT DEFAULT NULL,
+    PRIMARY KEY (`id`)
+  )
+  DEFAULT CHARSET = utf8;
+"""
+
 Mysql.ex( createTable_options )
 Mysql.ex( createTable_users )
 Mysql.ex( createTable_usermeta )
@@ -248,6 +261,7 @@ Mysql.ex( createTable_company_industry )
 Mysql.ex( createTable_company_news )
 Mysql.ex( createTable_people )
 Mysql.ex( createTable_people_meta )
+Mysql.ex( createTable_job_log )
 
 # FIRST USER CREATION 
 # User = MVC.loadModel( 'User' )
