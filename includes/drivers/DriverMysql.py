@@ -97,7 +97,15 @@ class DriverMysql( object ):
     limit_sql = ''
     if limit:
       limit_sql = ' LIMIT = "%s"' % limit
-    sql = """UPDATE `%s`.`%s` SET %s WHERE %s %s;""" % ( self.dbname, table, set_sql, where_sql, limit_sql )
+    sql = """UPDATE `%s`.`%s` 
+      SET %s 
+      WHERE %s %s;""" % ( 
+        self.dbname, 
+        table, 
+        set_sql, 
+        where_sql, 
+        limit_sql 
+    )
     self.ex( sql )
 
   def escape_string( self, string_ ):
