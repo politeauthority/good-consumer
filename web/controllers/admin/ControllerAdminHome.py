@@ -16,10 +16,16 @@ class ControllerAdminHome( object ):
   user     = MVC.loadController( 'admin/AdminUser' )
   settings = MVC.loadController( 'admin/AdminSettings' )
 
+  companies = MVC.loadController( 'admin/AdminCompanies' )
+
   def __init__( self ):
     self.Renderer          = MVC.loadDriver('Renderer')
-    self.Renderer.layout_h = 'admin/layout/header.html'
-    self.Renderer.layout_f = 'admin/layout/footer.html'
+    self.Renderer.layout   = 'admin/layout.html'
+    self.Renderer.layout_args = {
+      'ga_tracker' : '',
+      'cdn'        : MVC.server['cdn'],
+      'production' : MVC.server['production']
+    }    
 
   def index( self, **kwargs ):
     return self.Renderer.make( 'admin/login.html', header = False )
@@ -40,7 +46,7 @@ class ControllerAdminHome( object ):
   auth.exposed = True
 
   def dashboard( self ):
-    return self.Renderer.make('admin/dashboard.html')    
+    return self.Renderer.build('admin/home.html')    
   dashboard.exposed = True
 
 # End File: controllers/admin/ControllerAdminHome.py
