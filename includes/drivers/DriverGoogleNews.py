@@ -19,20 +19,14 @@ class DriverGoogleNews( object ):
 
 	def get( self, search_query ):
 		articles = []
-		print search_query
 		news_url = 'https://news.google.com/news/feeds?q=%s&output=rss' % urllib.quote( search_query ).lower()
 		soup     = self.__get_soup( news_url, 'xml' )
 
 		for item in soup.find_all('item'):
-			print news_url
 			print item.title.text
 			full_article = self.get_article_content( item.link.text )
 			if not full_article:
 				continue
-			# print item
-			# print item.link.text
-			# print item.pubDate.text
-			# print item.description.text
 			article = {
 				'headline' : item.title.text,
 				'url'      : item.link.text,

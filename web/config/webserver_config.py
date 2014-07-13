@@ -10,7 +10,7 @@ app_path = current_path[:-27]
 settings = { 
     'global': {
         'server.socket_port'          : 9777,
-        'server.socket_host'          : "192.168.7.70",
+        'server.socket_host'          : "10.1.10.55",
         'server.socket_file'          : "",
         'server.socket_queue_size'    : 5,
         'server.protocol_version'     : "HTTP/1.0",
@@ -24,9 +24,9 @@ settings = {
         #'favicon_ico'                 : 'favicon.ico',
         'tools.sessions.on'           : True,
         'tools.sessions.storage_type' : "file",
-        'tools.sessions.storage_path' : app_path + "/tmp/sessions/",
+        'tools.sessions.storage_path' : app_path + "tmp/sessions",
         'tools.sessions.timeout'      : 60,
-        'tools.staticdir.root'        : app_path + "/public_html/",
+        'tools.staticdir.root'        : app_path + "public_html",
         'tools.staticdir.debug'       : True,
     },
     '/css': {
@@ -40,7 +40,11 @@ settings = {
     '/libs': {
         'tools.staticdir.on' : True,
         'tools.staticdir.dir': "libs"
-    }
+    },
+    '/font-awesome': {
+        'tools.staticdir.on' : True,
+        'tools.staticdir.dir': "font-awesome"
+    }    
 }
 
 # End file: config/webserver_config.py

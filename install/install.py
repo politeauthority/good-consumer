@@ -198,7 +198,7 @@ createTable_company_news = """
   CREATE TABLE `%s`.`company_news` (
     `company_news_id` INT(10) NOT NULL AUTO_INCREMENT,
     `company_id`      INT(10) NOT NULL,
-    `url`             VARCHAR(255) NOT NULL,    
+    `url`             TEXT NOT NULL,    
     `headline`        VARCHAR(255) NULL,
     `publish_date`    TIMESTAMP DEFAULT '0000-00-00 00:00:00',
     `content`         TEXT DEFAULT NULL,
