@@ -51,7 +51,11 @@ class DriverMysql( object ):
     for column, value in items.items():
       if value:
         columns.append(column)
-        values.append( str( value.encode('utf8') ) )
+        try:
+          value = str( value )
+        except UnicodeEncodeError:
+          value = value
+        values.append( value )
     column_sql = ''
     for column in columns:
       column_sql = column_sql + "`%s`," % column
@@ -61,7 +65,10 @@ class DriverMysql( object ):
       if isinstance( value, int ):
         value_sql += '%s,' % value
       else:
-        value_sql += '"%s",' % self.escape_string( value )
+        try:
+          value_sql += '"%s",' % self.escape_string( value.encode('utf8') )
+        except UnicodeDecodeError:
+          value_sql += '"%s",' % self.escape_string( value )
     value_sql = value_sql.rstrip( value_sql[-1:] )
     sql = """INSERT INTO `%s`.`%s` (%s) VALUES(%s);""" % ( self.dbname, table, column_sql, value_sql )
     self.ex( sql )

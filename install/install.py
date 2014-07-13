@@ -11,8 +11,6 @@ import MVC as MVC
 MVC = MVC.MVC()
 # End file header
 
-
-
 #install our python dependancies
 subprocess.call( "apt-get install python-mysqldb",   shell=True )
 subprocess.call( "apt-get install python-cherrypy3", shell=True )
@@ -34,6 +32,7 @@ if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
   dropTable_company_meta     = "DROP TABLE IF EXISTS `%s`.`company_meta`; "    % MVC.db['name']
   dropTable_company_types    = "DROP TABLE IF EXISTS `%s`.`company_types`; "   % MVC.db['name']
   dropTable_company_industry = "DROP TABLE IF EXISTS `%s`.`company_industry`;" % MVC.db['name']
+  dropTable_company_news     = "DROP TABLE IF EXISTS `%s`.`company_news`;"     % MVC.db['name']
   dropTable_people           = "DROP TABLE IF EXISTS `%s`.`people`; "          % MVC.db['name']
   dropTable_people_meta      = "DROP TABLE IF EXISTS `%s`.`people_meta`; "     % MVC.db['name']
 
@@ -187,11 +186,24 @@ createTable_company_types = """
 
 createTable_company_industry = """
   CREATE TABLE `%s`.`company_industry` (
-    `company_industry_id` int(10) NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL,
-    `desc` VARCHAR(255) NULL,
-    `wiki` VARCHAR(255) NULL,
+    `company_industry_id` INT(10) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(255)   NOT NULL,
+    `desc` VARCHAR(255)   NULL,
+    `wiki` VARCHAR(255)   NULL,
     PRIMARY KEY(`company_industry_id`)
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
+
+createTable_company_news = """
+  CREATE TABLE `%s`.`company_news` (
+    `company_news_id` INT(10) NOT NULL AUTO_INCREMENT,
+    `company_id`      INT(10) NOT NULL,
+    `url`             VARCHAR(255) NOT NULL,    
+    `headline`        VARCHAR(255) NULL,
+    `publish_date`    TIMESTAMP DEFAULT '0000-00-00 00:00:00',
+    `content`         TEXT DEFAULT NULL,
+    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    
+    PRIMARY KEY(`company_news_id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
@@ -233,6 +245,7 @@ Mysql.ex( createTable_companies )
 Mysql.ex( createTable_company_meta )
 Mysql.ex( createTable_company_types )
 Mysql.ex( createTable_company_industry )
+Mysql.ex( createTable_company_news )
 Mysql.ex( createTable_people )
 Mysql.ex( createTable_people_meta )
 

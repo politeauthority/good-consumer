@@ -193,4 +193,9 @@ class ModelCompany( object ):
         }
         Mysql.update( 'company_meta', the_update, the_where )
 
+  def setUpdateTime( self, company_id ):
+    the_update = { 'date_updated' : Mysql.now }
+    the_where  = { 'company_id' : company_id }
+    Mysql.update( 'companies', the_update, the_where )
+
 # End File: models/ModelCompany.py

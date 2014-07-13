@@ -12,6 +12,7 @@ MVC               = MVC.MVC()
 ModelCompany      = MVC.loadModel('Company')
 ModelCompanies    = MVC.loadModel('Companies')
 ModelCompanyTypes = MVC.loadModel('CompanyTypes')
+ModelCompanyNews  = MVC.loadModel('CompanyNews')
 ModelPerson       = MVC.loadModel('Person')
 Wikipedia         = MVC.loadDriver('Wikipedia')
 GoogleNews        = MVC.loadDriver('GoogleNews')
@@ -81,7 +82,14 @@ class Fetcher( object ):
 
 	def fetch_company_news( self ):
 		print 'Fetching Company News'
-		GoogleNews.get( 'Equifax' )
+		update_companies = ModelCompanies.getUpdateSet()
+
+		for company in update_companies:
+			print '  Downloading news articles for ', company['name']
+			company_news = GoogleNews.get( company['name'] )
+			for article in company_news:
+				ModelCompanyNews.create( company['company_id'], article )
+			ModelCompany.setUpdateTime( company['company_id'] )
 
 if __name__ == "__main__":
 	Fetcher().go()

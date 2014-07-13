@@ -36,7 +36,8 @@ class ControllerHome( object ):
       'random_company' : Company.getRandom(),
       'stats'          : {
         'company_count' : SimpleStats.countOfCompanies(),
-        'people_count'  : SimpleStats.countOfPeople()
+        'people_count'  : SimpleStats.countOfPeople(),
+        'article_count' : SimpleStats.countOfNews()
       }
     }
     return self.Renderer.build( 'frontend/index.html', data )
