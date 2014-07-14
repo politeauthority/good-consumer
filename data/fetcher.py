@@ -34,8 +34,8 @@ class Fetcher( object ):
 	def go( self ):
 		if self.run_arguments['find_new_companies']:
 			self.find_new_companies( )
-		# if self.run_arguments['update_current_companies']:
-		# 	self.update_current_companies( )
+		if self.run_arguments['update_current_companies']:
+			self.update_current_companies( )
 		if self.run_arguments['update_current_people']:
 			self.update_current_people( )
 		if self.run_arguments['fetch_company_news']:

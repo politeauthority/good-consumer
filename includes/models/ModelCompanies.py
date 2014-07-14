@@ -23,11 +23,12 @@ class ModelCompanies( object ):
     companies = Mysql.ex( qry )
     return companies
 
-  def getUpdateSet( self, limit = 200  ):
+  def getUpdateSet( self, limit = 10 ):
     qry = "SELECT * FROM `%s`.`companies` ORDER BY date_updated ASC LIMIT %s;" % ( self.db_name, limit )
     return Mysql.ex( qry )
 
   def getRecentlyUpdated( self, limit = 20 ):
     qry = """SELECT * FROM `%s`.`companies` ORDER BY `date_updated` DESC LIMIT %s;""" % ( self.db_name, limit )
+    return Mysql.ex( qry )
 
 # End File: models/ModelCompanies.py

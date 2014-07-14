@@ -57,6 +57,8 @@ class ModelCompany( object ):
     """
     import random    
     count = Mysql.ex( "SELECT count(*) AS c FROM `%s`.`companies`;" % self.db_name )
+    if count == 0:
+      return False
     the_id = random.randint( 1, count[0]['c'] )
     company = self.getByID( the_id )
     return company
@@ -67,14 +69,14 @@ class ModelCompany( object ):
         company_id : int()
         metas : list() meta keys
       @return: 
-        dict{  'meta_key': 'meta_value' }
+        dict{ 'meta_key': 'meta_value' }
     """
     qry = """SELECT * FROM `%s`.`company_meta` WHERE `company_id`="%s" """ % ( self.db_name, company_id )
     if metas:
       if isinstance( metas, str ):
         metas = [ metas ]
       meta  = Mysql.list_to_string( metas )
-      qry  += "AND meta_value IN( %s );" % meta
+      qry  += "AND meta_key IN( %s );" % meta
     else:
       qry += ";"
     the_meta = Mysql.ex( qry )
@@ -87,7 +89,6 @@ class ModelCompany( object ):
     if load_level == 'full':
       company['meta'] = self.getMeta( company['company_id'] )
     return company
-
 
   def create( self, company ):
     """
@@ -197,5 +198,26 @@ class ModelCompany( object ):
     the_update = { 'date_updated' : Mysql.now() }
     the_where  = { 'company_id' : company_id }
     Mysql.update( 'companies', the_update, the_where )
+
+  def setMeta( self, company_id, meta_key, meta_value ):
+    """
+      Creates a single meta addition or update.
+    """
+    current_value = self.getMeta( company_id, meta_key )
+    print self.getMeta( company_id, meta_key )
+    if len( current_value ) == 0:
+      args = {
+        'company_id' : company_id,
+        'meta_key'   : meta_key,
+        'meta_value' : meta_value
+      }
+      Mysql.insert( 'company_meta', args )
+    else:
+      args = { 'meta_value' : meta_value }
+      the_where = {
+        'company_id' : company_id,
+        'meta_key'   : meta_key
+      }
+      Mysql.update( 'company_meta', args, the_where )
 
 # End File: models/ModelCompany.py

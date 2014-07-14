@@ -35,5 +35,11 @@ class ModelJobLog( object ):
     }
     the_where  = { 'id' : job_id }
     Mysql.update( 'job_log', the_update, the_where )
+
+  def get( self ):
+    qry  = """SELECT * FROM `%s`.`job_log` ORDER BY `start` DESC;""" % self.db_name
+    jobs = Mysql.ex( qry )
+    return jobs
+
  
 # End File: models/ModelJobLog.py

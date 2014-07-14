@@ -14,8 +14,10 @@ MVC = MVC.MVC()
 #install our python dependancies
 subprocess.call( "apt-get install python-mysqldb",   shell=True )
 subprocess.call( "apt-get install python-cherrypy3", shell=True )
-subprocess.call( "apt-get install python-jinja2",   shell=True )
-subprocess.call( "apt-get install python-bs4",   shell=True )
+subprocess.call( "apt-get install python-jinja2",    shell=True )
+subprocess.call( "apt-get install python-bs4",       shell=True )
+subprocess.call( "apt-get install python-stem",      shell=True )
+
 Mysql = MVC.loadDriver('Mysql')
 Mysql.ex( 'CREATE DATABASE IF NOT EXISTS `%s`;' % MVC.db['name'] )
 
@@ -49,6 +51,7 @@ if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
   Mysql.ex( dropTable_company_meta )
   Mysql.ex( dropTable_company_types )
   Mysql.ex( dropTable_company_industry )
+  Mysql.ex( dropTable_company_news )
   Mysql.ex( dropTable_people )
   Mysql.ex( dropTable_people_meta )
   Mysql.ex( dropTable_job_log )
@@ -156,7 +159,7 @@ createTable_companies = """
     `founded`      TIMESTAMP DEFAULT 0,
     `wikipedia`    varchar(255) DEFAULT NULL,
     `display`      int(1) DEFAULT 1,
-    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`company_id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
@@ -164,13 +167,12 @@ createTable_companies = """
 createTable_company_meta = """
   CREATE TABLE `%s`.`company_meta` (
     `meta_id`     int(10) NOT NULL AUTO_INCREMENT,
-    `parent`      int(10) NOT NULL,
     `company_id`  int(10) NOT NULL,
     `meta_key`    varchar(255) NOT NULL,
     `meta_value`  text DEFAULT NULL,
     `pretty_name` varchar(255) DEFAULT NULL,
     `help_text`   varchar(255) DEFAULT NULL,
-    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`meta_id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
@@ -203,7 +205,7 @@ createTable_company_news = """
     `headline`        VARCHAR(255) NULL,
     `publish_date`    TIMESTAMP DEFAULT '0000-00-00 00:00:00',
     `content`         TEXT DEFAULT NULL,
-    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,    
+    `date_updated`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,    
     PRIMARY KEY(`company_news_id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
@@ -215,7 +217,7 @@ createTable_people = """
     `slug`         varchar(255) DEFAULT NULL,
     `wikipedia`    varchar(255) DEFAULT NULL,
     `display`      int(1) DEFAULT 1,    
-    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`person_id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
@@ -224,12 +226,11 @@ createTable_people_meta = """
   CREATE TABLE `%s`.`people_meta` (
     `meta_id`      int(10) NOT NULL AUTO_INCREMENT,
     `person_id`    int(10) NOT NULL,
-    `parent`       int(10) NOT NULL,
     `meta_key`     varchar(255) NOT NULL,
     `meta_value`   varchar(255) NOT NULL,
     `pretty_name`  varchar(255) DEFAULT NULL,
     `help_text`    varchar(255) DEFAULT NULL,
-    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`meta_id`) 
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
