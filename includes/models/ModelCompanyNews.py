@@ -19,9 +19,10 @@ class ModelCompanyNews( object ):
 
   def getAll( self ):
     qry = """SELECT * FROM 
-      `%s`.`company_news`;""" % ( self.db_name )
-    c_types = Mysql.ex( qry )
-    return c_types
+      `%s`.`company_news`
+      ORDER BY date_updated DESC;""" % ( self.db_name )
+    news = Mysql.ex( qry )
+    return news
   
   def create( self, company_id, article ):
     """

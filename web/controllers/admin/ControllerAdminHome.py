@@ -46,11 +46,13 @@ class ControllerAdminHome( object ):
   auth.exposed = True
 
   def dashboard( self ):
-    ModelJobLog    = MVC.loadModel('JobLog')
-    ModelCompanies = MVC.loadModel('Companies')
+    ModelJobLog      = MVC.loadModel('JobLog')
+    ModelCompanies   = MVC.loadModel('Companies')
+    ModelCompanyNews = MVC.loadModel('CompanyNews')
     data = {
       'jobs' : ModelJobLog.get(),
-      'recently_updated_companies' : ModelCompanies.getRecentlyUpdated( limit=8 )
+      'recently_updated_companies' : ModelCompanies.getRecentlyUpdated( limit=8 ),
+      'recently_added_news'        : ModelCompanyNews.getAll()
     }
     return self.Renderer.build('admin/home.html', data )    
   dashboard.exposed = True

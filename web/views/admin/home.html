@@ -26,7 +26,7 @@
               {% if job['job'] %}
                 {% if job['job'] == 'fetch_company_news' %}
                   Fetch Company News
-                { %else% }
+                {% else %}
                   {{ job['job'] }}
                 {% endif %}
               {% endif %}
@@ -37,7 +37,11 @@
                 {{ job['end'].strftime('%I:%M %p') }}
               {% endif %}
             </td>
-            <td>{{ job['message'] }}</td>
+            <td>
+              {% if job['message'] %}
+                {{ job['message'] }}
+              {% endif %}
+            </td>
           </tr>
         {% endfor %}
       </tbody>
@@ -59,7 +63,7 @@
         {% for company in d['recently_updated_companies'] %}
           <tr>
             <td>
-              <a href="/admin/info/{{ company['company_id']  }}">{{ company['name'] }}</a>
+              <a href="/admin/companies/info/{{ company['company_id']  }}">{{ company['name'] }}</a>
             </td>
             <td>
               {{ company['date_updated'].strftime('%b %d, %I:%M %p') }}
@@ -82,6 +86,13 @@
         </tr>
       </thead>
       <tbody>
+
+        {% for news in d['recently_added_news'] %}
+          <tr>
+            <td>{{ news['headline'] }}</td>
+            <td></td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>

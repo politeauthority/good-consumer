@@ -13,18 +13,20 @@ MVC = MVC()
 # End file header
 
 Mysql    = MVC.loadDriver('Mysql')
-Settings = MVC.loadHelper('Settings')
 
 class ModelCompany( object ):
 
   def __init__( self ):
     self.db_name = MVC.db['name']
 
-  def getByID( self, company_id ):
+  def getByID( self, company_id, load_level = 'full' ):
+    """
+      Gets a company by ID
+    """
     if isinstance( company_id, int ):
       qry = """SELECT * FROM `%s`.`companies` WHERE `company_id` = %s; """ % ( self.db_name, company_id )
       company = Mysql.ex( qry )[0]
-      return company
+      return qry
 
   def getBySlug( self, company_slug, load_level = 'light' ):
     """
