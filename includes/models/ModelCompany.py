@@ -216,9 +216,12 @@ class ModelCompany( object ):
   def setMeta( self, company_id, meta_key, meta_value ):
     """
       Creates a single meta addition or update.
+      @params:
+        company_id : int()
+        meta_key   : str()
+        meta_value : int(), str(), list[], dict{}
     """
     current_value = self.getMeta( company_id, meta_key )
-    print self.getMeta( company_id, meta_key )
     if len( current_value ) == 0:
       args = {
         'company_id' : company_id,
@@ -233,5 +236,10 @@ class ModelCompany( object ):
         'meta_key'   : meta_key
       }
       Mysql.update( 'company_meta', args, the_where )
+
+  def __prepare_meta_value( self, meta_value ):
+    if isinstance( meta_value, list ):
+      print 'its a list'
+    print meta_value
 
 # End File: models/ModelCompany.py

@@ -27,6 +27,15 @@ class ModelCompanyNews( object ):
       qry = qry + ";"
     news = Mysql.ex( qry )
     return news
+
+  def getByID( self, article_id ):
+    qry = """SELECT * FROM
+      `%s`.`company_news` WHERE 
+      company_news_id = `%s` """ % ( self.db_name, article_id )
+    article = Mysql.now(qry)
+    if len( article ) == 0:
+      return False
+    return article[0]
   
   def getByCompany( self, company_id ):
     qry = """SELECT * FROM 

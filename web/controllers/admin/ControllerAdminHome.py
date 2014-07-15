@@ -17,6 +17,7 @@ class ControllerAdminHome( object ):
   settings = MVC.loadController( 'admin/AdminSettings' )
 
   companies = MVC.loadController( 'admin/AdminCompanies' )
+  news      = MVC.loadController( 'admin/AdminNews' )
 
   def __init__( self ):
     self.Renderer          = MVC.loadDriver('Renderer')
@@ -60,7 +61,7 @@ class ControllerAdminHome( object ):
         'article_count' : SimpleStats.countOfNews()
       }
     }
-    return self.Renderer.build('admin/home.html', data )    
+    return self.Renderer.build('admin/dashboard.html', data )    
   dashboard.exposed = True
 
 # End File: controllers/admin/ControllerAdminHome.py
