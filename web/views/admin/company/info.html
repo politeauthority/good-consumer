@@ -1,0 +1,133 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1>{{ d['company']['name'] }}</h1>
+    <ol class="breadcrumb">
+      <li><a href="index.html"><i class="icon-dashboard"></i> Company</a></li>
+      <li>{{ d['company']['name'] }}</li>
+    </ol>
+  </div>
+</div><!-- /.row -->
+
+<!-- Primary Info -->
+<div class="col-lg-6">
+  <h2>Primary Info</h2>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped tablesorter">
+      <tbody>
+        <tr>
+          <td><b>Name</b></td>
+          <td>{{ d['company']['name'] }}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>Slug</b></td>
+          <td>{{ d['company']['slug'] }}</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>Headquarters</b></td>
+          <td>
+            {% if d['company']['headquarters'] %}
+              {{d['company']['headquarters']}}
+            {% endif %}
+          </td>
+          <td></td>
+        <tr>
+          <td><b>Founded</b></td>
+          <td>
+            {% if['company']['founded'] %}
+              {{ d['company']['founded'] }}
+            {% endif %}            
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>Wikipedia</b></td>
+          <td>
+            <a href="{{ d['company']['wikipedia'] }}" target="wikipedia">{{ d['company']['wikipedia'] }}</a>
+          </td>
+          <td></td>
+        </tr> 
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Company People -->
+{% if d['company']['meta']['people'] %}
+  <div class="col-lg-6">
+    <h2>People</h2>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped tablesorter">
+        <thead>
+          <tr>
+            <th class="header">Company</th>
+            <th class="header">Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for person in d['company']['meta']['people'] %}
+            <tr>
+              <td>{{ person['name'] }}</td>
+              <td></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
+
+<!-- Internal Resources -->
+<div class="col-lg-6">
+  <h2>Internal Resources</h2>
+  <div class="table-responsive">
+    <ul>
+      <li><a href="/info/{{ d['company']['slug'] }}" target="good_consumer_public">Good Consumer Public</a></li>
+      <li><a href="{{ d['company']['wikipedia'] }}" target="wikpedia">Wikipedia</a></li>
+    </ul>
+  </div>
+</div>
+
+{% if  d['news'] %}
+  <!-- Company News -->
+  <div class="col-lg-12">
+    <h2>News</h2>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped tablesorter">
+        <tbody>
+          {% for news in d['news'] %}
+            <tr>
+              <td><b>{{ news['headline'] }}</b></td>
+              <td></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+{% endif %}
+
+<!-- All Company Meta -->
+<div class="col-lg-12">
+  <h2>All Meta</h2>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped tablesorter">
+      <thead>
+        <tr>
+          <th class="header">Meta Key</th>
+          <th class="header">Meta Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for meta in d['company']['meta'] %}
+          <tr>
+            <td><b>{{ d['meta_value'] }}<p></td>
+            <td>{{ d['meta_key'] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

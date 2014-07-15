@@ -5,7 +5,6 @@
 """
 import sys
 import os
-
 sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
@@ -26,18 +25,23 @@ class ControllerAdminCompanies( object ):
 
   def index( self ):
     data = { 'options' : Settings.get_options() }
-    return self.Renderer.make( 'admin/settings/index.html', data )
+    return self.Renderer.build( 'admin/settings/index.html', data )
   index.exposed = True
 
   def info( self, company_id = None ):
     if company_id:
-      ModelCompany = MVC.loadModel('Company')
-      company = ModelCompany.getByID( company_id )
-      return company
+      ModelCompany     = MVC.loadModel('Company')
+      ModelCompanyNews = MVC.loadModel('CompanyNews')
+      company = ModelCompany.getByID( company_id, 'full' )     
       if not company:
         raise cherrypy.HTTPRedirect( '/admin/error/?e="cantfindcompany"' )
-      data = { 'company' : ModelCompany.getByID( company_id ) }
-    return self.Renderer.make( 'admin/company/info.html', data )
+      data = { 
+        'company' : company,
+        'news'    : ModelCompanyNews.getByCompany( company_id )
+      }
+      return self.Renderer.build( 'admin/company/info.html', data )
+    else:
+      raise cherrypy.HTTPRedirect( '/admin/error/?e="cantfindcompany"' )      
   info.exposed = True
 
   def delete( self, meta_id ):

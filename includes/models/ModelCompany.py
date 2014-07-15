@@ -6,7 +6,6 @@
 
 import sys
 import os
-
 sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
@@ -19,14 +18,19 @@ class ModelCompany( object ):
   def __init__( self ):
     self.db_name = MVC.db['name']
 
-  def getByID( self, company_id, load_level = 'full' ):
+  def getByID( self, company_id, load_level = 'light' ):
     """
       Gets a company by ID
+      @params:
+        company_id : int( ) ex: 5
+      return company      
     """
-    if isinstance( company_id, int ):
-      qry = """SELECT * FROM `%s`.`companies` WHERE `company_id` = %s; """ % ( self.db_name, company_id )
-      company = Mysql.ex( qry )[0]
-      return qry
+    qry = """SELECT * FROM `%s`.`companies` WHERE `company_id` = "%s"; """ % ( self.db_name, company_id )
+    company = Mysql.ex( qry )
+    if len( company ) == 0:
+      return False
+    company = self.getLoadLevel( company[0], load_level )
+    return company
 
   def getBySlug( self, company_slug, load_level = 'light' ):
     """
@@ -90,6 +94,13 @@ class ModelCompany( object ):
   def getLoadLevel( self, company, load_level = 'light' ):
     if load_level == 'full':
       company['meta'] = self.getMeta( company['company_id'] )
+      if 'people' in company['meta']:
+        ModelPeople = MVC.loadModel('People')
+        people      = []
+        if company['meta']['people'] and ',' in company['meta']['people']:
+          for person_id in company['meta']['people'].split(','):
+            people.append( ModelPeople.getByID( person_id ) )
+        company['meta']['people'] = people
     return company
 
   def create( self, company ):
@@ -111,11 +122,11 @@ class ModelCompany( object ):
     new_company = {}
     if 'name' not in company or company['name'] == '':
       return False
+
     qry = """SELECT * FROM `%s`.`companies` WHERE name = "%s";""" % ( self.db_name, company['name'] )
     exists = Mysql.ex( qry )
     if len( exists ) != 0:
-      self.updateDiff( company, exists[0] )
-      company_id = ''
+      company_id = self.updateDiff( company, exists[0] )
     else:
       new_company['name'] = company['name']
       if 'symbol' not in company:
@@ -157,6 +168,7 @@ class ModelCompany( object ):
       diff['wikipedia'] = company_new['wikipedia']
     diff['date_updated'] = Mysql.now()
     Mysql.update( 'companies', diff, { 'company_id' : company_id } )
+    return company_id
 
   def createMeta( self, company_id, metas ):
     """
@@ -170,7 +182,6 @@ class ModelCompany( object ):
     company_meta = self.getMeta( company_id )
     update_meta = []
     new_meta    = []
-    print company_meta
     for meta_key, meta_value in metas.iteritems():
       if meta_key in company_meta:
         if meta_value != company_meta[ meta_key ]:
@@ -180,6 +191,7 @@ class ModelCompany( object ):
     for meta in new_meta:
       for key, value in meta.iteritems():
         the_insert = {
+          'company_id'   : company_id,
           'meta_key'     : key,
           'meta_value'   : value,
         }

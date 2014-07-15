@@ -5,12 +5,12 @@
 """
 import sys
 import os
-
 sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
 # End file header
-Mysql    = MVC.loadDriver('Mysql')
+
+Mysql  = MVC.loadDriver('Mysql')
 
 class ModelCompanies( object ):
 

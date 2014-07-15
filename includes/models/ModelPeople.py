@@ -5,7 +5,6 @@
 """
 import sys
 import os
-
 sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
@@ -16,6 +15,16 @@ class ModelPeople( object ):
 
   def __init__( self ):
     self.db_name = MVC.db['name']
+
+  def getByID( self, person_id, load_level = 'light' ):
+    qry = """SELECT * FROM 
+      `%s`.`people` 
+      WHERE `person_id` = "%s" """ % ( self.db_name, person_id )
+    person = Mysql.ex( qry )
+    if person == 0:
+      return False
+    else:
+      return person[0]
 
   def getAll( self ):
     # qry = """SELECT * FROM `%s`.`people` LIMIT %s OFFSET %s;""" % ( self.db_name, '100', '0' )
