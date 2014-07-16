@@ -13,27 +13,50 @@ MVC = MVC()
 import re
 import urllib
 import urllib2
+from urlparse import urlparse
 from bs4 import BeautifulSoup
+from datetime import datetime
 
 TorScrape = MVC.loadDriver('TorScrape')
 
 class DriverGoogleNews( object ):
 
 	def get( self, search_query ):
+		"""
+			Fetches RSS query from google news, follows article links
+			and returns the result out.
+			@params: 
+				search_query : str()
+			@return:
+				[ { 
+					'headline' : str(),
+					'source'   : str(),
+					'url'      : str(), 
+					'pubDate'  : str() } ]
+		"""
 		articles = []
 		news_url = 'https://news.google.com/news/feeds?q=%s&output=rss' % urllib.quote( search_query ).lower()
-		soup     = TorScrape.get_soup( news_url, 'xml' )
+		scrape   = TorScrape.get_soup( news_url, 'xml' )
+		soup     = scrape[0]
+		url      = self.__get_domain_from_url( scrape[1] )
 		if soup:
 			for item in soup.find_all('item'):
 				print item.title.text
 				full_article = self.get_article_content( item.link.text )
 				if not full_article:
 					continue
+				title_tag = item.title.text
+				headline  = title_tag[ : title_tag.rfind(' - ') ].strip()
+				source    = title_tag [ title_tag.rfind(' - ') + 2 : ].strip()
 				article = {
 					'headline' : item.title.text,
-					'url'      : item.link.text,
-					'pubDate'  : item.pubDate.text,
-					'content'  : full_article,				
+					'source'   : {
+						'name' : source,
+						'url'  : url,
+					},
+					'url'      : url,
+					'pubDate'  : str( date ),
+					'content'  : full_article
 				}
 				articles.append( article )
 		return articles
@@ -71,16 +94,13 @@ class DriverGoogleNews( object ):
 		else:
 			return False
 
-	def __get_soup( self, url, type_of_soup = None ):
-		try:
-			wiki = urllib2.urlopen( url  )
-			if type_of_soup == 'xml':
-				soup = BeautifulSoup( wiki, 'xml' )
-			else:
-				soup = BeautifulSoup( wiki )
-			return soup
-		except urllib2.HTTPError:
-			print '404 Error Fetching: ', url
-			return False
+	def __get_domain_from_url( self, url ):
+		"""
+			Grabs base domain  from a url string.
+		"""
+		from urlparse import urlparse
+		parsed_uri = urlparse( url )
+		domain = '{uri.scheme}://{uri.netloc}/'.format( uri=parsed_uri )
+		return domain
 
 # End File: driver/DriverGoogleNews.py

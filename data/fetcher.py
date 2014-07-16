@@ -14,6 +14,7 @@ ModelCompany      = MVC.loadModel('Company')
 ModelCompanies    = MVC.loadModel('Companies')
 ModelCompanyTypes = MVC.loadModel('CompanyTypes')
 ModelCompanyNews  = MVC.loadModel('CompanyNews')
+ModelNewsSources  = MVC.loadModel('NewsSources')
 ModelPerson       = MVC.loadModel('Person')
 Wikipedia         = MVC.loadDriver('Wikipedia')
 GoogleNews        = MVC.loadDriver('GoogleNews')
@@ -26,9 +27,10 @@ class Fetcher( object ):
 		self.verbosity = True
 		self.run_arguments = {
 			'find_new_companies'       : False,
-			'update_current_companies' : True,
+			'update_current_companies' : False,
 			'update_current_people'    : False,
 			'fetch_company_news'       : True,
+			'evaluate_comapny_news'    : False,
 		}
 
 	def go( self ):
@@ -43,6 +45,8 @@ class Fetcher( object ):
 			self.update_current_people( )
 		if self.run_arguments['fetch_company_news']:
 			self.fetch_company_news()
+		if self.run_arguments['evaluate_comapny_news']:
+			self.evaluate_comapny_news()
 
 	def find_new_companies( self ):
 		import subprocess
@@ -95,18 +99,22 @@ class Fetcher( object ):
 	def fetch_company_news( self ):
 		print 'Fetching Company News'
 		job_id = JobLog.start( 'fetch_company_news' )
-		update_companies = ModelCompanies.getUpdateSet( 20 )
+		update_companies = ModelCompanies.getUpdateSet( 1 )
 		companies_count = 0
 		articles_count  = 0
 		for company in update_companies:
 			print '  Downloading news articles for ', company['name']
 			company_news = GoogleNews.get( company['name'] )
 			for article in company_news:
+				news_source_id = ModelNewsSources.create( article[] )
 				ModelCompanyNews.create( company['company_id'], article )
 				articles_count = articles_count + 1
 			ModelCompany.setUpdateTime( company['company_id'] )
 			companies_count = companies_count + 1
 		JobLog.stop( job_id, "Ran %s companies and read %s articles" % ( companies_count, articles_count ) )
+
+	def evaluate_comapny_news( self ):
+		print 'stuff'
 
 if __name__ == "__main__":
 	Fetcher().go()

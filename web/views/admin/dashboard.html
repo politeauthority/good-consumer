@@ -83,13 +83,15 @@
     <table class="table table-hover table-striped tablesorter">
       <thead>
         <tr>
+          <th></th>
+          <th class="header">Headline</th>
           <th class="header">Company</th>
-          <th class="header">Updated</th>
         </tr>
       </thead>
       <tbody>
         {% for news in d['recently_added_news'] %}
           <tr>
+            <td>/admin/news/article/{{ d['company_news_id'] }}</td>
             <td>{{ news['headline'] }}</td>
             <td></td>
           </tr>

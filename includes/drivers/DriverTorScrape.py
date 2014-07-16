@@ -36,7 +36,7 @@ class DriverTorScrape( object ):
         soup = BeautifulSoup( source, 'xml' )
       else:
         soup = BeautifulSoup( source )
-      return soup
+      return [ soup, urllib2.geturl() ]
     except urllib2.HTTPError:
       print '404 Error Fetching: ', url
       return False
