@@ -12,17 +12,18 @@ MVC = MVC()
 # End file header
 
 import MySQLdb as mdb
+import time
 
 class DriverMysql( object ):
 
   def __init__( self, connect = True ):
-    self.host     = MVC.db['host']
-    self.dbname   = MVC.db['name']
-    self.user     = MVC.db['user']
-    self.password = MVC.db['pass']
+    self.host      = MVC.db['host']
+    self.dbname    = MVC.db['name']
+    self.user      = MVC.db['user']
+    self.password  = MVC.db['pass']
+    # self.init_time = time.now()
     if connect:
-      self.conn = mdb.connect( self.host, self.user, self.password, charset = 'utf8' )
-      self.cur  = False
+      self.__connect()
 
   def ex( self, query, args = None ):
     """
@@ -32,8 +33,14 @@ class DriverMysql( object ):
         args  : str(), list() or dict{} for paramaterized queries
       @return tuple of dicts ( {} , {} ) 
     """
+    # print self.init_time
     self.cur = mdb.cursors.DictCursor( self.conn )
-    self.cur.execute( query, args )
+    try:
+      self.cur.execute( query, args )
+    except OperationalError:
+      self.__close()
+      self.__connect()
+      self.cur.execute( query, args )
     self.conn.commit()
     return self.cur.fetchall()
   
@@ -137,7 +144,7 @@ class DriverMysql( object ):
       Gives out a basic MySQL timestamp
       @return str() ex: 2014-07-02 23:31:23
     """
-    import time
+
     if format:
       return time.strftime( format )      
     else:
@@ -148,7 +155,12 @@ class DriverMysql( object ):
     self.dbname   = dbname
     self.user     = dbuser
     self.password = dbpass
-  
+
+  def __connect( self ):
+    self.conn = mdb.connect( self.host, self.user, self.password, charset = 'utf8' )
+    self.cur  = False
+    return True
+
   def __close( self ):
     self.conn.close()    
 

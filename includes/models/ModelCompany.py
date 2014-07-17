@@ -120,9 +120,11 @@ class ModelCompany( object ):
         False or new company_id
     """
     new_company = {}
+    if 'company_id' in company:
+      company_rec = self.getByID( company['company_id'] )
+      self.updateDiff( company, company_rec )
     if 'name' not in company or company['name'] == '':
       return False
-
     qry = """SELECT * FROM `%s`.`companies` WHERE name = "%s";""" % ( self.db_name, company['name'] )
     exists = Mysql.ex( qry )
     if len( exists ) != 0:
@@ -142,6 +144,7 @@ class ModelCompany( object ):
       company_id = self.getByName( company['name'] )['company_id']
     if 'meta' in company:
       self.createMeta( company_id, company['meta'] )
+    return company_id
 
   def updateDiff( self, company_new, company_rec ):
     """
@@ -185,9 +188,11 @@ class ModelCompany( object ):
     for meta_key, meta_value in metas.iteritems():
       if meta_key in company_meta:
         if meta_value != company_meta[ meta_key ]:
+          meta_value = self.__prepare_meta_value( meta_value )
           update_meta.append( { meta_key : meta_value } )
       else:
         new_meta.append( {  meta_key : meta_value } )
+    # Write new meta
     for meta in new_meta:
       for key, value in meta.iteritems():
         the_insert = {
@@ -196,6 +201,7 @@ class ModelCompany( object ):
           'meta_value'   : value,
         }
         Mysql.insert( 'company_meta', the_insert )
+    # Updated existing meta
     for meta in update_meta: 
       for key, value, in meta.iteritems():
         the_update = {
@@ -221,25 +227,22 @@ class ModelCompany( object ):
         meta_key   : str()
         meta_value : int(), str(), list[], dict{}
     """
-    current_value = self.getMeta( company_id, meta_key )
-    if len( current_value ) == 0:
-      args = {
-        'company_id' : company_id,
-        'meta_key'   : meta_key,
-        'meta_value' : meta_value
-      }
-      Mysql.insert( 'company_meta', args )
-    else:
-      args = { 'meta_value' : meta_value }
-      the_where = {
-        'company_id' : company_id,
-        'meta_key'   : meta_key
-      }
-      Mysql.update( 'company_meta', args, the_where )
+    self.createMeta( company_id, { meta_key: meta_value } )
 
   def __prepare_meta_value( self, meta_value ):
+    """
+      Creates the proper store for meta values
+      @params:
+        meta_value : str(), int(), list[], dict{}
+      @return: SQL ready json object or str()
+    """
+    import json
     if isinstance( meta_value, list ):
+      meta_value = json.loads( meta_value )
       print 'its a list'
+    elif isinstance( meta_value, dict ):
+      meta_value = json.loads( meta_value )
     print meta_value
+    return meta_value
 
 # End File: models/ModelCompany.py

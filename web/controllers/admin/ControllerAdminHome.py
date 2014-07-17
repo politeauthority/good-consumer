@@ -48,7 +48,7 @@ class ControllerAdminHome( object ):
 
   def dashboard( self ):
     ModelJobLog      = MVC.loadModel('JobLog')
-    SimpleStats = MVC.loadModel( 'SimpleStats' )
+    SimpleStats      = MVC.loadModel( 'SimpleStats' )
     ModelCompanies   = MVC.loadModel('Companies')
     ModelCompanyNews = MVC.loadModel('CompanyNews')
     data = {
@@ -56,12 +56,31 @@ class ControllerAdminHome( object ):
       'recently_updated_companies' : ModelCompanies.getRecentlyUpdated( limit=8 ),
       'recently_added_news'        : ModelCompanyNews.getAll( 8 ),
       'stats'          : {
-        'company_count' : SimpleStats.countOfCompanies(),
-        'people_count'  : SimpleStats.countOfPeople(),
-        'article_count' : SimpleStats.countOfNews()
+        'company_count'     : SimpleStats.countOfCompanies(),
+        'people_count'      : SimpleStats.countOfPeople(),
+        'article_count'     : SimpleStats.countOfNews(),
+        'news_source_count' : SimpleStats.countofNewsSources()
       }
     }
     return self.Renderer.build('admin/dashboard.html', data )    
   dashboard.exposed = True
+
+  def edit_ajax( self, edit_type, **kwargs ):
+    if edit_type == 'company':
+      ModelCompany = MVC.loadModel('Company')
+      print ' '
+      print ' '
+      print ' '
+      print kwargs
+      company = {
+        'id'    : '',
+        'name'  : kwargs['name'],
+        'slug'  : kwargs['slug']
+      }
+      if ModelCompany.create( company ):
+        return 'success'
+      else:
+        return 'failure'
+  edit_ajax.exposed = True     
 
 # End File: controllers/admin/ControllerAdminHome.py

@@ -26,6 +26,8 @@
               {% if job['job'] %}
                 {% if job['job'] == 'fetch_company_news' %}
                   Fetch Company News
+                {% elif job['job'] == 'find_new_companies' %}
+                  Find New Companies
                 {% else %}
                   {{ job['job'] }}
                 {% endif %}
@@ -118,7 +120,11 @@
         <tr>
           <td><b>Articles</b></td>
           <td>{{ d['stats']['article_count'] }}</td>
-        </tr>                  
+        </tr>
+        <tr>
+          <td><b>News Sources</b></td>
+          <td>{{ d['stats']['news_sources_count'] }}</td>
+        </tr>                          
       </tbody>
     </table>
   </div>

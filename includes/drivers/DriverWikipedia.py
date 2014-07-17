@@ -14,6 +14,8 @@ MVC = MVC()
 import urllib2
 from bs4 import BeautifulSoup
 
+TorScrape = MVC.loadDriver('TorScrape')
+
 class DriverWikipedia( object ):
 
   def get( self, fetch_type, wiki_url ):

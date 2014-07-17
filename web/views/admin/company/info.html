@@ -2,7 +2,7 @@
   <div class="col-lg-12">
     <h1>{{ d['company']['name'] }}</h1>
     <ol class="breadcrumb">
-      <li><a href="index.html"><i class="icon-dashboard"></i> Company</a></li>
+      <li><a href="index.html"><i class="icon-dashboard"></i> Companies</a></li>
       <li>{{ d['company']['name'] }}</li>
     </ol>
   </div>
@@ -11,24 +11,32 @@
 <!-- Primary Info -->
 <div class="col-lg-6">
   <h2>Primary Info</h2>
+  <a href="#" id="edit_btn">edit</a>
   <div class="table-responsive">
     <table class="table table-hover table-striped tablesorter">
       <tbody>
         <tr>
           <td><b>Name</b></td>
-          <td>{{ d['company']['name'] }}</td>
+          <td>
+            <span class="edit_text">{{ d['company']['name'] }}</span>
+            <input class="form-control edit_input" style="display:none;" name="name" value="{{ d['company']['name'] }}">
+            <input class="edit_input" type="hidden" name="company_id" value="{{ d['company']['company_id'] }}">
+          </td>
           <td></td>
         </tr>
         <tr>
           <td><b>Slug</b></td>
-          <td>{{ d['company']['slug'] }}</td>
+          <td>
+            <span class="edit_text">{{ d['company']['slug'] }}</span>
+            <input class="form-control edit_input" style="display:none;" name="slug" value="{{ d['company']['slug'] }}">
+          </td>
           <td></td>
         </tr>
         <tr>
           <td><b>Headquarters</b></td>
           <td>
             {% if d['company']['headquarters'] %}
-              {{d['company']['headquarters']}}
+              {{ d['company']['headquarters'] }}
             {% endif %}
           </td>
           <td></td>
@@ -131,3 +139,55 @@
     </table>
   </div>
 </div>
+
+<div id="edit_submit">
+  <a href="#" id="cancel_btn" class="btn btn-default">Cancel</a>
+  <a href="#" id="save_btn" class="btn btn-default">Save</a>
+</div>
+
+<style type="text/css">
+  #edit_submit{
+    display: none;
+  }
+</style>
+
+<script type="text/javascript">
+  $( document ).ready(function() {
+
+    // Edit Button
+    $('#edit_btn').click( function(){
+      $('.edit_text').toggle();
+      $('.edit_input').toggle();
+      $('#edit_submit').toggle();
+    });
+
+    // Cancel
+    $('#cancel_btn').click( function(){
+      $('.edit_text').toggle();
+      $('.edit_input').toggle();
+      $('#edit_submit').toggle();
+    });    
+    
+    //Save Button
+    $('#save_btn').click( function() {
+      edit_type = 'company';
+      data = {}
+      $('.edit_input').each( function() {
+        data[ $(this).attr('name') ] = $(this).attr('value');
+      });
+      console.log( data );
+      $.ajax({
+        type : 'POST',
+        url  : '/admin/edit_ajax/' + edit_type,
+        data : data,
+        success: function( result ){
+          alert( result );
+          $('.edit_text').toggle();
+          $('.edit_input').toggle();
+          $('#edit_submit').toggle();          
+        }
+      });
+    });
+
+  });
+</script>

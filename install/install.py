@@ -34,7 +34,7 @@ if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
   dropTable_company_types    = "DROP TABLE IF EXISTS `%s`.`company_types`; "   % MVC.db['name']
   dropTable_company_industry = "DROP TABLE IF EXISTS `%s`.`company_industry`;" % MVC.db['name']
   dropTable_company_news     = "DROP TABLE IF EXISTS `%s`.`company_news`;"     % MVC.db['name']
-  dropTable_news_source      = "DROP TABLE IF EXISTS `%s`.`news_sources`; "    % MVC.db['name']
+  dropTable_news_sources     = "DROP TABLE IF EXISTS `%s`.`news_sources`; "    % MVC.db['name']
   dropTable_people           = "DROP TABLE IF EXISTS `%s`.`people`; "          % MVC.db['name']
   dropTable_people_meta      = "DROP TABLE IF EXISTS `%s`.`people_meta`; "     % MVC.db['name']
   dropTable_job_log          = "DROP TABLE IF EXISTS `%s`.`job_log`; "         % MVC.db['name']

@@ -26,9 +26,9 @@ class Fetcher( object ):
 	def __init__( self ):
 		self.verbosity = True
 		self.run_arguments = {
-			'find_new_companies'       : False,
-			'update_current_companies' : False,
-			'update_current_people'    : False,
+			'find_new_companies'       : True,
+			'update_current_companies' : True,
+			'update_current_people'    : True,
 			'fetch_company_news'       : True,
 			'evaluate_comapny_news'    : False,
 		}
@@ -59,7 +59,7 @@ class Fetcher( object ):
 		if self.verbosity:
 			print 'Updating Current Companies'
 		job_id = JobLog.start( 'update_current_companies' )			
-		update_companies = ModelCompanies.getUpdateSet( 200 )
+		update_companies = ModelCompanies.getUpdateSet( 100 )
 		# update_companies = [ ModelCompany.getBySlug( 'irobot' ) ]
 		companies_updated = 0
 		people_found      = 0
@@ -99,14 +99,14 @@ class Fetcher( object ):
 	def fetch_company_news( self ):
 		print 'Fetching Company News'
 		job_id = JobLog.start( 'fetch_company_news' )
-		update_companies = ModelCompanies.getUpdateSet( 1 )
+		update_companies = ModelCompanies.getUpdateSet( 100 )
 		companies_count = 0
 		articles_count  = 0
 		for company in update_companies:
 			print '  Downloading news articles for ', company['name']
 			company_news = GoogleNews.get( company['name'] )
 			for article in company_news:
-				news_source_id = ModelNewsSources.create( article[] )
+				news_source_id = ModelNewsSources.create( article['source'] )
 				ModelCompanyNews.create( company['company_id'], article )
 				articles_count = articles_count + 1
 			ModelCompany.setUpdateTime( company['company_id'] )

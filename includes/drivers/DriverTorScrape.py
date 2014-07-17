@@ -31,12 +31,14 @@ class DriverTorScrape( object ):
 
   def get_soup( self, url, type_of_soup = None ):
     try:
-      source = self.torOpener.open( url ).read()
+      phile  = self.torOpener.open( url )
+      source = phile.read()
       if type_of_soup == 'xml':
         soup = BeautifulSoup( source, 'xml' )
       else:
         soup = BeautifulSoup( source )
-      return [ soup, urllib2.geturl() ]
+      print phile.geturl()
+      return { 'soup': soup, 'url':  phile.geturl() }
     except urllib2.HTTPError:
       print '404 Error Fetching: ', url
       return False
