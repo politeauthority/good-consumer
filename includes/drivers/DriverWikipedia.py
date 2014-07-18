@@ -61,9 +61,22 @@ class DriverWikipedia( object ):
               'wikipedia' : 'http://en.wikipedia.org' + person['href']
             }
             info['people'].append( p )
-        elif 'Key People' in str( row.th ):
-          if 'people' not in info:
+        elif 'Key people' in str( row.th ):
+          people_wikis = []
+          for link in row.td.find_all( 'a' ):
+            if link['href'] and link['href'][:6] =='/wiki/':
+              job_titles = [ '/wiki/chief_executive_officer', '/wiki/chairmain', '/wiki/president' '/wiki/chairman', 
+                '/wiki/ceo', '/wiki/board_of_dcirectors', '/wiki/President', '/wiki/chief_technology_officer', 
+                '/wiki/marketing_director', '/wiki/marketing_manager', '/wiki/executive_chairman', '/wiki/president', 
+                '/wiki/executive_vice_president', '/wiki/cfo', '/wiki/chairman', '/wiki/chief_operating_officer',
+                '/wiki/Board_of_Directors/wiki/President#Non-governmental_presidents', '/wiki/chief_operating_officer' ]
+              if link['href'].lower() not in job_titles:
+                people_wikis.append( { 'wikipedia' : 'http://en.wikipedia.org' + link['href'] } )
+                print link['href']
+          if 'people' not in info and len( people_wikis ) != 0:
             info['people'] = []
+          for people in people_wikis:
+            info['people'].append( people )
       elif fetch_type == 'person':
         info = {}
     return info

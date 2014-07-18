@@ -27,7 +27,6 @@ class ModelPerson( object ):
 
   def getBySlug( self, person_slug ):
     """
-      getBySlug
       Get a person by the slugged name
       @params:
         slug : str( ) ex: donald-trump
@@ -39,12 +38,23 @@ class ModelPerson( object ):
 
   def getByName( self, person_name ):
     """
-      getByName
       Get a person by the exact name
-      @params : str( ) Oscar Myer
+      @params : str( ) Donald Trump
       @return person
     """
     qry = """SELECT * FROM `%s`.`people` WHERE `name` = "%s"; """ % ( self.db_name, Mysql.escape_string( person_name ) )
+    person = Mysql.ex( qry )
+    if len( person ) == 0:
+      return False
+    return person[0]    
+
+  def getByWiki( self, wikipedia_url ):
+    """
+      Get a person by the LIKE wiki url
+      @params : str( ) /wiki/Donald_Trump
+      @return person
+    """
+    qry  = 'SELECT * FROM `'+self.db_name+'`.`people` WHERE `wikipedia` LIKE "%'+ Mysql.escape_string( wikipedia_url ) + '%";'
     person = Mysql.ex( qry )
     return person[0]    
 
@@ -109,15 +119,21 @@ class ModelPerson( object ):
       self.updateDiff( person, exists[0] )
       person_id = exists[0]['person_id']
     else:
-      new_person['name'] = person['name']
+      if 'name' in person:
+        new_person['name'] = person['name']
+      else:
+        new_person['name'] = ''
       if 'slug' not in person:
-        new_person['slug'] = Misc.slug( person['name'] )
+        if 'name' not in person:
+          new_person['name'] = ''
+        else:
+          new_person['slug'] = Misc.slug( person['name'] )
       if 'wikipedia' not in person:
         new_person['wikipedia'] = ''
       else:
         new_person['wikipedia'] = person['wikipedia']
       Mysql.insert( 'people', new_person )
-      person_id = self.getByName( new_person['name'] )['person_id']
+      person_id = self.getByWiki( new_person['wikipedia'] )['person_id']
     if 'meta' in person:
       self.createMeta( person_id, person['meta'] )
     return person_id

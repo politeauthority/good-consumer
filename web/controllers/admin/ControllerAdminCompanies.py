@@ -24,8 +24,9 @@ class ControllerAdminCompanies( object ):
     }
 
   def index( self ):
-    data = { 'options' : Settings.get_options() }
-    return self.Renderer.build( 'admin/settings/index.html', data )
+    ModelCompanies = MVC.loadModel('Companies')
+    data = { 'companies' : ModelCompanies.getAll() }
+    return self.Renderer.build( 'admin/companies/index.html', data )
   index.exposed = True
 
   def info( self, company_id = None ):
@@ -39,7 +40,7 @@ class ControllerAdminCompanies( object ):
         'company' : company,
         'news'    : ModelCompanyNews.getByCompany( company_id )
       }
-      return self.Renderer.build( 'admin/company/info.html', data )
+      return self.Renderer.build( 'admin/companies/info.html', data )
     else:
       raise cherrypy.HTTPRedirect( '/admin/error/?e="cantfindcompany"' )      
   info.exposed = True

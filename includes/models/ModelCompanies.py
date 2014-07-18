@@ -31,4 +31,4 @@ class ModelCompanies( object ):
     qry = """SELECT * FROM `%s`.`companies` ORDER BY `date_updated` DESC LIMIT %s;""" % ( self.db_name, limit )
     return Mysql.ex( qry )
 
-# End File: models/ModelCompanies.py
+# End File: includes/models/ModelCompanies.py

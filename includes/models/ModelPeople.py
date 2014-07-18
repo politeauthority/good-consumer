@@ -16,6 +16,12 @@ class ModelPeople( object ):
   def __init__( self ):
     self.db_name = MVC.db['name']
 
+  def getAll( self ):
+    # qry = """SELECT * FROM `%s`.`people` LIMIT %s OFFSET %s;""" % ( self.db_name, '100', '0' )
+    qry = """SELECT * FROM `%s`.`people`;""" % ( self.db_name )    
+    people = Mysql.ex( qry )
+    return people
+
   def getByID( self, person_id, load_level = 'light' ):
     qry = """SELECT * FROM 
       `%s`.`people` 
@@ -25,12 +31,6 @@ class ModelPeople( object ):
       return False
     else:
       return person[0]
-
-  def getAll( self ):
-    # qry = """SELECT * FROM `%s`.`people` LIMIT %s OFFSET %s;""" % ( self.db_name, '100', '0' )
-    qry = """SELECT * FROM `%s`.`people`;""" % ( self.db_name )    
-    people = Mysql.ex( qry )
-    return people
 
   def getUpdateSet( self, limit = 200  ):
     qry = "SELECT * FROM `%s`.`people` ORDER BY date_updated ASC LIMIT %s;" % ( self.db_name, limit )

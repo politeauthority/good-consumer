@@ -21,7 +21,6 @@ class DriverMysql( object ):
     self.dbname    = MVC.db['name']
     self.user      = MVC.db['user']
     self.password  = MVC.db['pass']
-    # self.init_time = time.now()
     if connect:
       self.__connect()
 
@@ -33,7 +32,6 @@ class DriverMysql( object ):
         args  : str(), list() or dict{} for paramaterized queries
       @return tuple of dicts ( {} , {} ) 
     """
-    # print self.init_time
     self.cur = mdb.cursors.DictCursor( self.conn )
     try:
       self.cur.execute( query, args )
@@ -139,14 +137,13 @@ class DriverMysql( object ):
     string = string[ : len(string) - 1 ]
     return string
 
-  def now( self, format = None ):
+  def now( self, phormat = None ):
     """
       Gives out a basic MySQL timestamp
       @return str() ex: 2014-07-02 23:31:23
     """
-
-    if format:
-      return time.strftime( format )      
+    if phormat:
+      return time.strftime( phormat )      
     else:
       return time.strftime('%Y-%m-%d %H:%M:%S')
 

@@ -28,6 +28,8 @@
                   Fetch Company News
                 {% elif job['job'] == 'find_new_companies' %}
                   Find New Companies
+                {% elif job['job'] == 'update_current_companies' %}
+                  Update Companies
                 {% else %}
                   {{ job['job'] }}
                 {% endif %}
@@ -93,6 +95,7 @@
       <tbody>
         {% for news in d['recently_added_news'] %}
           <tr>
+            <td><a href="/admin/news/article/{{ d['company_news_id'] }}"<i class="fa fa-font"></i></td>
             <td>/admin/news/article/{{ d['company_news_id'] }}</td>
             <td>{{ news['headline'] }}</td>
             <td></td>

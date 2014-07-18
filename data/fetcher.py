@@ -26,10 +26,10 @@ class Fetcher( object ):
 	def __init__( self ):
 		self.verbosity = True
 		self.run_arguments = {
-			'find_new_companies'       : True,
+			'find_new_companies'       : False,
 			'update_current_companies' : True,
-			'update_current_people'    : True,
-			'fetch_company_news'       : True,
+			'update_current_people'    : False,
+			'fetch_company_news'       : False,
 			'evaluate_comapny_news'    : False,
 		}
 
@@ -59,8 +59,8 @@ class Fetcher( object ):
 		if self.verbosity:
 			print 'Updating Current Companies'
 		job_id = JobLog.start( 'update_current_companies' )			
-		update_companies = ModelCompanies.getUpdateSet( 100 )
-		# update_companies = [ ModelCompany.getBySlug( 'irobot' ) ]
+		update_companies = ModelCompanies.getUpdateSet( 200 )
+		# update_companies = [ ModelCompany.getBySlug( 'best-buy' ) ]
 		companies_updated = 0
 		people_found      = 0
 		c = 0

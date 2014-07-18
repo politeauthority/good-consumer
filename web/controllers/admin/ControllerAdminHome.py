@@ -1,6 +1,8 @@
-#!/usr/bin/python                                                                                                
-# Admin Controller
-# This model controls interactions with the indoor and outdoor weather actions which need to occur
+#!/usr/bin/python
+"""
+  Admin Home Controller
+  Handles all /admin URL requests.
+"""
 import sys
 import os
 
@@ -17,6 +19,7 @@ class ControllerAdminHome( object ):
   settings = MVC.loadController( 'admin/AdminSettings' )
 
   companies = MVC.loadController( 'admin/AdminCompanies' )
+  people    = MVC.loadController( 'admin/AdminPeople' )
   news      = MVC.loadController( 'admin/AdminNews' )
 
   def __init__( self ):
@@ -48,7 +51,7 @@ class ControllerAdminHome( object ):
 
   def dashboard( self ):
     ModelJobLog      = MVC.loadModel('JobLog')
-    SimpleStats      = MVC.loadModel( 'SimpleStats' )
+    SimpleStats      = MVC.loadModel('SimpleStats')
     ModelCompanies   = MVC.loadModel('Companies')
     ModelCompanyNews = MVC.loadModel('CompanyNews')
     data = {

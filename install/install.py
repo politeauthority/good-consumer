@@ -159,7 +159,7 @@ createTable_companies = """
     `headquarters`   VARCHAR(255) DEFAULT NULL,
     `founded`        TIMESTAMP DEFAULT 0,
     `wikipedia`      VARCHAR(255) DEFAULT NULL,
-    `display`        INT(1) DEFAULT 1,
+    `display`        INT(1) DEFAULT 0,
     `record_status`  INT(10) DEFAULT 0,    
     `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`company_id`)

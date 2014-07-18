@@ -2,7 +2,7 @@
   <div class="col-lg-12">
     <h1>{{ d['company']['name'] }}</h1>
     <ol class="breadcrumb">
-      <li><a href="index.html"><i class="icon-dashboard"></i> Companies</a></li>
+      <li><a href="/admin/companies/"><i class="icon-dashboard"></i> Companies</a></li>
       <li>{{ d['company']['name'] }}</li>
     </ol>
   </div>
@@ -76,7 +76,14 @@
         <tbody>
           {% for person in d['company']['meta']['people'] %}
             <tr>
-              <td>{{ person['name'] }}</td>
+              <td>
+                  {% if person['name'] %}
+                    <a href="/admin/people/info/{{ person['person_id'] }}">{{ person['name'] }}</a>
+                  {% else %}
+                    <a href="/admin/people/info/{{ person['person_id'] }}">No Name</a>
+                  {% endif %}
+                </a>
+              </td>
               <td></td>
             </tr>
           {% endfor %}
