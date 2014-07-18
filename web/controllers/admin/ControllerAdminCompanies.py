@@ -32,13 +32,13 @@ class ControllerAdminCompanies( object ):
   def info( self, company_id = None ):
     if company_id:
       ModelCompany     = MVC.loadModel('Company')
-      ModelCompanyNews = MVC.loadModel('CompanyNews')
+      # ModelCompanyNews = MVC.loadModel('CompanyNews')
       company = ModelCompany.getByID( company_id, 'full' )     
       if not company:
         raise cherrypy.HTTPRedirect( '/admin/error/?e="cantfindcompany"' )
       data = { 
         'company' : company,
-        'news'    : ModelCompanyNews.getByCompany( company_id )
+        # 'news'    : ModelCompanyNews.getByCompany( company_id )
       }
       return self.Renderer.build( 'admin/companies/info.html', data )
     else:

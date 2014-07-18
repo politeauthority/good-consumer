@@ -20,10 +20,11 @@ class ModelPerson( object ):
     self.db_name = MVC.db['name']
 
   def getByID( self, person_id ):
-    if isinstance( person_id, int ):
-      qry = """SELECT * FROM `%s`.`people` WHERE `person_id` = %s; """ % ( self.db_name, person_id )
-      person = Mysql.ex( qry )[0]
-      return person
+    qry = """SELECT * FROM `%s`.`people` WHERE `person_id` = "%s"; """ % ( self.db_name, person_id )
+    person = Mysql.ex( qry )
+    if len( person ) == 0:
+      return False
+    return person[0]
 
   def getBySlug( self, person_slug ):
     """

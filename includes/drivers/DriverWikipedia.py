@@ -69,7 +69,8 @@ class DriverWikipedia( object ):
                 '/wiki/ceo', '/wiki/board_of_dcirectors', '/wiki/President', '/wiki/chief_technology_officer', 
                 '/wiki/marketing_director', '/wiki/marketing_manager', '/wiki/executive_chairman', '/wiki/president', 
                 '/wiki/executive_vice_president', '/wiki/cfo', '/wiki/chairman', '/wiki/chief_operating_officer',
-                '/wiki/Board_of_Directors/wiki/President#Non-governmental_presidents', '/wiki/chief_operating_officer' ]
+                '/wiki/Board_of_Directors/wiki/President#Non-governmental_presidents', '/wiki/chief_operating_officer', 
+                '/wiki/president#non-governmental_presidents' ]
               if link['href'].lower() not in job_titles:
                 people_wikis.append( { 'wikipedia' : 'http://en.wikipedia.org' + link['href'] } )
                 print link['href']

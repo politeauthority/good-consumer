@@ -24,7 +24,8 @@ class ControllerAdminNews( object ):
     }
 
   def index( self ):
-    data = {  }
+    ModelNews = MVC.loadModel('News')
+    data = { 'articles' : ModelNews.getAll() }
     return self.Renderer.build( 'admin/news/index.html', data )
   index.exposed = True
 

@@ -8,41 +8,23 @@
   </div>
 </div><!-- /.row -->
 
-<div class="col-lg-6">
+<div class="col-lg-12">
   <h2>Recently Downloaded Articles</h2>
   <div class="table-responsive">
     <table class="table table-hover table-striped tablesorter">
       <thead>
         <tr>
           <th class="header">Job</th>
-          <th class="header">Start</th>
-          <th class="header">End</th>
-          <th class="header">Message</th>
         </tr>
       </thead>
       <tbody>
-        {% for job in d['jobs'] %}
+        {% for article in d['articles'] %}
           <tr>
             <td>
-              {% if job['job'] %}
-                {% if job['job'] == 'fetch_company_news' %}
-                  Fetch Company News
-                {% else %}
-                  {{ job['job'] }}
-                {% endif %}
-              {% endif %}
+              {{ article['headline'] }}
             </td>
             <td>{{ job['start'].strftime('%m-%d %I:%M %p') }}</td>
-            <td>
-              {% if job['end'] %}
-                {{ job['end'].strftime('%I:%M %p') }}
-              {% endif %}
-            </td>
-            <td>
-              {% if job['message'] %}
-                {{ job['message'] }}
-              {% endif %}
-            </td>
+
           </tr>
         {% endfor %}
       </tbody>

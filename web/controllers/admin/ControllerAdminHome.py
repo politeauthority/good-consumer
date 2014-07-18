@@ -53,16 +53,16 @@ class ControllerAdminHome( object ):
     ModelJobLog      = MVC.loadModel('JobLog')
     SimpleStats      = MVC.loadModel('SimpleStats')
     ModelCompanies   = MVC.loadModel('Companies')
-    ModelCompanyNews = MVC.loadModel('CompanyNews')
+    ModelNews        = MVC.loadModel('News')
     data = {
       'jobs' : ModelJobLog.get(),
       'recently_updated_companies' : ModelCompanies.getRecentlyUpdated( limit=8 ),
-      'recently_added_news'        : ModelCompanyNews.getAll( 8 ),
+      'recently_added_news'        : ModelNews.getAll( 8 ),
       'stats'          : {
         'company_count'     : SimpleStats.countOfCompanies(),
         'people_count'      : SimpleStats.countOfPeople(),
         'article_count'     : SimpleStats.countOfNews(),
-        'news_source_count' : SimpleStats.countofNewsSources()
+        # 'news_source_count' : SimpleStats.countofNewsSources()
       }
     }
     return self.Renderer.build('admin/dashboard.html', data )    

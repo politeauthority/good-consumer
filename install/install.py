@@ -17,7 +17,7 @@ subprocess.call( "apt-get install python-cherrypy3", shell=True )
 subprocess.call( "apt-get install python-jinja2",    shell=True )
 subprocess.call( "apt-get install python-bs4",       shell=True )
 
-Mysql = MVC.loadDriver('Mysql')
+Mysql = MVC.loadDriver('Mysql' )
 Mysql.ex( 'CREATE DATABASE IF NOT EXISTS `%s`;' % MVC.db['name'] )
 
 if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
@@ -33,7 +33,8 @@ if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
   dropTable_company_meta     = "DROP TABLE IF EXISTS `%s`.`company_meta`; "    % MVC.db['name']
   dropTable_company_types    = "DROP TABLE IF EXISTS `%s`.`company_types`; "   % MVC.db['name']
   dropTable_company_industry = "DROP TABLE IF EXISTS `%s`.`company_industry`;" % MVC.db['name']
-  dropTable_company_news     = "DROP TABLE IF EXISTS `%s`.`company_news`;"     % MVC.db['name']
+  dropTable_news             = "DROP TABLE IF EXISTS `%s`.`news`;"             % MVC.db['name']
+  dropTable_news_meta        = "DROP TABLE IF EXISTS `%s`.`news_meta`;"        % MVC.db['name']
   dropTable_news_sources     = "DROP TABLE IF EXISTS `%s`.`news_sources`; "    % MVC.db['name']
   dropTable_people           = "DROP TABLE IF EXISTS `%s`.`people`; "          % MVC.db['name']
   dropTable_people_meta      = "DROP TABLE IF EXISTS `%s`.`people_meta`; "     % MVC.db['name']
@@ -51,7 +52,8 @@ if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
   Mysql.ex( dropTable_company_meta )
   Mysql.ex( dropTable_company_types )
   Mysql.ex( dropTable_company_industry )
-  Mysql.ex( dropTable_company_news )
+  Mysql.ex( dropTable_news )
+  Mysql.ex( dropTable_news_meta )
   Mysql.ex( dropTable_news_sources )
   Mysql.ex( dropTable_people )
   Mysql.ex( dropTable_people_meta )
@@ -60,12 +62,12 @@ if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
 # Base Website tables
 createTable_options = """
   CREATE TABLE `%s`.`options` (
-    `id`              int(10) NOT NULL AUTO_INCREMENT,
-    `meta_key`        varchar(255) NOT NULL,
-    `meta_value`      varchar(255) NOT NULL,
-    `parent`          int(10) DEFAULT 0,
-    `pretty_name`     varchar(255) DEFAULT NULL,
-    `help_text`       varchar(255) DEFAULT NULL,
+    `id`              INT(10) NOT NULL AUTO_INCREMENT,
+    `meta_key`        VARCHAR(255) NOT NULL,
+    `meta_value`      VARCHAR(255) NOT NULL,
+    `parent`          INT(10) DEFAULT 0,
+    `pretty_name`     VARCHAR(255) DEFAULT NULL,
+    `help_text`       VARCHAR(255) DEFAULT NULL,
     PRIMARY KEY (`id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
@@ -73,11 +75,11 @@ createTable_options = """
 # User tables
 createTable_users  = """
   CREATE TABLE `%s`.`users` ( 
-    `id`              int(10)       NOT NULL AUTO_INCREMENT,
-    `user`            varchar(100) NOT NULL,
-    `email`           varchar(250) NOT NULL,
-    `pass`            varchar(250) NOT NULL,
-    `last_login`      varchar(15) DEFAULT NULL,
+    `id`              INT(10)       NOT NULL AUTO_INCREMENT,
+    `user`            VARCHAR(100) NOT NULL,
+    `email`           VARCHAR(250) NOT NULL,
+    `pass`            VARCHAR(250) NOT NULL,
+    `last_login`      VARCHAR(15) DEFAULT NULL,
     PRIMARY KEY (`id`)
   )
   DEFAULT CHARSET = utf8;""" % MVC.db['name']
@@ -87,10 +89,10 @@ createTable_usermeta = """
     `id`              INT(10) NOT NULL AUTO_INCREMENT,
     `user_id`         INT(10) NOT NULL,
     `parent`          INT(10) NOT NULL,
-    `meta_key`        varchar(200) NOT NULL,
-    `meta_value`      varchar(200) NOT NULL,
-    `pretty_name`     varchar(250) DEFAULT NULL,
-    `help_text`       varchar(250) DEFAULT NULL,
+    `meta_key`        VARCHAR(200) NOT NULL,
+    `meta_value`      VARCHAR(200) NOT NULL,
+    `pretty_name`     VARCHAR(250) DEFAULT NULL,
+    `help_text`       VARCHAR(250) DEFAULT NULL,
     PRIMARY KEY (`id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
@@ -98,7 +100,7 @@ createTable_usermeta = """
 createTable_acl_roles       = """
   CREATE TABLE `%s`.`acl_roles` ( 
     `id`            INT(10) unsigned NOT NULL AUTO_INCREMENT,
-    `role_name`     varchar(20) NOT NULL,
+    `role_name`     VARCHAR(20) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `role_name` (`role_name`)        
   )
@@ -107,8 +109,8 @@ createTable_acl_roles       = """
 createTable_acl_permissions = """
   CREATE TABLE `%s`.`acl_permissions` (
     `id`         INT(10) unsigned NOT NULL AUTO_INCREMENT,
-    `perm_key`   varchar(30) NOT NULL,
-    `perm_name`  varchar(30) NOT NULL,
+    `perm_key`   VARCHAR(30) NOT NULL,
+    `perm_name`  VARCHAR(30) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `perm_key` (`perm_key`)        
   )
@@ -119,8 +121,8 @@ createTable_acl_role_perms  = """
     `id`        INT(10) unsigned NOT NULL AUTO_INCREMENT,
     `role_id`   INT(10) NOT NULL,
     `perm_id`   INT(10) NOT NULL,
-    `value`     tinyint(1) NOT NULL DEFAULT '0',
-    `added` datetime NOT NULL,
+    `value`     TINYINT(1) NOT NULL DEFAULT '0',
+    `added`     DATETIME NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `role_id` (`role_id`,`perm_id`)
   )
@@ -132,7 +134,7 @@ createTable_acl_user_perms  = """
     `user_id`    INT(10) NOT NULL,
     `perm_id`    INT(10) NOT NULL,
     `value`      tinyint(1) NOT NULL DEFAULT '0',
-    `added`      datetime NOT NULL,
+    `added`      DATETIME NOT NULL,
     PRIMARY KEY (`ID`), 
     UNIQUE KEY `user_id` (`user_id`,`perm_id`)
   )
@@ -199,10 +201,9 @@ createTable_company_industry = """
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
-createTable_company_news = """
-  CREATE TABLE `%s`.`company_news` (
-    `company_news_id` INT(10) NOT NULL AUTO_INCREMENT,
-    `company_id`      INT(10) NOT NULL,
+createTable_news = """
+  CREATE TABLE `%s`.`news` (
+    `article_id`      INT(10) NOT NULL AUTO_INCREMENT,
     `url`             TEXT NOT NULL,    
     `headline`        VARCHAR(255) NULL,
     `publish_date`    TIMESTAMP DEFAULT '0000-00-00 00:00:00',
@@ -210,7 +211,20 @@ createTable_company_news = """
     `content`         TEXT DEFAULT NULL,
     `record_status`   INT(10) DEFAULT 0,
     `date_updated`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY(`company_news_id`)
+    PRIMARY KEY(`article_id`)
+  )
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
+
+createTable_news_meta = """
+  CREATE TABLE `%s`.`news_meta` (
+    `meta_id`      INT(10) NOT NULL AUTO_INCREMENT,
+    `article_id`   INT(10) NOT NULL,
+    `meta_key`     VARCHAR(255) NOT NULL,
+    `meta_value`   TEXT DEFAULT NULL,
+    `pretty_name`  VARCHAR(255) DEFAULT NULL,
+    `help_text`    VARCHAR(255) DEFAULT NULL,
+    `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`meta_id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
@@ -274,7 +288,8 @@ Mysql.ex( createTable_companies )
 Mysql.ex( createTable_company_meta )
 Mysql.ex( createTable_company_types )
 Mysql.ex( createTable_company_industry )
-Mysql.ex( createTable_company_news )
+Mysql.ex( createTable_news )
+Mysql.ex( createTable_news_meta )
 Mysql.ex( createTable_news_sources)
 Mysql.ex( createTable_people )
 Mysql.ex( createTable_people_meta )

@@ -27,7 +27,7 @@ class ModelSimpleStats( object ):
   	return Mysql.ex(qry)[0]['c']
 
   def countOfNews( self ):
-    qry = "SELECT count(*) as c FROM `%s`.`company_news`;" % self.db_name
+    qry = "SELECT count(*) as c FROM `%s`.`news`;" % self.db_name
     return Mysql.ex(qry)[0]['c']
 
   def countofNewsSources( self ):
