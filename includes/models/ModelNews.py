@@ -23,7 +23,8 @@ class ModelNews( object ):
         limit int()
       @return: 
         [ { 
-            'article_id' : 4 
+            'article_id' : 4 ,
+            'headline'   : 'Some Headline',
           } 
         ]
     """    

@@ -19,7 +19,7 @@ ModelPerson       = MVC.loadModel('Person')
 Wikipedia         = MVC.loadDriver('Wikipedia')
 GoogleNews        = MVC.loadDriver('GoogleNews')
 
-Debug             = MVC.loadHelper('Debug')
+Debugger          = MVC.loadHelper('Debug')
 
 class Fetcher( object ):
 
@@ -68,9 +68,8 @@ class Fetcher( object ):
 			if self.verbosity:
 				print '  ', company['name']
 				print '  ', company['wikipedia']
-			c_info = {}
 			wiki_info = Wikipedia.get( 'company', company['wikipedia'] )
-			the_company = {
+			the_company_update = {
 				'company_id' : company['company_id'],
 				'name'       : company['name'],
 				'meta'       : { }
@@ -82,14 +81,18 @@ class Fetcher( object ):
 					people_ids += str( person_id ) + ','
 					people_found = people_found + 1
 				people_ids = people_ids[:-1]
-				the_company['meta']['people'] = people_ids
-			if 'type' in wiki_info:
+				the_company_update['meta']['people'] = people_ids
+
+			if 'type' in wiki_info['infobox']:
 				company_type_ids = [ ]
 				for company_type in wiki_info['infobox']['type']:
-					company_type_ids.append( ModelCompany.create( company_type ) )
-				the_company['type'] = company_type_ids
-			ModelCompany.create( the_company )
+					company_type_ids.append( ModelCompanyTypes.create( company_type['name'], company_type['wikipedia'] ) )
+				the_company_update['type'] = company_type_ids
+			
+			Debugger.write( 'the_company_update', the_company_update )
+			ModelCompany.create( the_company_update )
 			companies_updated = companies_updated + 1
+			Debugger.write( 'Company by id', ModelCompany.getByID( the_company_update['company_id'] ) )
 		JobLog.stop( job_id, 'Updated %s companies and found %s people' % ( companies_updated, people_found ) )
 
 	def update_current_people( self ):

@@ -154,7 +154,6 @@ createTable_companies = """
   CREATE TABLE `%s`.`companies` (
     `company_id`     INT(10) NOT NULL AUTO_INCREMENT,
     `name`           VARCHAR(255) DEFAULT NULL,
-    `symbol`         VARCHAR(10) DEFAULT NULL,
     `slug`           VARCHAR(255) DEFAULT NULL,
     `type`           VARCHAR(255) DEFAULT NULL,
     `industry`       VARCHAR(255) DEFAULT NULL,
@@ -186,7 +185,7 @@ createTable_company_types = """
     `company_type_id`   INT(10) NOT NULL AUTO_INCREMENT,
     `name`              VARCHAR(255) NOT NULL,
     `desc`              VARCHAR(255) NULL,
-    `wiki`              VARCHAR(255) NULL,
+    `wikipedia`         VARCHAR(255) NULL,
     PRIMARY KEY(`company_type_id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
@@ -196,7 +195,7 @@ createTable_company_industry = """
     `company_industry_id` INT(10) NOT NULL AUTO_INCREMENT,
     `name`                VARCHAR(255)   NOT NULL,
     `desc`                VARCHAR(255)   NULL,
-    `wiki`                VARCHAR(255)   NULL,
+    `wikipedia`           VARCHAR(255)   NULL,
     PRIMARY KEY(`company_industry_id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']

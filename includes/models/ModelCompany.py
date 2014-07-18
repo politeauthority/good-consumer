@@ -11,6 +11,7 @@ from MVC import MVC
 MVC = MVC()
 # End file header
 
+Debugger = MVC.loadHelper('Debug')
 Mysql    = MVC.loadDriver('Mysql')
 
 class ModelCompany( object ):
@@ -101,6 +102,8 @@ class ModelCompany( object ):
           for person_id in company['meta']['people'].split(','):
             people.append( ModelPeople.getByID( person_id ) )
         company['meta']['people'] = people
+      ModelCompanyTypes = MVC.loadModel('CompanyTypes')
+      company['type']   = ModelCompanyTypes.getByID( company['type'] )
     return company
 
   def create( self, company ):
@@ -155,8 +158,6 @@ class ModelCompany( object ):
     """
     company_id = company_rec['company_id']
     diff = {}
-    if 'symbol' in company_new and company_new['symbol'] != company_rec['symbol']:
-      diff['symbol'] = company_new['symbol']
     if 'slug' in company_new and company_new['slug'] != company_rec['slug']:
       diff['slug'] = company_new['slug']
     if 'type' in company_new and company_new['type'] != company_rec['type']:
@@ -170,6 +171,7 @@ class ModelCompany( object ):
     if 'wikipedia' in company_new and company_new['wikipedia'] != company_rec['wikipedia']:
       diff['wikipedia'] = company_new['wikipedia']
     diff['date_updated'] = Mysql.now()
+    Debugger.write( 'diff', diff )
     Mysql.update( 'companies', diff, { 'company_id' : company_id } )
     return company_id
 

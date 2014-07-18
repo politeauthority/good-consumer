@@ -32,13 +32,33 @@ class DriverMysql( object ):
         args  : str(), list() or dict{} for paramaterized queries
       @return tuple of dicts ( {} , {} ) 
     """
+    # if args:
+    #   print query
+    #   print str( args )
+    # else:
+    #   print query
+    #   print args
     self.cur = mdb.cursors.DictCursor( self.conn )
-    try:
-      self.cur.execute( query, args )
-    except OperationalError:
-      self.__close()
-      self.__connect()
-      self.cur.execute( query, args )
+    # try:
+    #   if not self.conn:
+    #     self.__connect()
+    #   self.cur.execute( query, args )
+    # except:
+    #   self.__close()
+    #   self.__connect()
+    #   self.cur.execute( query, args )
+    # try:
+    #   if not self.conn:
+    #     self.__connect()
+    #   
+    # except:
+    #   self.__close()
+    #   self.__connect()
+    #   self.cur.execute( query, args )
+    
+    # self.__debug( query )
+    self.cur.execute( query, args )
+
     self.conn.commit()
     return self.cur.fetchall()
   
@@ -159,6 +179,10 @@ class DriverMysql( object ):
     return True
 
   def __close( self ):
-    self.conn.close()    
+    self.conn.close()
 
-# End File: driver/DriverMysql
+  def __debug( self, qry ):
+    Debugger = MVC.loadHelper('Debug')
+    Debugger.write( 'MySQL Qry', qry )
+
+# End File: includes/driver/DriverMysql
