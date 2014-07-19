@@ -12,6 +12,8 @@ MVC = MVC()
 
 import cherrypy
 
+Debugger = MVC.loadHelper('Debug')
+
 class ControllerAdminNews( object ):
 
   def __init__( self ):
@@ -24,8 +26,12 @@ class ControllerAdminNews( object ):
     }
 
   def index( self ):
-    ModelNews = MVC.loadModel('News')
-    data = { 'articles' : ModelNews.getAll() }
+    ModelNews        = MVC.loadModel('News')
+    ModelNewsSources = MVC.loadModel('NewsSources')
+    data = { 
+      'articles' : ModelNews.getAll(),
+      'sources'  : ModelNewsSources.getAll()
+    }
     return self.Renderer.build( 'admin/news/index.html', data )
   index.exposed = True
 
@@ -36,5 +42,13 @@ class ControllerAdminNews( object ):
     }
     return self.Renderer.build( 'admin/news/article.html', data )
   article.exposed = True
-  
+
+  def source( self, source_id = None ):
+    ModelNews = MVC.loadModel('News')
+    data = {
+      'articles' : ModelNews.getBySource( source_id )
+    }
+    return self.Renderer.build( 'admin/news/source.html', data )    
+  source.exposed = True  
+
 # End File: web/controllers/ControllerAdminNews.py

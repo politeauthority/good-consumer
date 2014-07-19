@@ -20,7 +20,7 @@ class ModelNewsSources( object ):
   def getAll( self, limit = None ):
     qry = """SELECT * FROM 
       `%s`.`news_sources` 
-      ORDER BY `date_updated` DESC """ % ( self.db_name )
+      ORDER BY `article_count` DESC """ % ( self.db_name )
     if limit:
       qry = qry + """ LIMIT %s;""" % limit
     else:
@@ -67,4 +67,14 @@ class ModelNewsSources( object ):
       exists = Mysql.ex(qry)
     return exists[0]['source_id']
 
-# End File: models/ModelCompanyNews.py
+  def updateCounts( self ):
+    qry = """ SELECT distinct(`source_id`), count(*) as c 
+      FROM `%s`.`news` GROUP BY 1 ORDER BY 2;""" % self.db_name
+    sources = Mysql.ex( qry )
+    for source in sources:
+      the_args  = { 'article_count' : source['c'] }
+      the_where = { 'source_id' : source['source_id'] }
+      Mysql.update( 'news_sources', the_args, the_where )
+    return True
+
+# End File: includes/models/ModelCompanyNews.py

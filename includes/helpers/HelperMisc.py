@@ -1,12 +1,12 @@
 #!/usr/bin/python
-# Backup Helper
-# @description
-# Class for database, logfiles, and remote export of those files if needed
-#
+"""
+  Misc Helper
+  Pretty much the junk drawer of an application.
+  Many of these functions could probably be put somewhere else.
+"""
 
 import sys
 import os
-
 sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
@@ -30,5 +30,12 @@ class HelperMisc( object ):
     for key, trans in chars_to_translate.iteritems():
       slug = slug.replace( key, trans )
     return slug
+
+  def gmt_to_mtn( self, gmt_date ):
+    subtract_offset_in_hours = 6
+    from datetime import date, timedelta
+    d = gmt_date - timedelta( hours = subtract_offset_in_hours )
+    return d
+
 
 # End File: helpers/HelperMisc.py

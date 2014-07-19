@@ -17,7 +17,7 @@ class ModelNews( object ):
   def __init__( self ):
     self.db_name = MVC.db['name']
 
-  def getAll( self, limit = None ):
+  def getAll( self, limit = 50 ):
     """
       @params: 
         limit int()
@@ -101,8 +101,17 @@ class ModelNews( object ):
         'headline'     : article['headline'],
         'publish_date' : article['pubDate'],
         'content'      : article['content'],
+        'source_id'    : article['source_id']
       }
       Mysql.insert( 'news', args )
+      qry2 = """SELECT `article_id` FROM `%s`.`news` 
+      WHERE `url`="%s";""" % ( self.db_name, args['url'] )
+      article_id = Mysql.ex( qry2 )[0]['article_id']
+    else:
+      article_id = exists[0]['article_id']
+    if 'meta' in article:
+      self.createMeta( article_id, article['meta'] )
+    return article_id
 
   def createMeta( self, article_id, metas ):
     """

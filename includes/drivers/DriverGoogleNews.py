@@ -17,6 +17,7 @@ from urlparse import urlparse
 from bs4 import BeautifulSoup
 from datetime import datetime
 
+Misc      = MVC.loadHelper('Misc')
 TorScrape = MVC.loadDriver('TorScrape')
 
 class DriverGoogleNews( object ):
@@ -48,6 +49,8 @@ class DriverGoogleNews( object ):
 				title_tag = item.title.text
 				headline  = title_tag[ : title_tag.rfind(' - ') ].strip()
 				source    = title_tag [ title_tag.rfind(' - ') + 2 : ].strip()
+				pubDate   = datetime.strptime( str( item.pubDate.text ), '%a, %d %b %Y %H:%M:%S %Z' )
+				pubDate_l = Misc.gmt_to_mtn( pubDate )
 				article = {
 					'headline' : headline,
 					'source'   : {
@@ -55,7 +58,7 @@ class DriverGoogleNews( object ):
 						'url'  : self.__get_domain_from_url( full_article['article_url'] ),
 					},
 					'url'      : full_article['article_url'],
-					'pubDate'  : str( item.pubDate.text ),
+					'pubDate'  : pubDate_l,
 					'content'  : full_article['export_text']
 				}
 				articles.append( article )

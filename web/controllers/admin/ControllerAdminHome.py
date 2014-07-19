@@ -62,10 +62,12 @@ class ControllerAdminHome( object ):
         'company_count'     : SimpleStats.countOfCompanies(),
         'people_count'      : SimpleStats.countOfPeople(),
         'article_count'     : SimpleStats.countOfNews(),
+        'sources_count'     : SimpleStats.countofNewsSources(),
         # 'news_source_count' : SimpleStats.countofNewsSources(),
         'company_status'    : SimpleStats.runningCompanyStatus(),
         'people_status'     : SimpleStats.runningPeopleStatus(),
         'news_status'       : SimpleStats.runningNewsStatus(),
+
       }
     }
     return self.Renderer.build('admin/dashboard.html', data )    

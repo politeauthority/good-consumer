@@ -11,8 +11,8 @@ from MVC import MVC
 MVC = MVC()
 # End file header
 
-Debugger = MVC.loadHelper('Debug')
 Mysql    = MVC.loadDriver('Mysql')
+Debugger = MVC.loadHelper('Debug')
 
 class ModelCompany( object ):
 
@@ -180,7 +180,7 @@ class ModelCompany( object ):
         diff[ field ] = company_new[ field ]   
     diff['date_updated'] = Mysql.now()
     Mysql.update( 'companies', diff, { 'company_id' : company_id } )
-    Debugger.write( 'Company: %s' % company_id, diff )
+    # Debugger.write( 'Company: %s' % company_id, diff )
     return company_id
 
   def createMeta( self, company_id, metas ):

@@ -202,7 +202,7 @@ createTable_company_industry = """
 
 createTable_news = """
   CREATE TABLE `%s`.`news` (
-    `article_id`      INT(10) NOT NULL AUTO_INCREMENT,
+    `news_id`      INT(10) NOT NULL AUTO_INCREMENT,
     `url`             TEXT NOT NULL,    
     `headline`        VARCHAR(255) NULL,
     `publish_date`    TIMESTAMP DEFAULT '0000-00-00 00:00:00',
@@ -232,6 +232,7 @@ createTable_news_sources = """
     `source_id`       INT(10) NOT NULL AUTO_INCREMENT,
     `name`            VARCHAR(255) DEFAULT NULL,
     `url`             TEXT DEFAULT NULL,
+    `article_count`   INT(10) DEFAULT 0,
     `date_updated`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,    
     PRIMARY KEY(`source_id`)
   )

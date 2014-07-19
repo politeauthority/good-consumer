@@ -30,7 +30,9 @@ class Fetcher( object ):
 			'update_current_companies' : False,
 			'update_current_people'    : False,
 			'fetch_company_news'       : True,
+			'uodate_source_counts'     : True,
 			'evaluate_comapny_news'    : False,
+
 		}
 
 	def go( self ):
@@ -45,8 +47,11 @@ class Fetcher( object ):
 			self.update_current_people( )
 		if self.run_arguments['fetch_company_news']:
 			self.fetch_company_news()
+		if self.run_arguments['uodate_source_counts']:
+			self.uodate_source_counts()
 		if self.run_arguments['evaluate_comapny_news']:
 			self.evaluate_comapny_news()
+
 
 	def find_new_companies( self ):
 		import subprocess
@@ -104,7 +109,7 @@ class Fetcher( object ):
 	def fetch_company_news( self ):
 		print 'Fetching Company News'
 		job_id = JobLog.start( 'fetch_company_news' )
-		update_companies = ModelCompanies.getUpdateSet( 250, hide = False )
+		update_companies = ModelCompanies.getUpdateSet( 100, hide = False )
 		companies_count  = 0
 		articles_count   = 0
 		if len( update_companies ) == 0:
@@ -114,21 +119,17 @@ class Fetcher( object ):
 		for company in update_companies:
 			print '  Downloading news articles for ', company['name']
 			company_news = GoogleNews.get( company['name'] )
-
 			for article in company_news:
 				news_source_id = ModelNewsSources.create( article['source'] )
+				Debugger.write( 'news_source_id', news_source_id )
 				a_meta = {
-					'company_asso' : company['company_id']
+					'assoc_company' : company['company_id']
 				}
-				article.update( { 'news_source_id' : news_source_id } )
+				article.update( { 'source_id' : news_source_id } )
 				article.update( { 'meta': a_meta } )
-
-				Debugger.write( 'article', article )
+				# Debugger.write( 'article', article )
 				ModelNews.create( article )
 				articles_count = articles_count + 1
-
-
-
 			the_company_update = {
 				'company_id'    : company['company_id'],
 				'record_status' : 2,
@@ -142,6 +143,11 @@ class Fetcher( object ):
 
 	def evaluate_comapny_news( self ):
 		print 'stuff'
+
+	def update_source_counts( self ):
+		if self.verbosity:
+			print 'Updating News Sources counts'
+		ModelNewsSources.updateCounts()		
 
 if __name__ == "__main__":
 	Fetcher().go()
