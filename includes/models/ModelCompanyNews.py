@@ -17,12 +17,34 @@ class ModelCompanyNews( object ):
   def __init__( self ):
     self.db_name = MVC.db['name']
 
-  def getAll( self ):
+  def getAll( self, limit = None ):
     qry = """SELECT * FROM 
-      `%s`.`company_news`;""" % ( self.db_name )
-    c_types = Mysql.ex( qry )
-    return c_types
+      `%s`.`company_news` 
+      ORDER BY `date_updated` DESC """ % ( self.db_name )
+    if limit:
+      qry = qry + """ LIMIT %s;""" % limit
+    else:
+      qry = qry + ";"
+    news = Mysql.ex( qry )
+    return news
+
+  def getByID( self, article_id ):
+    qry = """SELECT * FROM
+      `%s`.`company_news` WHERE 
+      company_news_id = `%s` """ % ( self.db_name, article_id )
+    article = Mysql.now(qry)
+    if len( article ) == 0:
+      return False
+    return article[0]
   
+  def getByCompany( self, company_id ):
+    qry = """SELECT * FROM 
+      `%s`.`company_news`
+      WHERE `company_id` = "%s"
+      ORDER BY `date_updated` DESC """ % ( self.db_name, company_id )
+    news = Mysql.ex( qry )
+    return news
+
   def create( self, company_id, article ):
     """
       Make a new news article associated with the company

@@ -1,0 +1,33 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1>People</h1>
+    <ol class="breadcrumb">
+      <li><a href="/admin/people/.html"><i class="icon-dashboard"></i> People</a></li>
+    </ol>
+  </div>
+</div><!-- /.row -->
+
+<!-- All People -->
+<div class="col-lg-6">
+  <div class="table-responsive">
+    <table class="table table-hover table-striped tablesorter">
+      <thead>
+        <tr>
+          <th class="header">Person</th>
+          <th class="header">Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for person in d['people'] %}
+          <tr>
+            <td>
+              <a href="/admin/people/info/{{ person['person_id'] }}">{{ person['name'] }}</a>
+              </a>
+            </td>
+            <td></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>

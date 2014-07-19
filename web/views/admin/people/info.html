@@ -1,0 +1,110 @@
+<div class="row">
+  <div class="col-lg-12">
+    <h1>{{ d['person']['name'] }}</h1>
+    <ol class="breadcrumb">
+      <li><a href="/admin/people/"><i class="icon-dashboard"></i> People</a></li>
+      <li>{{ d['person']['name'] }}</li>
+    </ol>
+  </div>
+</div><!-- /.row -->
+
+<!-- Primary Info -->
+<div class="col-lg-6">
+  <h2>Primary Info</h2>
+  <a href="#" id="edit_btn">edit</a>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped tablesorter">
+      <tbody>
+        <tr>
+          <td><b>Name</b></td>
+          <td>
+            <span class="edit_text">{{ d['person']['name'] }}</span>
+            <input class="form-control edit_input" style="display:none;" name="name" value="{{ d['person']['name'] }}">
+            <input class="edit_input" type="hidden" name="person_id" value="{{ d['person']['person_id'] }}">
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>Slug</b></td>
+          <td>
+            <span class="edit_text">{{ d['person']['slug'] }}</span>
+            <input class="form-control edit_input" style="display:none;" name="slug" value="{{ d['person']['slug'] }}">
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><b>Wikipedia</b></td>
+          <td>
+            <a href="{{ d['person']['wikipedia'] }}" target="wikipedia">{{ d['person']['wikipedia'] }}</a>
+          </td>
+          <td></td>
+        </tr> 
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Internal Resources -->
+<div class="col-lg-6">
+  <h2>Internal Resources</h2>
+  <div class="table-responsive">
+    <ul>
+      <li><a href="/info/{{ d['person']['slug'] }}" target="good_consumer_public">Good Consumer Public</a></li>
+      <li><a href="{{ d['person']['wikipedia'] }}" target="wikpedia">Wikipedia</a></li>
+    </ul>
+  </div>
+</div>
+
+{% if  d['news'] %}
+  <!-- Company News -->
+  <div class="col-lg-12">
+    <h2>News</h2>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped tablesorter">
+        <tbody>
+          {% for news in d['news'] %}
+            <tr>
+              <td><b>{{ news['headline'] }}</b></td>
+              <td></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </div>
+{% endif %}
+
+<!-- All Person Meta -->
+<div class="col-lg-12">
+  <h2>All Meta</h2>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped tablesorter">
+      <thead>
+        <tr>
+          <th class="header">Meta Key</th>
+          <th class="header">Meta Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for meta in d['person']['meta'] %}
+          <tr>
+            <td><b>{{ d['meta_value'] }}<p></td>
+            <td>{{ d['meta_key'] }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div id="edit_submit">
+  <a href="#" id="cancel_btn" class="btn btn-default">Cancel</a>
+  <a href="#" id="save_btn" class="btn btn-default">Save</a>
+</div>
+
+<style type="text/css">
+  #edit_submit{
+    display: none;
+  }
+</style>

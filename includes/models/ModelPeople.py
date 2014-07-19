@@ -5,7 +5,6 @@
 """
 import sys
 import os
-
 sys.path.append( os.path.join(os.path.dirname(__file__), '..', '') )
 from MVC import MVC
 MVC = MVC()
@@ -22,6 +21,16 @@ class ModelPeople( object ):
     qry = """SELECT * FROM `%s`.`people`;""" % ( self.db_name )    
     people = Mysql.ex( qry )
     return people
+
+  def getByID( self, person_id, load_level = 'light' ):
+    qry = """SELECT * FROM 
+      `%s`.`people` 
+      WHERE `person_id` = "%s" """ % ( self.db_name, person_id )
+    person = Mysql.ex( qry )
+    if person == 0:
+      return False
+    else:
+      return person[0]
 
   def getUpdateSet( self, limit = 200  ):
     qry = "SELECT * FROM `%s`.`people` ORDER BY date_updated ASC LIMIT %s;" % ( self.db_name, limit )

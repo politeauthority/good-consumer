@@ -12,17 +12,17 @@ MVC = MVC()
 # End file header
 
 import MySQLdb as mdb
+import time
 
 class DriverMysql( object ):
 
   def __init__( self, connect = True ):
-    self.host     = MVC.db['host']
-    self.dbname   = MVC.db['name']
-    self.user     = MVC.db['user']
-    self.password = MVC.db['pass']
+    self.host      = MVC.db['host']
+    self.dbname    = MVC.db['name']
+    self.user      = MVC.db['user']
+    self.password  = MVC.db['pass']
     if connect:
-      self.conn = mdb.connect( self.host, self.user, self.password, charset = 'utf8' )
-      self.cur  = False
+      self.__connect()
 
   def ex( self, query, args = None ):
     """
@@ -32,8 +32,33 @@ class DriverMysql( object ):
         args  : str(), list() or dict{} for paramaterized queries
       @return tuple of dicts ( {} , {} ) 
     """
+    # if args:
+    #   print query
+    #   print str( args )
+    # else:
+    #   print query
+    #   print args
     self.cur = mdb.cursors.DictCursor( self.conn )
+    # try:
+    #   if not self.conn:
+    #     self.__connect()
+    #   self.cur.execute( query, args )
+    # except:
+    #   self.__close()
+    #   self.__connect()
+    #   self.cur.execute( query, args )
+    # try:
+    #   if not self.conn:
+    #     self.__connect()
+    #   
+    # except:
+    #   self.__close()
+    #   self.__connect()
+    #   self.cur.execute( query, args )
+    
+    # self.__debug( query )
     self.cur.execute( query, args )
+
     self.conn.commit()
     return self.cur.fetchall()
   
@@ -115,9 +140,12 @@ class DriverMysql( object ):
         string_ : str()
       @return : str()
     """
-    if not isinstance( string_, unicode ):
-      string_ = unicode( string_, errors='ignore')
-    return mdb.escape_string( string_ )
+    if isinstance( string_, str ):
+      if not isinstance( string_, unicode ):
+        string_ = unicode( string_, errors='ignore')
+      return mdb.escape_string( string_ )
+    else:
+      return str( string_ )
 
   def list_to_string( self, the_list ):
     """
@@ -132,14 +160,13 @@ class DriverMysql( object ):
     string = string[ : len(string) - 1 ]
     return string
 
-  def now( self, format = None ):
+  def now( self, phormat = None ):
     """
       Gives out a basic MySQL timestamp
       @return str() ex: 2014-07-02 23:31:23
     """
-    import time
-    if format:
-      return time.strftime( format )      
+    if phormat:
+      return time.strftime( phormat )      
     else:
       return time.strftime('%Y-%m-%d %H:%M:%S')
 
@@ -148,8 +175,17 @@ class DriverMysql( object ):
     self.dbname   = dbname
     self.user     = dbuser
     self.password = dbpass
-  
-  def __close( self ):
-    self.conn.close()    
 
-# End File: driver/DriverMysql
+  def __connect( self ):
+    self.conn = mdb.connect( self.host, self.user, self.password, charset = 'utf8' )
+    self.cur  = False
+    return True
+
+  def __close( self ):
+    self.conn.close()
+
+  def __debug( self, qry ):
+    Debugger = MVC.loadHelper('Debug')
+    Debugger.write( 'MySQL Qry', qry )
+
+# End File: includes/driver/DriverMysql

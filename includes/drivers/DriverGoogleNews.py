@@ -13,34 +13,62 @@ MVC = MVC()
 import re
 import urllib
 import urllib2
+from urlparse import urlparse
 from bs4 import BeautifulSoup
+from datetime import datetime
+
+Misc      = MVC.loadHelper('Misc')
+TorScrape = MVC.loadDriver('TorScrape')
 
 class DriverGoogleNews( object ):
 
 	def get( self, search_query ):
-		articles = []
-		news_url = 'https://news.google.com/news/feeds?q=%s&output=rss' % urllib.quote( search_query ).lower()
-		soup     = self.__get_soup( news_url, 'xml' )
-
-		for item in soup.find_all('item'):
-			print item.title.text
-			full_article = self.get_article_content( item.link.text )
-			if not full_article:
-				continue
-			article = {
-				'headline' : item.title.text,
-				'url'      : item.link.text,
-				'pubDate'  : item.pubDate.text,
-				'content'     : full_article,				
-			}
-			articles.append( article )
-			break
+		"""
+			Fetches RSS query from google news, follows article links
+			and returns the result out.
+			@params: 
+				search_query : str()
+			@return:
+				[ { 
+					'headline' : str(),
+					'source'   : str(),
+					'url'      : str(), 
+					'pubDate'  : str() } ]
+		"""
+		articles   = []
+		news_url   = 'https://news.google.com/news/feeds?q=%s&output=rss' % urllib.quote( search_query ).lower()
+		scrape     = TorScrape.get_soup( news_url, 'xml' )
+		soup       = scrape['soup']
+		# source_url = self.__get_domain_from_url( scrape['url'] )
+		if soup:
+			for item in soup.find_all('item'):
+				print item.title.text
+				full_article = self.get_article_content( item.link.text )
+				if not full_article:
+					continue
+				title_tag = item.title.text
+				headline  = title_tag[ : title_tag.rfind(' - ') ].strip()
+				source    = title_tag [ title_tag.rfind(' - ') + 2 : ].strip()
+				pubDate   = datetime.strptime( str( item.pubDate.text ), '%a, %d %b %Y %H:%M:%S %Z' )
+				pubDate_l = Misc.gmt_to_mtn( pubDate )
+				article = {
+					'headline' : headline,
+					'source'   : {
+						'name' : source,
+						'url'  : self.__get_domain_from_url( full_article['article_url'] ),
+					},
+					'url'      : full_article['article_url'],
+					'pubDate'  : pubDate_l,
+					'content'  : full_article['export_text']
+				}
+				articles.append( article )
 		return articles
 
 	def get_article_content( self, article_url ):
-		full_article = self.__get_soup( article_url )
-		if not full_article:
+		source = TorScrape.get_soup( article_url )
+		if not source:
 			return False
+		full_article = source['soup']
 		counter = 0
 		divs_with_paragraphs = []
 		all_article_divs     = full_article.find_all('div')
@@ -66,20 +94,17 @@ class DriverGoogleNews( object ):
 				if num_sentances > 1:
 					export_text += p_text
 		if len( export_text ) > 100:
-			return export_text
+			return { 'export_text': export_text, 'article_url' : source['url'] }
 		else:
 			return False
 
-	def __get_soup( self, url, type_of_soup = None ):
-		try:
-			wiki = urllib2.urlopen( url  )
-			if type_of_soup == 'xml':
-				soup = BeautifulSoup( wiki, 'xml' )
-			else:
-				soup = BeautifulSoup( wiki )
-			return soup
-		except urllib2.HTTPError:
-			print '404 Error Fetching: ', url
-			return False
+	def __get_domain_from_url( self, url ):
+		"""
+			Grabs base domain  from a url string.
+		"""
+		from urlparse import urlparse
+		parsed_uri = urlparse( url )
+		domain = '{uri.scheme}://{uri.netloc}/'.format( uri=parsed_uri )
+		return domain
 
 # End File: driver/DriverGoogleNews.py
