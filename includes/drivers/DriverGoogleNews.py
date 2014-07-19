@@ -38,7 +38,7 @@ class DriverGoogleNews( object ):
 		news_url   = 'https://news.google.com/news/feeds?q=%s&output=rss' % urllib.quote( search_query ).lower()
 		scrape     = TorScrape.get_soup( news_url, 'xml' )
 		soup       = scrape['soup']
-		source_url = self.__get_domain_from_url( scrape['url'] )
+		# source_url = self.__get_domain_from_url( scrape['url'] )
 		if soup:
 			for item in soup.find_all('item'):
 				print item.title.text
@@ -49,22 +49,23 @@ class DriverGoogleNews( object ):
 				headline  = title_tag[ : title_tag.rfind(' - ') ].strip()
 				source    = title_tag [ title_tag.rfind(' - ') + 2 : ].strip()
 				article = {
-					'headline' : item.title.text,
+					'headline' : headline,
 					'source'   : {
 						'name' : source,
-						'url'  : source_url,
+						'url'  : self.__get_domain_from_url( full_article['article_url'] ),
 					},
-					'url'      : scrape['url'],
+					'url'      : full_article['article_url'],
 					'pubDate'  : str( item.pubDate.text ),
-					'content'  : full_article
+					'content'  : full_article['export_text']
 				}
 				articles.append( article )
 		return articles
 
 	def get_article_content( self, article_url ):
-		full_article = TorScrape.get_soup( article_url )['soup']
-		if not full_article:
+		source = TorScrape.get_soup( article_url )
+		if not source:
 			return False
+		full_article = source['soup']
 		counter = 0
 		divs_with_paragraphs = []
 		all_article_divs     = full_article.find_all('div')
@@ -90,7 +91,7 @@ class DriverGoogleNews( object ):
 				if num_sentances > 1:
 					export_text += p_text
 		if len( export_text ) > 100:
-			return export_text
+			return { 'export_text': export_text, 'article_url' : source['url'] }
 		else:
 			return False
 

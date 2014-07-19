@@ -37,7 +37,7 @@ class ModelJobLog( object ):
     Mysql.update( 'job_log', the_update, the_where )
 
   def get( self ):
-    qry  = """SELECT * FROM `%s`.`job_log` ORDER BY `start` DESC;""" % self.db_name
+    qry  = """SELECT * FROM `%s`.`job_log` ORDER BY `start` DESC LIMIT 8;""" % self.db_name
     jobs = Mysql.ex( qry )
     return jobs
 

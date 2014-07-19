@@ -57,17 +57,59 @@
           </td>
           <td></td>
         </tr>
+        <!--
+        <tr>
+          <td><b>Type</b></td>
+          <td>
+            {{ d['company']['type'] }}
+            {% if d['company']['type'] %}
+              {{ company['type'] }}
+            {% endif %}
+          </td>
+          <td></td>
+        </tr>
+        -->         
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Record Info -->
+<div class="col-lg-3">
+  <h2>Record Info</h2>
+  <a href="#" id="edit_btn" class="btn btn-primary btn-small">edit</a>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped tablesorter">
+      <tbody>
         <tr>
           <td><b>Front End Display</b></td>
           <td>
-            {% if d['company']['display'] %}
+            {% if d['company']['display'] == 1 %}
               On
             {% else %}
               Off
             {% endif %}
           </td>
           <td></td>
-        </tr>         
+        </tr>            
+        <tr>
+          <td><b>Record Status</b></td>
+          <td>
+            {% if d['company']['record_status'] == 0 %}
+              Raw
+            {% elif d['company']['record_status'] == 1 %}
+              Currently Running
+            {% else %}
+              Status Code: {{ d['company']['record_status'] }}
+            {% endif %}
+            <select class="form-control hide">
+              <option></option>
+              <option value="0">Flagged for Update</option>
+              <option value="2">Done</option>
+            </select>               
+          </td>
+          <td></td>
+        </tr>      
       </tbody>
     </table>
   </div>
@@ -75,7 +117,7 @@
 
 <!-- Company People -->
 {% if d['company']['meta']['people'] %}
-  <div class="col-lg-6">
+  <div class="col-lg-3">
     <h2>People</h2>
     <div class="table-responsive">
       <table class="table table-hover table-striped tablesorter">

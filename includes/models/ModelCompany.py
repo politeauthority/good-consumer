@@ -18,15 +18,23 @@ class ModelCompany( object ):
 
   def __init__( self ):
     self.db_name = MVC.db['name']
+    self.meta_key_type = {
+      'people'   : 'entity_people',
+      'job_news' : 'date_time'
+    }
 
-  def getByID( self, company_id, load_level = 'light' ):
+  def getByID( self, company_id, load_level = 'light', hide = True ):
     """
       Gets a company by ID
       @params:
         company_id : int( ) ex: 5
       return company      
     """
-    qry = """SELECT * FROM `%s`.`companies` WHERE `company_id` = "%s"; """ % ( self.db_name, company_id )
+    qry = """SELECT * FROM `%s`.`companies` WHERE `company_id` = "%s" """ % ( self.db_name, company_id )
+    if hide:
+      qry += " AND `display` = 1;"
+    else:
+      qry += ";"
     company = Mysql.ex( qry )
     if len( company ) == 0:
       return False
@@ -98,9 +106,11 @@ class ModelCompany( object ):
       if 'people' in company['meta']:
         ModelPeople = MVC.loadModel('People')
         people      = []
-        if company['meta']['people'] and ',' in company['meta']['people']:
+        if ',' in company['meta']['people']:
           for person_id in company['meta']['people'].split(','):
             people.append( ModelPeople.getByID( person_id ) )
+        else:
+          people.append( ModelPeople.getByID( company['meta']['people'] ) )
         company['meta']['people'] = people
       ModelCompanyTypes = MVC.loadModel('CompanyTypes')
       company['type']   = ModelCompanyTypes.getByID( company['type'] )
@@ -124,7 +134,7 @@ class ModelCompany( object ):
     """
     new_company = {}
     if 'company_id' in company:
-      company_rec = self.getByID( company['company_id'] )
+      company_rec = self.getByID( company['company_id'], hide = False )
       self.updateDiff( company, company_rec )
     if 'name' not in company or company['name'] == '':
       return False
@@ -134,8 +144,6 @@ class ModelCompany( object ):
       company_id = self.updateDiff( company, exists[0] )
     else:
       new_company['name'] = company['name']
-      if 'symbol' not in company:
-        new_company['symbol'] = None
       if 'slug' not in company:
         Misc = MVC.loadHelper( 'Misc' )
         new_company['slug'] = Misc.slug( company['name'] )
@@ -158,21 +166,21 @@ class ModelCompany( object ):
     """
     company_id = company_rec['company_id']
     diff = {}
-    if 'slug' in company_new and company_new['slug'] != company_rec['slug']:
-      diff['slug'] = company_new['slug']
-    if 'type' in company_new and company_new['type'] != company_rec['type']:
-      diff['type'] = company_new['type']
-    if 'industry' in company_new and company_new['industry'] != company_rec['industry']:
-      diff['industry'] = company_new['industry']
-    if 'headquarters' in company_new and company_new['headquarters'] != company_rec['headquarters']:
-      diff['headquarters'] = company_new['headquarters']  
-    if 'founded' in company_new and company_new['founded'] != company_rec['founded']:
-      diff['founded'] = company_new['founded']
-    if 'wikipedia' in company_new and company_new['wikipedia'] != company_rec['wikipedia']:
-      diff['wikipedia'] = company_new['wikipedia']
+    company_fields = [
+      'name', 
+      'slug', 
+      'type', 
+      'industry', 
+      'headquarters', 
+      'founded',
+      'wikipedia',
+      'record_status']
+    for field in company_fields:
+      if field in company_new and company_new[ field ] != company_rec[ field ]:
+        diff[ field ] = company_new[ field ]   
     diff['date_updated'] = Mysql.now()
-    Debugger.write( 'diff', diff )
     Mysql.update( 'companies', diff, { 'company_id' : company_id } )
+    Debugger.write( 'Company: %s' % company_id, diff )
     return company_id
 
   def createMeta( self, company_id, metas ):
@@ -247,4 +255,4 @@ class ModelCompany( object ):
     print meta_value
     return meta_value
 
-# End File: models/ModelCompany.py
+# End File: includes/models/ModelCompany.py

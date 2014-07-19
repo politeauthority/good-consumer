@@ -30,7 +30,11 @@ class ControllerAdminNews( object ):
   index.exposed = True
 
   def article( self, article_id = None ):
-    return 'article!'
+    ModelNews = MVC.loadModel('News')    
+    data = {
+      'article' : ModelNews.getByID( article_id, load_level = 'full' )
+    }
+    return self.Renderer.build( 'admin/news/article.html', data )
   article.exposed = True
   
-# End File: controllers/ControllerAdminNews.py
+# End File: web/controllers/ControllerAdminNews.py

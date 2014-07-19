@@ -13,7 +13,7 @@ JobLog            = MVC.loadModel('JobLog')
 ModelCompany      = MVC.loadModel('Company')
 ModelCompanies    = MVC.loadModel('Companies')
 ModelCompanyTypes = MVC.loadModel('CompanyTypes')
-ModelCompanyNews  = MVC.loadModel('CompanyNews')
+ModelNews         = MVC.loadModel('News')
 ModelNewsSources  = MVC.loadModel('NewsSources')
 ModelPerson       = MVC.loadModel('Person')
 Wikipedia         = MVC.loadDriver('Wikipedia')
@@ -27,9 +27,9 @@ class Fetcher( object ):
 		self.verbosity = True
 		self.run_arguments = {
 			'find_new_companies'       : False,
-			'update_current_companies' : True,
+			'update_current_companies' : False,
 			'update_current_people'    : False,
-			'fetch_company_news'       : False,
+			'fetch_company_news'       : True,
 			'evaluate_comapny_news'    : False,
 		}
 
@@ -59,7 +59,7 @@ class Fetcher( object ):
 		if self.verbosity:
 			print 'Updating Current Companies'
 		job_id = JobLog.start( 'update_current_companies' )			
-		update_companies = ModelCompanies.getUpdateSet( 200 )
+		update_companies = ModelCompanies.getUpdateSet( 300, hide = False )
 		# update_companies = [ ModelCompany.getBySlug( 'best-buy' ) ]
 		companies_updated = 0
 		people_found      = 0
@@ -70,9 +70,10 @@ class Fetcher( object ):
 				print '  ', company['wikipedia']
 			wiki_info = Wikipedia.get( 'company', company['wikipedia'] )
 			the_company_update = {
-				'company_id' : company['company_id'],
-				'name'       : company['name'],
-				'meta'       : { }
+				'company_id'    : company['company_id'],
+				'name'          : company['name'],
+				'record_status' : 2,
+				'meta'          : { }
 			}
 			if 'people' in wiki_info['infobox']:
 				people_ids = ''
@@ -83,16 +84,17 @@ class Fetcher( object ):
 				people_ids = people_ids[:-1]
 				the_company_update['meta']['people'] = people_ids
 
-			if 'type' in wiki_info['infobox']:
-				company_type_ids = [ ]
-				for company_type in wiki_info['infobox']['type']:
-					company_type_ids.append( ModelCompanyTypes.create( company_type['name'], company_type['wikipedia'] ) )
-				the_company_update['type'] = company_type_ids
+			# Disabling type for now
+			# if 'type' in wiki_info['infobox']:
+			# 	company_type_ids = [ ]
+			# 	for company_type in wiki_info['infobox']['type']:
+			# 		company_type_ids.append( ModelCompanyTypes.create( company_type['name'], company_type['wikipedia'] ) )
+			# 	the_company_update['type'] = company_type_ids
 			
-			Debugger.write( 'the_company_update', the_company_update )
+			# Debugger.write( 'the_company_update', the_company_update )
 			ModelCompany.create( the_company_update )
 			companies_updated = companies_updated + 1
-			Debugger.write( 'Company by id', ModelCompany.getByID( the_company_update['company_id'] ) )
+			# Debugger.write( 'Company by id', ModelCompany.getByID( the_company_update['company_id'], 'full' ) )
 		JobLog.stop( job_id, 'Updated %s companies and found %s people' % ( companies_updated, people_found ) )
 
 	def update_current_people( self ):
@@ -102,17 +104,39 @@ class Fetcher( object ):
 	def fetch_company_news( self ):
 		print 'Fetching Company News'
 		job_id = JobLog.start( 'fetch_company_news' )
-		update_companies = ModelCompanies.getUpdateSet( 100 )
-		companies_count = 0
-		articles_count  = 0
+		update_companies = ModelCompanies.getUpdateSet( 250, hide = False )
+		companies_count  = 0
+		articles_count   = 0
+		if len( update_companies ) == 0:
+			if self.verbosity:
+				print 'No companies found for news fetch'
+			return
 		for company in update_companies:
 			print '  Downloading news articles for ', company['name']
 			company_news = GoogleNews.get( company['name'] )
+
 			for article in company_news:
 				news_source_id = ModelNewsSources.create( article['source'] )
-				ModelCompanyNews.create( company['company_id'], article )
+				a_meta = {
+					'company_asso' : company['company_id']
+				}
+				article.update( { 'news_source_id' : news_source_id } )
+				article.update( { 'meta': a_meta } )
+
+				Debugger.write( 'article', article )
+				ModelNews.create( article )
 				articles_count = articles_count + 1
-			ModelCompany.setUpdateTime( company['company_id'] )
+
+
+
+			the_company_update = {
+				'company_id'    : company['company_id'],
+				'record_status' : 2,
+				'meta'       : {
+					'job_news' : 'ran'
+				}
+			}
+			ModelCompany.create( the_company_update )
 			companies_count = companies_count + 1
 		JobLog.stop( job_id, "Ran %s companies and read %s articles" % ( companies_count, articles_count ) )
 

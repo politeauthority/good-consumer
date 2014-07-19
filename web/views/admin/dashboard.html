@@ -96,8 +96,8 @@
       <tbody>
         {% for news in d['recently_added_news'] %}
           <tr>
-            <td><a href="/admin/news/article/{{ d['company_news_id'] }}"<i class="fa fa-font"></i></td>
-            <td>/admin/news/article/{{ d['company_news_id'] }}</td>
+            <td><a href="/admin/news/article/{{ news['article_id'] }}"<i class="fa fa-font"></i></td>
+            <td></td>
             <td>{{ news['headline'] }}</td>
             <td></td>
           </tr>
@@ -107,8 +107,50 @@
   </div>
 </div>
 
+<!-- Record Status -->
+<div class="col-lg-3">
+  <h2>Record Status</h2>
+  <div class="table-responsive">
+    <table class="table table-hover table-striped tablesorter">
+      <tbody>
+        <tr>
+          <th colspan="3">
+            <h5>Companies</h5>
+          </th>
+        </tr>
+        {% for status in d['stats']['company_status'] %}
+          <tr>
+            <td></td>
+            <td>
+              {% if status['record_status'] == 0 %}
+                Flagged For Update
+              {% elif status['record_status'] == 1 %}
+                Running
+              {% elif status['record_status'] == 2 %}
+                Done
+              {% endif %}
+            </td>
+            <td><b>{{ status['c'] }}</b></td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <th colspan="2">
+            <h5>People</h5>
+          </th>
+        </tr>
+        <tr>
+          <th colspan="2">
+            <h5>News</h5>
+          </th>
+        </tr>               
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
 <!-- Simple Stats -->
-<div class="col-lg-6">
+<div class="col-lg-3">
   <h2>Simple Stats</h2>
   <div class="table-responsive">
     <table class="table table-hover table-striped tablesorter">
@@ -133,3 +175,4 @@
     </table>
   </div>
 </div>
+

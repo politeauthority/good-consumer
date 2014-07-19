@@ -39,14 +39,15 @@ class ModelNews( object ):
 
     return news
 
-  def getByID( self, article_id ):
+  def getByID( self, article_id, load_level = 'light' ):
     qry = """SELECT * FROM
       `%s`.`news` WHERE 
-      news_id = `%s` """ % ( self.db_name, article_id )
-    article = Mysql.now(qry)
+      `article_id` = "%s" """ % ( self.db_name, article_id )
+    article = Mysql.ex( qry )
     if len( article ) == 0:
       return False
-    return article[0]
+    article = self.getLoadLevel( article[0], load_level )
+    return article
   
   def getByCompany( self, company_id ):
     qry = """SELECT * FROM 
@@ -56,9 +57,36 @@ class ModelNews( object ):
     news = Mysql.ex( qry )
     return news
 
+  def getMeta( self, article_id, metas = None ):
+    """
+      @params:
+        article_id : int()
+        metas : list() meta keys
+      @return: 
+        dict{ 'meta_key': 'meta_value' }
+    """
+    qry = """SELECT * FROM `%s`.`news_meta` WHERE `article_id`="%s" """ % ( self.db_name, article_id )
+    if metas:
+      if isinstance( metas, str ):
+        metas = [ metas ]
+      meta  = Mysql.list_to_string( metas )
+      qry  += "AND meta_key IN( %s );" % meta
+    else:
+      qry += ";"
+    the_meta = Mysql.ex( qry )
+    export_meta = {}
+    for meta in the_meta:
+      export_meta[ meta['meta_key'] ] = meta['meta_value']
+    return export_meta
+
+  def getLoadLevel( self, article, load_level = 'light' ):
+    if load_level == 'full':
+      article['meta'] = self.getMeta( article['article_id'] )
+    return article
+
   def create( self, article ):
     """
-      Make a new news article associated with the company
+      Make a new news article associated by meta
     """
     qry = """SELECT * FROM 
       `%s`.`news` 

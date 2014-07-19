@@ -41,7 +41,7 @@ class ModelNewsSources( object ):
     """
       Make a new news source
       @params:
-        source : dict{ 'name': '', 'source': '' }
+        source : dict{ 'name': '', 'url': '' }
       @return:
         news_source_id : int()
     """
@@ -60,9 +60,11 @@ class ModelNewsSources( object ):
       Mysql.insert( 'news_sources', args )
       qry = """SELECT * FROM 
         `%s`.`news_sources` 
-        WHERE `news_source_id` = "%s";""" % (
+        WHERE `url` = "%s";""" % (
         self.db_name,
-        source['name']
+        source['url']
       )
+      exists = Mysql.ex(qry)
+    return exists[0]['source_id']
 
 # End File: models/ModelCompanyNews.py

@@ -140,9 +140,12 @@ class DriverMysql( object ):
         string_ : str()
       @return : str()
     """
-    if not isinstance( string_, unicode ):
-      string_ = unicode( string_, errors='ignore')
-    return mdb.escape_string( string_ )
+    if isinstance( string_, str ):
+      if not isinstance( string_, unicode ):
+        string_ = unicode( string_, errors='ignore')
+      return mdb.escape_string( string_ )
+    else:
+      return str( string_ )
 
   def list_to_string( self, the_list ):
     """

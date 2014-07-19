@@ -25,7 +25,7 @@ class ControllerAdminCompanies( object ):
 
   def index( self ):
     ModelCompanies = MVC.loadModel('Companies')
-    data = { 'companies' : ModelCompanies.getAll() }
+    data = { 'companies' : ModelCompanies.getAll( hide = False ) }
     return self.Renderer.build( 'admin/companies/index.html', data )
   index.exposed = True
 
@@ -33,7 +33,7 @@ class ControllerAdminCompanies( object ):
     if company_id:
       ModelCompany     = MVC.loadModel('Company')
       # ModelCompanyNews = MVC.loadModel('CompanyNews')
-      company = ModelCompany.getByID( company_id, 'full' )     
+      company = ModelCompany.getByID( company_id, 'full', hide = False )     
       if not company:
         raise cherrypy.HTTPRedirect( '/admin/error/?e="cantfindcompany"' )
       data = { 
@@ -45,10 +45,18 @@ class ControllerAdminCompanies( object ):
       raise cherrypy.HTTPRedirect( '/admin/error/?e="cantfindcompany"' )      
   info.exposed = True
 
+  def types( self ):
+    ModelCompanyTypes = MVC.loadModel('CompanyTypes')
+    data = {
+      'types' : ModelCompanyTypes.getAll()
+    }
+    return self.Renderer.build( 'admin/companies/types.html', data )
+  types.exposed = True
+
   def delete( self, meta_id ):
     Settings = MVC.loadHelper( 'Settings')
     Settings.delete( meta_id )
     raise cherrypy.HTTPRedirect( '/admin/settings' )
   delete.exposed = True
   
-# End File: controllers/ControllerAdminCompanies.py
+# End File: web/controllers/ControllerAdminCompanies.py

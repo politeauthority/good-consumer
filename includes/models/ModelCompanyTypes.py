@@ -12,6 +12,7 @@ MVC = MVC()
 
 Mysql    = MVC.loadDriver('Mysql')
 Debugger = MVC.loadHelper('Debug')
+
 class ModelCompanyTypes( object ):
 
   def __init__( self ):
