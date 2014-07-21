@@ -21,24 +21,24 @@ Mysql = MVC.loadDriver('Mysql' )
 Mysql.ex( 'CREATE DATABASE IF NOT EXISTS `%s`;' % MVC.db['name'] )
 
 if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
-  dropTable_options          = "DROP TABLE IF EXISTS `%s`.`options`; "         % MVC.db['name']
-  dropTable_users            = "DROP TABLE IF EXISTS `%s`.`users`; "           % MVC.db['name']
-  dropTable_usermeta         = "DROP TABLE IF EXISTS `%s`.`usermeta`; "        % MVC.db['name']
-  dropTable_acl_roles        = "DROP TABLE IF EXISTS `%s`.`acl_roles`; "       % MVC.db['name']
-  dropTable_acl_permissions  = "DROP TABLE IF EXISTS `%s`.`acl_permissions`; " % MVC.db['name']
-  dropTable_acl_role_perms   = "DROP TABLE IF EXISTS `%s`.`acl_role_perms`; "  % MVC.db['name']
-  dropTable_acl_user_perms   = "DROP TABLE IF EXISTS `%s`.`acl_user_perms`; "  % MVC.db['name']
-  dropTable_acl_user_roles   = "DROP TABLE IF EXISTS `%s`.`acl_user_roles`; "  % MVC.db['name']
-  dropTable_companies        = "DROP TABLE IF EXISTS `%s`.`companies`; "       % MVC.db['name']
-  dropTable_company_meta     = "DROP TABLE IF EXISTS `%s`.`company_meta`; "    % MVC.db['name']
-  dropTable_company_types    = "DROP TABLE IF EXISTS `%s`.`company_types`; "   % MVC.db['name']
-  dropTable_company_industry = "DROP TABLE IF EXISTS `%s`.`company_industry`;" % MVC.db['name']
-  dropTable_news             = "DROP TABLE IF EXISTS `%s`.`news`;"             % MVC.db['name']
-  dropTable_news_meta        = "DROP TABLE IF EXISTS `%s`.`news_meta`;"        % MVC.db['name']
-  dropTable_news_sources     = "DROP TABLE IF EXISTS `%s`.`news_sources`; "    % MVC.db['name']
-  dropTable_people           = "DROP TABLE IF EXISTS `%s`.`people`; "          % MVC.db['name']
-  dropTable_people_meta      = "DROP TABLE IF EXISTS `%s`.`people_meta`; "     % MVC.db['name']
-  dropTable_job_log          = "DROP TABLE IF EXISTS `%s`.`job_log`; "         % MVC.db['name']
+  dropTable_options            = "DROP TABLE IF EXISTS `%s`.`options`; "          % MVC.db['name']
+  dropTable_users              = "DROP TABLE IF EXISTS `%s`.`users`; "            % MVC.db['name']
+  dropTable_usermeta           = "DROP TABLE IF EXISTS `%s`.`usermeta`; "         % MVC.db['name']
+  dropTable_acl_roles          = "DROP TABLE IF EXISTS `%s`.`acl_roles`; "        % MVC.db['name']
+  dropTable_acl_permissions    = "DROP TABLE IF EXISTS `%s`.`acl_permissions`; "  % MVC.db['name']
+  dropTable_acl_role_perms     = "DROP TABLE IF EXISTS `%s`.`acl_role_perms`; "   % MVC.db['name']
+  dropTable_acl_user_perms     = "DROP TABLE IF EXISTS `%s`.`acl_user_perms`; "   % MVC.db['name']
+  dropTable_acl_user_roles     = "DROP TABLE IF EXISTS `%s`.`acl_user_roles`; "   % MVC.db['name']
+  dropTable_companies          = "DROP TABLE IF EXISTS `%s`.`companies`; "        % MVC.db['name']
+  dropTable_companies_meta     = "DROP TABLE IF EXISTS `%s`.`companies_meta`; "   % MVC.db['name']
+  dropTable_companies_types    = "DROP TABLE IF EXISTS `%s`.`companies_types`; "  % MVC.db['name']
+  dropTable_companies_industry = "DROP TABLE IF EXISTS `%s`.`companies_industry`;"% MVC.db['name']
+  dropTable_articles           = "DROP TABLE IF EXISTS `%s`.`articles`;"          % MVC.db['name']
+  dropTable_articles_meta      = "DROP TABLE IF EXISTS `%s`.`articles_meta`;"     % MVC.db['name']
+  dropTable_articles_sources   = "DROP TABLE IF EXISTS `%s`.`articles_sources`; " % MVC.db['name']
+  dropTable_people             = "DROP TABLE IF EXISTS `%s`.`people`; "           % MVC.db['name']
+  dropTable_people_meta        = "DROP TABLE IF EXISTS `%s`.`people_meta`; "      % MVC.db['name']
+  dropTable_job_log            = "DROP TABLE IF EXISTS `%s`.`job_log`; "          % MVC.db['name']
 
   Mysql.ex( dropTable_options )
   Mysql.ex( dropTable_users )
@@ -49,12 +49,12 @@ if( len( sys.argv ) > 1 and sys.argv[1] == 'cleanup' ):
   Mysql.ex( dropTable_acl_user_perms )
   Mysql.ex( dropTable_acl_user_roles )
   Mysql.ex( dropTable_companies )
-  Mysql.ex( dropTable_company_meta )
-  Mysql.ex( dropTable_company_types )
-  Mysql.ex( dropTable_company_industry )
-  Mysql.ex( dropTable_news )
-  Mysql.ex( dropTable_news_meta )
-  Mysql.ex( dropTable_news_sources )
+  Mysql.ex( dropTable_companies_meta )
+  Mysql.ex( dropTable_companies_types )
+  Mysql.ex( dropTable_companies_industry )
+  Mysql.ex( dropTable_articles )
+  Mysql.ex( dropTable_articles_meta )
+  Mysql.ex( dropTable_articles_sources )
   Mysql.ex( dropTable_people )
   Mysql.ex( dropTable_people_meta )
   Mysql.ex( dropTable_job_log )
@@ -152,7 +152,7 @@ createTable_acl_user_roles  = """
 # Create Good Consumer tables
 createTable_companies = """
   CREATE TABLE `%s`.`companies` (
-    `company_id`     INT(10) NOT NULL AUTO_INCREMENT,
+    `id`             INT(10) NOT NULL AUTO_INCREMENT,
     `name`           VARCHAR(255) DEFAULT NULL,
     `slug`           VARCHAR(255) DEFAULT NULL,
     `type`           VARCHAR(255) DEFAULT NULL,
@@ -163,14 +163,15 @@ createTable_companies = """
     `display`        INT(1) DEFAULT 0,
     `record_status`  INT(10) DEFAULT 0,    
     `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`company_id`)
+    PRIMARY KEY (`id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
-createTable_company_meta = """
-  CREATE TABLE `%s`.`company_meta` (
+createTable_companies_meta = """
+  CREATE TABLE `%s`.`companies_meta` (
     `meta_id`      INT(10) NOT NULL AUTO_INCREMENT,
-    `company_id`   INT(10) NOT NULL,
+    `id`           INT(10) NOT NULL,
+    `meta_type`    VARCHAR(100) NOT NULL,    
     `meta_key`     VARCHAR(255) NOT NULL,
     `meta_value`   TEXT DEFAULT NULL,
     `pretty_name`  VARCHAR(255) DEFAULT NULL,
@@ -180,29 +181,29 @@ createTable_company_meta = """
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
-createTable_company_types = """
-  CREATE TABLE `%s`.`company_types` (
-    `company_type_id`   INT(10) NOT NULL AUTO_INCREMENT,
-    `name`              VARCHAR(255) NOT NULL,
-    `desc`              VARCHAR(255) NULL,
-    `wikipedia`         VARCHAR(255) NULL,
-    PRIMARY KEY(`company_type_id`)
+createTable_companies_types = """
+  CREATE TABLE `%s`.`companies_types` (
+    `id`        INT(10) NOT NULL AUTO_INCREMENT,
+    `name`      VARCHAR(255) NOT NULL,
+    `desc`      VARCHAR(255) NULL,
+    `wikipedia` VARCHAR(255) NULL,
+    PRIMARY KEY(`id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
-createTable_company_industry = """
-  CREATE TABLE `%s`.`company_industry` (
-    `company_industry_id` INT(10) NOT NULL AUTO_INCREMENT,
-    `name`                VARCHAR(255)   NOT NULL,
-    `desc`                VARCHAR(255)   NULL,
-    `wikipedia`           VARCHAR(255)   NULL,
-    PRIMARY KEY(`company_industry_id`)
+createTable_companies_industry = """
+  CREATE TABLE `%s`.`companies_industry` (
+    `id`        INT(10) NOT NULL AUTO_INCREMENT,
+    `name`      VARCHAR(255)   NOT NULL,
+    `desc`      VARCHAR(255)   NULL,
+    `wikipedia` VARCHAR(255)   NULL,
+    PRIMARY KEY(`id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
-createTable_news = """
-  CREATE TABLE `%s`.`news` (
-    `news_id`      INT(10) NOT NULL AUTO_INCREMENT,
+createTable_articles = """
+  CREATE TABLE `%s`.`articles` (
+    `id`              INT(10) NOT NULL AUTO_INCREMENT,
     `url`             TEXT NOT NULL,    
     `headline`        VARCHAR(255) NULL,
     `publish_date`    TIMESTAMP DEFAULT '0000-00-00 00:00:00',
@@ -210,14 +211,15 @@ createTable_news = """
     `content`         TEXT DEFAULT NULL,
     `record_status`   INT(10) DEFAULT 0,
     `date_updated`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY(`article_id`)
+    PRIMARY KEY(`id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
-createTable_news_meta = """
-  CREATE TABLE `%s`.`news_meta` (
+createTable_articles_meta = """
+  CREATE TABLE `%s`.`articles_meta` (
     `meta_id`      INT(10) NOT NULL AUTO_INCREMENT,
-    `article_id`   INT(10) NOT NULL,
+    `id`           INT(10) NOT NULL,
+    `meta_type`    VARCHAR(100) NOT NULL,
     `meta_key`     VARCHAR(255) NOT NULL,
     `meta_value`   TEXT DEFAULT NULL,
     `pretty_name`  VARCHAR(255) DEFAULT NULL,
@@ -227,45 +229,46 @@ createTable_news_meta = """
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
-createTable_news_sources = """
-  CREATE TABLE `%s`.`news_sources` (
-    `source_id`       INT(10) NOT NULL AUTO_INCREMENT,
-    `name`            VARCHAR(255) DEFAULT NULL,
-    `url`             TEXT DEFAULT NULL,
-    `article_count`   INT(10) DEFAULT 0,
+createTable_articles_sources = """
+  CREATE TABLE `%s`.`articles_sources` (
+    `id`            INT(10) NOT NULL AUTO_INCREMENT,
+    `name`          VARCHAR(255) DEFAULT NULL,
+    `url`           TEXT DEFAULT NULL,
+    `article_count` INT(10) DEFAULT 0,
     `date_updated`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,    
-    PRIMARY KEY(`source_id`)
+    PRIMARY KEY(`id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_people = """ 
   CREATE TABLE `%s`.`people` (
-    `person_id`       INT(10) NOT NULL AUTO_INCREMENT,
-    `name`            VARCHAR(255) DEFAULT NULL,
+    `id`            INT(10) NOT NULL AUTO_INCREMENT,
+    `name`          VARCHAR(255) DEFAULT NULL,
     `slug`            VARCHAR(255) DEFAULT NULL,
     `wikipedia`       VARCHAR(255) DEFAULT NULL,
     `display`         INT(1) DEFAULT 1,
     `record_status`   INT(10) DEFAULT 0,
     `date_updated`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`person_id`)
+    PRIMARY KEY (`id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_people_meta = """
   CREATE TABLE `%s`.`people_meta` (
-    `meta_id`      INT(10) NOT NULL AUTO_INCREMENT,
-    `person_id`    INT(10) NOT NULL,
-    `meta_key`     VARCHAR(255) NOT NULL,
-    `meta_value`   VARCHAR(255) NOT NULL,
-    `pretty_name`  VARCHAR(255) DEFAULT NULL,
-    `help_text`    VARCHAR(255) DEFAULT NULL,
+    `meta_id`     INT(10) NOT NULL AUTO_INCREMENT,
+    `id`          INT(10) NOT NULL,
+    `meta_type`   VARCHAR(100) NOT NULL,    
+    `meta_key`    VARCHAR(255) NOT NULL,
+    `meta_value`  VARCHAR(255) NOT NULL,
+    `pretty_name` VARCHAR(255) DEFAULT NULL,
+    `help_text`   VARCHAR(255) DEFAULT NULL,
     `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`meta_id`) 
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_job_log = """
-  CREATE TABLE `good_consumer`.`job_log` (
+  CREATE TABLE `%s`.`job_log` (
     `id`         INT(10) NOT NULL AUTO_INCREMENT,
     `job`        VARCHAR(255) NOT NULL,
     `start`      TIMESTAMP DEFAULT '0000-00-00 00:00:00',
@@ -273,8 +276,7 @@ createTable_job_log = """
     `message`    TEXT DEFAULT NULL,
     PRIMARY KEY (`id`)
   )
-  DEFAULT CHARSET = utf8;
-"""
+  DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 Mysql.ex( createTable_options )
 Mysql.ex( createTable_users )
@@ -285,12 +287,12 @@ Mysql.ex( createTable_acl_role_perms)
 Mysql.ex( createTable_acl_user_perms )
 Mysql.ex( createTable_acl_user_roles )
 Mysql.ex( createTable_companies )
-Mysql.ex( createTable_company_meta )
-Mysql.ex( createTable_company_types )
-Mysql.ex( createTable_company_industry )
-Mysql.ex( createTable_news )
-Mysql.ex( createTable_news_meta )
-Mysql.ex( createTable_news_sources)
+Mysql.ex( createTable_companies_meta )
+Mysql.ex( createTable_companies_types )
+Mysql.ex( createTable_companies_industry )
+Mysql.ex( createTable_articles )
+Mysql.ex( createTable_articles_meta )
+Mysql.ex( createTable_articles_sources)
 Mysql.ex( createTable_people )
 Mysql.ex( createTable_people_meta )
 Mysql.ex( createTable_job_log )

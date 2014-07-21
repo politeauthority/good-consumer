@@ -1,6 +1,6 @@
 #!/usr/bin/python
 """
-  Admin News Controller
+  Admin Articles Controller
   This Controller handles Admin - News interactions
 """
 import sys
@@ -14,7 +14,7 @@ import cherrypy
 
 Debugger = MVC.loadHelper('Debug')
 
-class ControllerAdminNews( object ):
+class ControllerAdminArticles( object ):
 
   def __init__( self ):
     self.Renderer          = MVC.loadDriver('Renderer')
@@ -26,29 +26,29 @@ class ControllerAdminNews( object ):
     }
 
   def index( self ):
-    ModelNews        = MVC.loadModel('News')
-    ModelNewsSources = MVC.loadModel('NewsSources')
+    ModelArticles        = MVC.loadModel('Articles')
+    ModelArticlesSources = MVC.loadModel('ArticlesSources')
     data = { 
-      'articles' : ModelNews.getAll(),
-      'sources'  : ModelNewsSources.getAll()
+      'articles' : ModelArticles.getAll(),
+      'sources'  : ModelArticlesSources.getAll()
     }
-    return self.Renderer.build( 'admin/news/index.html', data )
+    return self.Renderer.build( 'admin/articles/index.html', data )
   index.exposed = True
 
   def article( self, article_id = None ):
-    ModelNews = MVC.loadModel('News')    
+    ModelArticles = MVC.loadModel('News')    
     data = {
-      'article' : ModelNews.getByID( article_id, load_level = 'full' )
+      'article' : ModelArticles.getByID( article_id, load_level = 'full' )
     }
-    return self.Renderer.build( 'admin/news/article.html', data )
+    return self.Renderer.build( 'admin/articles/article.html', data )
   article.exposed = True
 
   def source( self, source_id = None ):
-    ModelNews = MVC.loadModel('News')
+    ModelArticles = MVC.loadModel('Articles')
     data = {
-      'articles' : ModelNews.getBySource( source_id )
+      'articles' : ModelArticles.getBySource( source_id )
     }
-    return self.Renderer.build( 'admin/news/source.html', data )    
+    return self.Renderer.build( 'admin/articles/source.html', data )    
   source.exposed = True  
 
 # End File: web/controllers/ControllerAdminNews.py

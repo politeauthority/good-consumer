@@ -38,10 +38,10 @@ class ModelCompanies( object ):
       return []
     company_ids = []
     for c in update_companies:
-      company_ids.append( c['company_id'] )
+      company_ids.append( c['id'] )
     qry2 = """UPDATE `%s`.`companies`
       SET `record_status` = 1
-      WHERE company_id IN ( %s );""" % ( self.db_name, Mysql.list_to_string( company_ids ) )
+      WHERE `id` IN ( %s );""" % ( self.db_name, Mysql.list_to_string( company_ids ) )
     Mysql.ex(qry2)
     return update_companies
 

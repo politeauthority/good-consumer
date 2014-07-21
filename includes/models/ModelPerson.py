@@ -20,7 +20,7 @@ class ModelPerson( object ):
     self.db_name = MVC.db['name']
 
   def getByID( self, person_id ):
-    qry = """SELECT * FROM `%s`.`people` WHERE `person_id` = "%s"; """ % ( self.db_name, person_id )
+    qry = """SELECT * FROM `%s`.`people` WHERE `people_id` = "%s"; """ % ( self.db_name, person_id )
     person = Mysql.ex( qry )
     if len( person ) == 0:
       return False
@@ -33,11 +33,11 @@ class ModelPerson( object ):
         slug : str( ) ex: donald-trump
       return person
     """
-    qry = """SELECT * FROM `%s`.`person` WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( person_slug ) )
+    qry = """SELECT * FROM `%s`.`people` WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( person_slug ) )
     person = Mysql.ex( qry )
     return person[0]
 
-  def getByName( self, person_name ):
+  def getByName( self, people_name ):
     """
       Get a person by the exact name
       @params : str( ) Donald Trump
@@ -118,7 +118,7 @@ class ModelPerson( object ):
     exists = Mysql.ex( qry )
     if len( exists ) != 0:
       self.updateDiff( person, exists[0] )
-      person_id = exists[0]['person_id']
+      person_id = exists[0]['id']
     else:
       if 'name' in person:
         new_person['name'] = person['name']
@@ -134,7 +134,7 @@ class ModelPerson( object ):
       else:
         new_person['wikipedia'] = person['wikipedia']
       Mysql.insert( 'people', new_person )
-      person_id = self.getByWiki( new_person['wikipedia'] )['person_id']
+      person_id = self.getByWiki( new_person['wikipedia'] )['id']
     if 'meta' in person:
       self.createMeta( person_id, person['meta'] )
     return person_id
@@ -143,7 +143,7 @@ class ModelPerson( object ):
     """
       Updates a person record by a diff of the values
     """
-    person_id = person_rec['person_id']
+    person_id = person_rec['id']
     diff = {}
     if 'slug' in person_new and person_new['slug'] != person_rec['slug']:
       diff['slug'] = person_new['slug']
@@ -151,7 +151,7 @@ class ModelPerson( object ):
       diff['wikipedia'] = person_new['wikipedia']
     if len( diff ) > 0:
       diff['date_updated'] = Mysql.now()
-      Mysql.update( 'people', diff, { 'person_id' : person_id } )
+      Mysql.update( 'people', diff, { 'id' : person_id } )
 
   def createMeta( self, person_id, metas ):
     """
@@ -187,4 +187,4 @@ class ModelPerson( object ):
         the_where = { 'meta_key': key }
         Mysql.update( 'people_meta', the_update, the_where )
 
-# End File: models/ModelPerson.py
+# End File: includes/models/ModelPerson.py
