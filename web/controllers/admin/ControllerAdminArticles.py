@@ -35,13 +35,13 @@ class ControllerAdminArticles( object ):
     return self.Renderer.build( 'admin/articles/index.html', data )
   index.exposed = True
 
-  def article( self, article_id = None ):
-    ModelArticles = MVC.loadModel('News')    
+  def info( self, article_id = None ):
+    ModelArticles = MVC.loadModel('Articles')    
     data = {
-      'article' : ModelArticles.getByID( article_id, load_level = 'full' )
+      'article' : ModelArticles.getByID( article_id, hide = False, load_level = 'full' )
     }
     return self.Renderer.build( 'admin/articles/article.html', data )
-  article.exposed = True
+  info.exposed = True
 
   def source( self, source_id = None ):
     ModelArticles = MVC.loadModel('Articles')
@@ -51,4 +51,4 @@ class ControllerAdminArticles( object ):
     return self.Renderer.build( 'admin/articles/source.html', data )    
   source.exposed = True  
 
-# End File: web/controllers/ControllerAdminNews.py
+# End File: web/controllers/ControllerAdminArticles.py

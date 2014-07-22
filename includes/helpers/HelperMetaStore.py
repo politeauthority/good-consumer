@@ -25,6 +25,20 @@ class HelperMetaStore( object ):
     self.entities   = [ 'companies', 'people', 'articles' ] 
 
   def get( self, entity_id, entity = None, metas = None ):
+    """
+      @params:
+        entity_id : 12
+        entity    : 'companies'
+        metas     : [ 'meta_key', 'meta_key' ]
+      @return: [ {
+        'meta_key' : {
+          'meta_value' : 'something',
+          'meta_type'  : 'string',
+          'meta_id'    : 1234,
+          'id'         : 42
+        },
+      } ]
+    """
     if self.entity not in self.entities and entity not in self.entities:
       print 'INCORRECT ENTITY USAGE: ', entity
       sys.exit()
@@ -59,6 +73,18 @@ class HelperMetaStore( object ):
     return meta_return
 
   def create( self, entity, entity_id, metas ):
+    """
+    Create of update a meta entry.
+    @params:
+      entity    : 'companies',
+      entity_id : 103
+      metas     : [ {
+        'meta_key'   : 'assoc_company',
+        'meta_value' : '123,532',
+        'meta_type'  : 'comma',
+        'action'     : 'append'
+      } ]
+    """
     self.entity = entity
     entity_meta = self.get( entity_id )
     update_meta = []
@@ -92,9 +118,19 @@ class HelperMetaStore( object ):
       Mysql.insert( "%s_meta" % entity, values )
 
     for u_meta in update_meta:
-      meta_type = entity_meta[ u_meta['meta_key'] ]['type']
+      meta_value = u_meta['meta_value']
+      try:
+        meta_type = entity_meta[ u_meta['meta_key'] ]['meta_type']
+      except KeyError:
+        Debugger.write( 'KeyERROR line 123 entity_meta, u_meta[meta_key]', ( entity_meta,  u_meta['meta_key'] ) )
+        sys.exit()
+      if 'action' in u_meta:
+        if u_meta['action'] == 'append':
+          if u_meta['meta_type'] == 'comma':
+            meta_value = entity_meta[ u_meta['meta_key'] ]['value']
+            meta_value.append( u_meta['meta_value'] )
       values = {
-        'meta_value' : self.__encode_value( meta_type, u_meta['meta_value'] )
+        'meta_value' : self.__encode_value( meta_type,meta_value )
       }
       where = {
         'id'       : entity_id,
@@ -110,9 +146,14 @@ class HelperMetaStore( object ):
     return parsed
 
   def __encode_value( self, e_type, value ):
+    """
+      Encodes a value on its way to the datbase.
+    """
     if e_type == 'string':
-      return str( value )
+      return value
     elif e_type == 'date':
+      if value == 'now':
+        return Mysql.now()
       try:
         return datetime.strptime( value, '%Y-%m-%d %H:%M:%S' )
       except:
@@ -123,6 +164,10 @@ class HelperMetaStore( object ):
       return json.dumps( value, ensure_ascii=False )
 
   def __decode_value( self, e_type, value ):
+    """
+      Decodes a value from the database out to the application
+      based on the type of data which is stored.
+    """
     if e_type == 'string':
       return str( value )
     elif e_type == 'date':
@@ -130,8 +175,11 @@ class HelperMetaStore( object ):
         return datetime.strptime( value, '%Y-%m-%d %H:%M:%S' )
       except:
         return value
-    elif e_type == 'comma':
-      return e_type.split( ',' )
+    elif e_type == 'comma' and value:
+      if ',' in value:
+        return value.split( ',' )
+      else:
+        return [ value ]
     elif e_type == 'json':
       return json.loads( value )
 

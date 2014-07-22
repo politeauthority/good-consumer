@@ -13,11 +13,23 @@ MVC = MVC()
 Mysql    = MVC.loadDriver('Mysql')
 
 class ModelArticlesSources( object ):
+  """
+    AritcleSource {
+      'id'            : 50,
+      'name'          : 'New York Times',
+      'url'           : 'http://www.nytimes.com/'
+      'article_count' : 20,
+      'date_updated'  : '2014-07-15 23:55:12'
+    }
+  """
 
   def __init__( self ):
     self.db_name = MVC.db['name']
 
   def getAll( self, limit = None ):
+    """
+      @return: [ ArticleSource{}, ArticleSource{} ]
+    """
     qry = """SELECT * FROM 
       `%s`.`articles_sources` 
       ORDER BY `article_count` DESC """ % ( self.db_name )
@@ -30,12 +42,12 @@ class ModelArticlesSources( object ):
 
   def getByID( self, article_id ):
     qry = """SELECT * FROM
-      `%s`.`articles_sources` WHERE 
-      company_articles_id = `%s` """ % ( self.db_name, article_id )
-    article = Mysql.now(qry)
-    if len( article ) == 0:
+      `%s`.`articles_sources` 
+      WHERE `id` = "%s"; """ % ( self.db_name, article_id )
+    source = Mysql.ex(qry)
+    if len( source ) == 0:
       return False
-    return article[0]
+    return source[0]
   
   def create( self, source ):
     """
@@ -68,12 +80,15 @@ class ModelArticlesSources( object ):
     return exists[0]['id']
 
   def updateCounts( self ):
+    """
+      Sets the proper article count by each unique source.
+    """
     qry = """ SELECT distinct(`source_id`), count(*) as c 
       FROM `%s`.`articles` GROUP BY 1 ORDER BY 2;""" % self.db_name
     sources = Mysql.ex( qry )
     for source in sources:
       the_args  = { 'article_count' : source['c'] }
-      the_where = { 'source_id' : source['source_id'] }
+      the_where = { 'id' : source['source_id'] }
       Mysql.update( 'articles_sources', the_args, the_where )
     return True
 

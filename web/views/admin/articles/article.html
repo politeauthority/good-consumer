@@ -2,7 +2,10 @@
   <div class="col-lg-12">
     <h1>Article</h1>
     <ol class="breadcrumb">
-      <li><a href="/admin/news/"><i class="icon-dashboard"></i> News</a></li>
+      <li><a href="/admin/articles/"><i class="icon-dashboard"></i> Articles</a></li>
+      <li>
+        <a href="/admin/articles/source/{{ d['article']['source']['id'] }}">{{ d['article']['source']['name'] }}</a>
+      </li>
       <li>{{ d['article']['headline'] }}</li>
     </ol>
   </div>
@@ -36,6 +39,6 @@
     </table>
   </div>
 </div>
-{{d}}
+{{d['article']['source']}}
 
 

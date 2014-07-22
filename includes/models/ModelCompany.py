@@ -15,6 +15,28 @@ Mysql    = MVC.loadDriver('Mysql')
 Debugger = MVC.loadHelper('Debug')
 
 class ModelCompany( object ):
+  """
+    Company {
+      'id'            : 50,
+      'name'          : 'New York Times',
+      'slug'          : 'http://www.nytimes.com/',
+      'type'          : 20,   
+      'industry'      : 'Web Development',
+      'headquarters'  : 'Washington D.C.',
+      'founded'       : 1990-06-24 13:25:19,
+      'wikipedia'     : 'http://',
+      'display'       : 1,
+      'record_status' : 2,
+      'date_updated'  : '2014-07-15 23:55:12',
+    }
+
+    Record Status Keys {
+        0  :  Raw
+        1  :  Flagged for Update
+        2  :  In Process
+        3  :  Finished
+    }    
+  """
 
   def __init__( self ):
     self.db_name = MVC.db['name']
@@ -48,7 +70,9 @@ class ModelCompany( object ):
         company_slug : str( ) ex: oscar-myer
       return company
     """
-    qry = """SELECT * FROM `%s`.`companies` WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( company_slug ) )
+    qry = """SELECT * FROM
+      `%s`.`companies` 
+      WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( company_slug ) )
     company = Mysql.ex( qry )
     if len( company ) == 0:
       return False
@@ -87,24 +111,21 @@ class ModelCompany( object ):
         dict{ 'meta_key': 'meta_value' }
     """
     MetaStore = MVC.loadHelper('MetaStore')
-    return MetaStore.get( entity='companies', entity_id=company_id  )
+    return MetaStore.get( entity = 'companies', entity_id = company_id  )
 
   def getLoadLevel( self, company, load_level = 'light' ):
     if load_level == 'full':
       company['meta'] = self.getMeta( company['id'] )
-      Debugger.write('company_meta', company['meta'] )      
-      if 'people' in company['meta']:
-        ModelPeople = MVC.loadModel('People')
-        people      = []
-
-        if ',' in company['meta']['people']:
-          for person_id in company['meta']['people'].split(','):
-            people.append( ModelPeople.getByID( person_id ) )
-        else:
-          people.append( ModelPeople.getByID( company['meta']['people'] ) )
-        company['meta']['people'] = people
-      # ModelCompanyTypes = MVC.loadModel('CompanyTypes')
-      # company['type']   = ModelCompanyTypes.getByID( company['type'] )
+      if company['meta']:      
+        if 'assoc_people' in company['meta']:
+          ModelPerson = MVC.loadModel('Person')
+          people      = []
+          if company['meta']['assoc_people']['value']:
+            for p_id in company['meta']['assoc_people']['value']:
+              people.append( ModelPerson.getByID( p_id ) )
+            company['meta']['assoc_people'] = people
+        # ModelCompanyTypes = MVC.loadModel('CompanyTypes')
+        # company['type']   = ModelCompanyTypes.getByID( company['type'] )
     return company
 
   def create( self, company ):
@@ -129,7 +150,7 @@ class ModelCompany( object ):
       self.updateDiff( company, company_rec )
     if 'name' not in company or company['name'] == '':
       return False
-    qry = """SELECT * FROM `%s`.`companies` WHERE name = "%s";""" % ( self.db_name, company['name'] )
+    qry = """SELECT * FROM `%s`.`companies` WHERE `name` = "%s";""" % ( self.db_name, company['name'] )
     exists = Mysql.ex( qry )
     if len( exists ) != 0:
       company_id = self.updateDiff( company, exists[0] )
@@ -200,21 +221,5 @@ class ModelCompany( object ):
         meta_value : int(), str(), list[], dict{}
     """
     self.createMeta( company_id, { meta_key: meta_value } )
-
-  def __prepare_meta_value( self, meta_value ):
-    """
-      Creates the proper store for meta values
-      @params:
-        meta_value : str(), int(), list[], dict{}
-      @return: SQL ready json object or str()
-    """
-    import json
-    if isinstance( meta_value, list ):
-      meta_value = json.loads( meta_value )
-      print 'its a list'
-    elif isinstance( meta_value, dict ):
-      meta_value = json.loads( meta_value )
-    print meta_value
-    return meta_value
 
 # End File: includes/models/ModelCompany.py
