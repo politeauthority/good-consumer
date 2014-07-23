@@ -25,9 +25,10 @@ class DriverWikipedia( object ):
       '/wiki/executive_vice_president', '/wiki/cfo', '/wiki/chairman', '/wiki/chief_operating_officer',
       '/wiki/board_of_directors/wiki/president#non-governmental_presidents', '/wiki/chief_operating_officer', 
       '/wiki/president#non-governmental_presidents', '/wiki/Chief_brand_officer', '/wiki/Chairman#Corporate_governance',
-      '/wiki/Senior_vice_president', '/wiki/Vice_President#Vice_presidents_in_business', '/wiki/Treasurer#Corporate_treasurers',
-      '/wiki/Creative_director', '/wiki/Chief_financial_officer', '/wiki/Chief_strategy_officer', '/wiki/Entrepreneur',
-      '/wiki/Chief_Accounting_Officer', '/wiki/Executive_director', '/wiki/Entrepreneur', '/wiki/Chief_marketing_officer' ]
+      '/wiki/senior_vice_president', '/wiki/vice_president#vice_presidents_in_business', '/wiki/treasurer#corporate_treasurers',
+      '/wiki/creative_director', '/wiki/chief_financial_officer', '/wiki/chief_strategy_officer', '/wiki/entrepreneur',
+      '/wiki/chief_acccounting_officer', '/wiki/executive_director', '/wiki/entrepreneur', '/wiki/chief_marketing_officer',
+      'http://en.wikipedia.org/wiki/chairman#executive' ]
 
   def get( self, fetch_type, wiki_url ):
     sourced_info = {}

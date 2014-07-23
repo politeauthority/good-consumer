@@ -2,6 +2,7 @@
 """
   Admin Home Controller
   Handles all /admin URL requests.
+  File : web/controllers/admin/ControllerAdminHome.py
 """
 import sys
 import os
@@ -21,6 +22,7 @@ class ControllerAdminHome( object ):
   companies = MVC.loadController( 'admin/AdminCompanies' )
   people    = MVC.loadController( 'admin/AdminPeople' )
   articles  = MVC.loadController( 'admin/AdminArticles' )
+  search    = MVC.loadController( 'admin/AdminSearch' )
 
   def __init__( self ):
     self.Renderer          = MVC.loadDriver('Renderer')
@@ -92,4 +94,4 @@ class ControllerAdminHome( object ):
         return 'failure'
   edit_ajax.exposed = True     
 
-# End File: controllers/admin/ControllerAdminHome.py
+# End File: web/controllers/admin/ControllerAdminHome.py

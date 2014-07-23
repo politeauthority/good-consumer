@@ -50,8 +50,7 @@ class ModelCompanies( object ):
         `%s`.companies
         WHERE `record_status` = 1 """ % self.db_name
       qry += """ORDER BY `date_updated` ASC LIMIT %s;""" % the_diff 
-      update_companies_added = Mysql.ex( qry )
-      Debugger.write( 'update_companies_added', update_companies_added )      
+      update_companies_added = Mysql.ex( qry ) 
       for c in update_companies_added:
         final_set.append(c)
     company_ids = []
@@ -65,7 +64,10 @@ class ModelCompanies( object ):
     return update_companies
 
   def getRecentlyUpdated( self, limit = 20, hide = True ):
-    qry = """SELECT * FROM `%s`.`companies` ORDER BY `date_updated` DESC LIMIT %s;""" % ( self.db_name, limit )
+    qry = """SELECT * FROM 
+      `%s`.`companies` 
+      ORDER BY `date_updated` 
+      DESC LIMIT %s;""" % ( self.db_name, limit )
     return Mysql.ex( qry )
 
 # End File: includes/models/ModelCompanies.py
