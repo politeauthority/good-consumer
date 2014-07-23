@@ -1,7 +1,7 @@
 #!/usr/bin/python
 """
   Admin Search Controller
-  This Controller handles Admin - Company interactions
+  This Controller handles Admin - Search interactions
 """
 import sys
 import os
@@ -26,29 +26,7 @@ class ControllerAdminSearch( object ):
   def index( self ):
     ModelCompanies = MVC.loadModel('Companies')
     data = { 'companies' : ModelCompanies.getAll() }
-    return self.Renderer.build( 'admin/companies/index.html', data )
+    return self.Renderer.build( 'admin/search/index.html', data )
   index.exposed = True
-
-  def info( self, company_id = None ):
-    if company_id:
-      ModelCompany     = MVC.loadModel('Company')
-      # ModelCompanyNews = MVC.loadModel('CompanyNews')
-      company = ModelCompany.getByID( company_id, 'full' )     
-      if not company:
-        raise cherrypy.HTTPRedirect( '/admin/error/?e="cantfindcompany"' )
-      data = { 
-        'company' : company,
-        # 'news'    : ModelCompanyNews.getByCompany( company_id )
-      }
-      return self.Renderer.build( 'admin/companies/info.html', data )
-    else:
-      raise cherrypy.HTTPRedirect( '/admin/error/?e="cantfindcompany"' )      
-  info.exposed = True
-
-  def delete( self, meta_id ):
-    Settings = MVC.loadHelper( 'Settings')
-    Settings.delete( meta_id )
-    raise cherrypy.HTTPRedirect( '/admin/settings' )
-  delete.exposed = True
   
 # End File: web/controllers/ControllerAdminSearch.py

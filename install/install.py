@@ -1,7 +1,8 @@
 #!/usr/bin/python
 """
   Installer
-  This will have to be run as root, as we will be installing all our dependancies here
+  This will have to be run as root, as we will be installing all our dependancies here.
+  We're expecting a Debain based platform here.
 """   
 import sys
 import subprocess
@@ -11,11 +12,18 @@ import MVC as MVC
 MVC = MVC.MVC()
 # End file header
 
-#install our python dependancies
+# Install our primary dependancies
 subprocess.call( "apt-get install python-mysqldb",   shell=True )
+subprocess.call( "apt-get install python-bs4",       shell=True )
+
+# Install web dependancies
 subprocess.call( "apt-get install python-cherrypy3", shell=True )
 subprocess.call( "apt-get install python-jinja2",    shell=True )
-subprocess.call( "apt-get install python-bs4",       shell=True )
+
+# Install our data download
+
+# Install our data manipulation dependancies
+subprocess.call( "apt-get install python-numpy",       shell=True )
 
 Mysql = MVC.loadDriver('Mysql' )
 Mysql.ex( 'CREATE DATABASE IF NOT EXISTS `%s`;' % MVC.db['name'] )
