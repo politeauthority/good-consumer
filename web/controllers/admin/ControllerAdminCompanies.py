@@ -11,6 +11,7 @@ MVC = MVC()
 # End file header
 
 import cherrypy
+Debugger = MVC.loadHelper('Debug')
 
 class ControllerAdminCompanies( object ):
 
@@ -36,9 +37,10 @@ class ControllerAdminCompanies( object ):
       company = ModelCompany.getByID( company_id, 'full', hide = False )     
       if not company:
         raise cherrypy.HTTPRedirect( '/admin/error/?e="cantfindcompany"' )
+      ModelArticles = MVC.loadModel('Articles')
       data = { 
         'company' : company,
-        # 'news'    : ModelCompanyNews.getByCompany( company_id )
+        'articles' : ModelArticles.getByCompany( company_id )
       }
       return self.Renderer.build( 'admin/companies/info.html', data )
     else:

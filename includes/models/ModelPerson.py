@@ -15,16 +15,40 @@ MVC = MVC()
 Mysql    = MVC.loadDriver('Mysql')
 
 class ModelPerson( object ):
+  """
+  Person {
+      'id'            : 123,
+      'name'          : 'Donald Trump'
+      'slug'          : 'donald-trump'
+      'wikipedia'     : '',
+      'display'       : 1
+      'record_status' : 0,
+      'date_updated'  : '2014-07-15 23:55:12'
+    }
+
+    Meta Keys {
+      'assoc_company' : 'comma',
+      'assoc_people'  : 'comma'
+    }
+
+    Record Status Keys {
+        0  :  Raw
+        1  :  Flagged for Update
+        2  :  In Process
+        3  :  Finished
+    }
+    """
 
   def __init__( self ):
     self.db_name = MVC.db['name']
 
-  def getByID( self, person_id ):
-    qry = """SELECT * FROM `%s`.`people` WHERE `person_id` = "%s"; """ % ( self.db_name, person_id )
+  def getByID( self, person_id, hide = True, load_level = 'light' ):
+    qry = """SELECT * FROM `%s`.`people` WHERE `id` = "%s"; """ % ( self.db_name, person_id )
     person = Mysql.ex( qry )
     if len( person ) == 0:
       return False
-    return person[0]
+    person = self.getLoadLevel( person[0], load_level )
+    return person
 
   def getBySlug( self, person_slug ):
     """
@@ -33,11 +57,11 @@ class ModelPerson( object ):
         slug : str( ) ex: donald-trump
       return person
     """
-    qry = """SELECT * FROM `%s`.`person` WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( person_slug ) )
+    qry = """SELECT * FROM `%s`.`people` WHERE `slug` = "%s"; """ % ( self.db_name, Mysql.escape_string( person_slug ) )
     person = Mysql.ex( qry )
     return person[0]
 
-  def getByName( self, person_name ):
+  def getByName( self, people_name ):
     """
       Get a person by the exact name
       @params : str( ) Donald Trump
@@ -71,29 +95,26 @@ class ModelPerson( object ):
     people = self.getByID( the_id )
     return people
 
-  def getMeta( self, person_id, metas = None ):
+  def getLoadLevel( self, person, load_level = 'light' ):
+    if load_level == 'full':
+      person['meta'] = self.getMeta( person['id'] )
+      if person['meta']:      
+        if 'people' in person['meta']:
+          ModelPeople = MVC.loadModel('People')
+          people      = []
+    return person
+
+  def getMeta( self, people_id, metas = None ):
     """
       @params:
-        person_id : int()
+        company_id : int()
         metas : list() meta keys
       @return: 
-        dict{ 
-          'meta_key': 'meta_value'
-        }
+        dict{ 'meta_key': 'meta_value' }
     """
-    qry = """SELECT * FROM `%s`.`people_meta` WHERE `people_id`="%s";"""
-    if metas:
-      if isinstance( metas, str ):
-        metas = [ metas ]
-      meta  = Mysql.list_to_string( metas )
-      qry  += "AND meta_value IN( %s );"
-    else:
-      qry += ";"
-    the_meta = Mysql.ex( qry )
-    export_meta = {}
-    for meta in the_meta.iteritems():
-      export_meta[meta['meta_key']] = export_meta['meta_value']
-    return export_meta
+    MetaStore = MVC.loadHelper('MetaStore')
+    return MetaStore.get( entity = 'people', entity_id = people_id  )
+
 
   def create( self, person ):
     """
@@ -118,7 +139,7 @@ class ModelPerson( object ):
     exists = Mysql.ex( qry )
     if len( exists ) != 0:
       self.updateDiff( person, exists[0] )
-      person_id = exists[0]['person_id']
+      person_id = exists[0]['id']
     else:
       if 'name' in person:
         new_person['name'] = person['name']
@@ -134,7 +155,7 @@ class ModelPerson( object ):
       else:
         new_person['wikipedia'] = person['wikipedia']
       Mysql.insert( 'people', new_person )
-      person_id = self.getByWiki( new_person['wikipedia'] )['person_id']
+      person_id = self.getByWiki( new_person['wikipedia'] )['id']
     if 'meta' in person:
       self.createMeta( person_id, person['meta'] )
     return person_id
@@ -143,7 +164,7 @@ class ModelPerson( object ):
     """
       Updates a person record by a diff of the values
     """
-    person_id = person_rec['person_id']
+    person_id = person_rec['id']
     diff = {}
     if 'slug' in person_new and person_new['slug'] != person_rec['slug']:
       diff['slug'] = person_new['slug']
@@ -151,40 +172,18 @@ class ModelPerson( object ):
       diff['wikipedia'] = person_new['wikipedia']
     if len( diff ) > 0:
       diff['date_updated'] = Mysql.now()
-      Mysql.update( 'people', diff, { 'person_id' : person_id } )
+      Mysql.update( 'people', diff, { 'id' : person_id } )
 
   def createMeta( self, person_id, metas ):
     """
       @params:
-        person_id : int
+        company_id : int
         meta       : dict {
           'meta_key' : 'meta_value',
           'meta_key' : 'meta_value',
         }
     """
-    person_meta = self.getMeta( person_id )
-    update_meta = []
-    new_meta    = []
-    for meta_key, meta_value in metas.iteritems():
-      if meta_key in person_meta:
-        if meta_value != person_meta[ meta_key ]:
-          update_meta.append( metas[ meta_key ] )
-      else:
-        new_meta.append( metas[ meta_key ] )
-    for meta in new_meta:
-      for key, value in meta.iteritems():
-        the_insert = {
-          'meta_key'     : key,
-          'meta_value'   : value,
-        }
-        Mysql.insert( 'people_meta', the_insert )
-    for meta in update_meta:
-      for key, value, in meta.iteritems():
-        the_update = {
-          'meta_value'   : value,
-          'date_updated' : Mysql.now()
-        }
-        the_where = { 'meta_key': key }
-        Mysql.update( 'people_meta', the_update, the_where )
+    MetaStore = MVC.loadHelper('MetaStore')
+    MetaStore.create( 'people', person_id, metas  )
 
-# End File: models/ModelPerson.py
+# End File: includes/models/ModelPerson.py

@@ -21,27 +21,46 @@ class ModelCompanies( object ):
   def getAll( self, hide = True ):
     qry = """SELECT * FROM `%s`.`companies`""" % ( self.db_name )
     if hide:
-      qry += """ WHERE display="1";"""
+      qry += """ WHERE `display`="1";"""
     else:
       qry += ";"
     companies = Mysql.ex( qry )
     return companies
 
   def getUpdateSet( self, limit = 10, hide = True ):
-    qry = """SELECT * FROM `%s`.`companies` WHERE `record_status` = 0 """ % self.db_name
+    """
+    Gets a set of company ids 
+    """
+    limit = 5
+    # Check the raw status
+    qry = """SELECT * FROM 
+      `%s`.`companies` 
+      WHERE `record_status` = 0 """ % self.db_name
     if hide:
       qry += """ AND `display` = 1 """
     qry += """ORDER BY `date_updated` ASC LIMIT %s;""" % limit
     update_companies = Mysql.ex( qry )
-    # @todo: come up with a way of looking harder for work to do here
-    if len( update_companies ) == 0:
-      return []
-    company_ids = []
+    final_set = []
     for c in update_companies:
-      company_ids.append( c['company_id'] )
+      final_set.append( final_set )
+    # Check the flagged status
+    if len( final_set ) < limit:
+      the_diff = limit - len( final_set )
+      qry = """SELECT * FROM
+        `%s`.companies
+        WHERE `record_status` = 1 """ % self.db_name
+      qry += """ORDER BY `date_updated` ASC LIMIT %s;""" % the_diff 
+      update_companies_added = Mysql.ex( qry )
+      Debugger.write( 'update_companies_added', update_companies_added )      
+      for c in update_companies_added:
+        final_set.append(c)
+    company_ids = []
+    for c in final_set:
+      company_ids.append( c['id'] )
     qry2 = """UPDATE `%s`.`companies`
-      SET `record_status` = 1
-      WHERE company_id IN ( %s );""" % ( self.db_name, Mysql.list_to_string( company_ids ) )
+      SET `record_status` = 2
+      WHERE `id` IN ( %s );""" % ( self.db_name, Mysql.list_to_string( company_ids ) )
+    Debugger.write( 'qry', qry2)
     Mysql.ex(qry2)
     return update_companies
 

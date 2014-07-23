@@ -31,8 +31,8 @@ class ControllerAdminPeople( object ):
 
   def info( self, person_id = None ):
     ModelPerson = MVC.loadModel('Person')
-    data = { 'person' : ModelPerson.getByID( person_id ) }
+    data = { 'person' : ModelPerson.getByID( person_id, load_level = 'full' ) }
     return self.Renderer.build( 'admin/people/info.html', data )
   info.exposed = True
   
-# End File: controllers/ControllerAdminPeople.py
+# End File: web/controllers/ControllerAdminPeople.py

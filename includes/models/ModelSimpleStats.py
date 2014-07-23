@@ -26,12 +26,12 @@ class ModelSimpleStats( object ):
   	qry = "SELECT count(*) as c FROM `%s`.`people`;" % self.db_name
   	return Mysql.ex(qry)[0]['c']
 
-  def countOfNews( self ):
-    qry = "SELECT count(*) as c FROM `%s`.`news`;" % self.db_name
+  def countOfArticles( self ):
+    qry = "SELECT count(*) as c FROM `%s`.`articles`;" % self.db_name
     return Mysql.ex(qry)[0]['c']
 
-  def countofNewsSources( self ):
-    qry = "SELECT count(*) as c FROM `%s`.`news_sources`;" % self.db_name
+  def countOfArticlesSources( self ):
+    qry = "SELECT count(*) as c FROM `%s`.`articles_sources`;" % self.db_name
     return Mysql.ex(qry)[0]['c']
 
   def runningCompanyStatus( self ):
@@ -48,9 +48,9 @@ class ModelSimpleStats( object ):
       ORDER BY 1;""" % self.db_name
     return Mysql.ex(qry )  
 
-  def runningNewsStatus( self ):
+  def runningArticlesStatus( self ):
     qry = """SELECT distinct( `record_status` ), count(*) as `c`
-      FROM `%s`.`news`
+      FROM `%s`.`articles`
       GROUP BY 1
       ORDER BY 1;""" % self.db_name
     return Mysql.ex(qry )        

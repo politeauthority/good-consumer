@@ -3,7 +3,6 @@
   Wikipedia Driver
   Helps fetch and organize content from Wikipedia
 """
-
 import sys
 import os
 sys.path.append( '../../', )
@@ -13,6 +12,7 @@ MVC = MVC()
 
 import urllib2
 from bs4 import BeautifulSoup
+import re
 
 TorScrape = MVC.loadDriver('TorScrape')
 
@@ -24,13 +24,18 @@ class DriverWikipedia( object ):
       '/wiki/marketing_director', '/wiki/marketing_manager', '/wiki/executive_chairman', '/wiki/president', 
       '/wiki/executive_vice_president', '/wiki/cfo', '/wiki/chairman', '/wiki/chief_operating_officer',
       '/wiki/board_of_directors/wiki/president#non-governmental_presidents', '/wiki/chief_operating_officer', 
-      '/wiki/president#non-governmental_presidents',  ]
+      '/wiki/president#non-governmental_presidents', '/wiki/Chief_brand_officer', '/wiki/Chairman#Corporate_governance',
+      '/wiki/Senior_vice_president', '/wiki/Vice_President#Vice_presidents_in_business', '/wiki/Treasurer#Corporate_treasurers',
+      '/wiki/Creative_director', '/wiki/Chief_financial_officer', '/wiki/Chief_strategy_officer', '/wiki/Entrepreneur',
+      '/wiki/Chief_Accounting_Officer', '/wiki/Executive_director', '/wiki/Entrepreneur', '/wiki/Chief_marketing_officer' ]
 
   def get( self, fetch_type, wiki_url ):
     sourced_info = {}
     soup = self.__get_soup( wiki_url )
-    infobox = self.__parse_infobox( fetch_type, soup )
-    sourced_info['infobox'] = infobox
+    sourced_info['infobox']     = self.__parse_infobox( fetch_type, soup )
+    sourced_info['description'] = self.__parse_description( soup )
+    if fetch_type == 'people':
+      sourced_info['name'] = self.__parse_name( soup )
     return sourced_info
 
   def __get_soup( self, wiki_url ):
@@ -71,14 +76,14 @@ class DriverWikipedia( object ):
           for people in people_wikis:
             info['people'].append( people )
       elif fetch_type == 'person':
-        info = {}
+        print 'fetching person'
     return info
 
   def __infobox_company_people( self, row ):
     """
       Finds people with wikipedia pages 
       contained in the company info box row.
-      @return [ {
+      @return: [ {
         'wikipedia': http://en.wikipedia.org/wiki/Donald_Trump
       } ]
     """
@@ -89,5 +94,22 @@ class DriverWikipedia( object ):
           people_wikis.append( { 'wikipedia' : 'http://en.wikipedia.org' + link['href'] } )
           print link['href']
     return people_wikis
+
+  def __parse_name( self, soup ):
+    if row.find( 'h1', { 'id': 'firstHeading' } ):
+      print row.find( 'h1', { 'id': 'firstHeading' } ).text
+      return row.find( 'h1', { 'id': 'firstHeading' } ).text
+    else:
+      return False
+
+  def __parse_description( self, soup ):
+    paragraphs = soup.find_all('p')
+    if len( paragraphs ) != 0:
+      return paragraphs[0].text
+    else:
+      return False
+
+  def __strip_wiki( self, string_ ):
+    print string_
 
 # End File: includes/driver/DriverWikipedia.py

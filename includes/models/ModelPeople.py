@@ -22,21 +22,26 @@ class ModelPeople( object ):
     people = Mysql.ex( qry )
     return people
 
-  def getByID( self, person_id, load_level = 'light' ):
-    qry = """SELECT * FROM 
-      `%s`.`people` 
-      WHERE `person_id` = "%s" """ % ( self.db_name, person_id )
-    person = Mysql.ex( qry )
-    if person == 0:
-      return False
-    else:
-      return person[0]
-
-  def getUpdateSet( self, limit = 200  ):
-    qry = "SELECT * FROM `%s`.`people` ORDER BY date_updated ASC LIMIT %s;" % ( self.db_name, limit )
-    return Mysql.ex( qry )
+  def getUpdateSet( self, limit = 200, hide = True, load_level ='light' ):
+    qry = """SELECT * FROM `%s`.`people` WHERE `record_status` = 0 """ % self.db_name
+    if hide:
+      qry += """ AND `display` = 1 """
+    qry += """ORDER BY `date_updated` ASC LIMIT %s;""" % limit
+    update_people = Mysql.ex( qry )
+    # @todo: come up with a way of looking harder for work to do here
+    if len( update_people ) == 0:
+      return []
+    people_ids = []
+    for p in update_people:
+      people_ids.append( p['id'] )
+    qry2 = """UPDATE `%s`.`people`
+      SET `record_status` = 1
+      WHERE `id` IN ( %s );""" % ( self.db_name, Mysql.list_to_string( people_ids ) )
+    Mysql.ex(qry2)
+    return update_people
 
   def getRecentlyUpdated( self, limit = 20 ):
     qry = """SELECT * FROM `%s`.`people` ORDER BY `date_updated` DESC LIMIT %s;""" % ( self.db_name, limit )
+    return Mysql.ex( qry )
 
-# End File: models/ModelCompanies.py
+# End File: includes/models/ModelCompanies.py

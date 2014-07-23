@@ -113,11 +113,11 @@ class DriverMysql( object ):
     """
     set_sql = ''
     for column, value in items.items():
-      set_sql = set_sql + '`%s`="%s", ' % ( column, value )
+      set_sql = set_sql + '`%s`="%s", ' % ( column, self.escape_string( value ) )
     set_sql = set_sql.rstrip( set_sql[-2:] )
     where_sql = ''
     for column, value in where.items():
-      where_sql = where_sql + '`%s`="%s" AND ' % ( column, value )
+      where_sql = where_sql + "`%s`='%s' AND " % ( column, self.escape_string( value ) )
     where_sql = where_sql.rstrip( where_sql[-4:] )
     limit_sql = ''
     if limit:
@@ -145,7 +145,7 @@ class DriverMysql( object ):
         string_ = unicode( string_, errors='ignore')
       return mdb.escape_string( string_ )
     else:
-      return str( string_ )
+      return mdb.escape_string( str( string_ ) )
 
   def list_to_string( self, the_list ):
     """

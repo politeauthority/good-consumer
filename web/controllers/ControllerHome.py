@@ -36,7 +36,8 @@ class ControllerHome( object ):
       'stats'          : {
         'company_count' : SimpleStats.countOfCompanies(),
         'people_count'  : SimpleStats.countOfPeople(),
-        'article_count' : SimpleStats.countOfNews()
+        'article_count' : SimpleStats.countOfArticles(),
+        'sources_count' : SimpleStats.countOfArticlesSources()
       }
     }
     return self.Renderer.build( 'frontend/index.html', data )
@@ -48,7 +49,7 @@ class ControllerHome( object ):
     """
     Compaines = MVC.loadModel( 'Companies' )
     data = {
-      'companies' : Compaines.getAll()
+      'companies' : Compaines.getAll( False )
     }
     return self.Renderer.build( 'frontend/companies.html', data )
   companies.exposed = True
