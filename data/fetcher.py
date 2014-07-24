@@ -3,10 +3,10 @@
 	Data Fetcher
 	Controls and manages all data collection.
 """
-
 import sys
 sys.path.append( '../web/' )
 import MVC as MVC
+import getopt
 
 MVC                   = MVC.MVC()
 JobLog                = MVC.loadModel('JobLog')
@@ -28,11 +28,11 @@ class Fetcher( object ):
 		self.verbosity = True
 		self.run_arguments = {
 			'find_new_companies'        : False,
-			'update_companies'          : True,
-			'update_people'             : True,
+			'update_companies'          : False,
+			'update_people'             : False,
 			'fetch_company_articles'    : False,
 			'evaluate_company_articles' : False,
-			'update_source_counts'      : True,
+			'update_source_counts'      : False,
 		}
 
 	def go( self ):
@@ -59,11 +59,11 @@ class Fetcher( object ):
 		subprocess.call( 'python ' + MVC.app_dir + 'data/get_companies_from_wikipedia.py', shell=True)
 		JobLog.stop( job_id )
 
-	def update_companies( self ):
+	def update_companies( self, count = 5 ):
 		if self.verbosity:
 			print 'Updating Current Companies'
 		job_id = JobLog.start( 'update_companies' )			
-		update_companies = ModelCompanies.getUpdateSet( 300, hide = False )
+		update_companies  = ModelCompanies.getUpdateSet( count, hide = False )
 		# update_companies = [ ModelCompany.getBySlug( 'best-buy' ) ]id
 		companies_updated = 0
 		people_found      = 0
@@ -121,19 +121,15 @@ class Fetcher( object ):
 			# 	for company_type in wiki_info['infobox']['type']:
 			# 		company_type_ids.append( ModelCompanyTypes.create( company_type['name'], company_type['wikipedia'] ) )
 			# 	the_company_update['type'] = company_type_ids
-			
-			# Debugger.write( 'the_company_update', the_company_update )
 			ModelCompany.create( the_company_update )
 			companies_updated = companies_updated + 1
-			# Debugger.write( 'Company by id', ModelCompany.getByID( the_company_update['company_id'], 'full' ) )
 		JobLog.stop( job_id, 'Updated %s companies and found %s people' % ( companies_updated, people_found ) )
 
-	def update_people( self ):
+	def update_people( self, count = 300 ):
 		if self.verbosity:
 			print 'Updating current people'
 		# job_id = JobLog.start( 'update_people' )						
-		people =  ModelPeople.getUpdateSet( 10, hide = False )
-
+		people =  ModelPeople.getUpdateSet( count, hide = False )
 		people_updated = 0
 		for person in people:
 			if self.verbosity:
@@ -162,7 +158,7 @@ class Fetcher( object ):
 
 		# JobLog.stop( job_id, 'Updated x people')
 
-	def fetch_company_articles( self, count = 10 ):
+	def fetch_company_articles( self, count = 5 ):
 		print 'Fetching Company Articles'
 		job_id = JobLog.start( 'fetch_company_articles' )
 		update_companies = ModelCompanies.getUpdateSet( count, hide = False )
@@ -211,7 +207,78 @@ class Fetcher( object ):
 		ModelArticlesSources.updateCounts()
 		JobLog.stop( job_id )		
 
+def usage():
+	print 'Good Consumer Fetcher'
+
+def __opt_search( key_search, opts, default = None ):
+	"""
+		Search through the options return the arg if available or True if its set
+	"""	
+	if not isinstance( key_search, list ):
+		key_search = [ key_search ]
+	for opt, arg in opts:
+		if opt in key_search:
+			if not arg:
+				return True
+			return arg
+	if default:
+		return default
+	return False
+
 if __name__ == "__main__":
-	Fetcher().go()
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], "hg:v", 
+			["help",
+			"find_new_companies",
+			"update_companies",
+			"update_people",
+			"fetch_company_articles",
+			"evaluate_company_articles", 
+			"update_source_counts" ] )
+	except getopt.GetoptError, e:
+		print 'Error: Problem parsing arguments'
+		print e
+		usage()
+		sys.exit()
+
+	Fetcher = Fetcher()
+
+	find_new_companies = __opt_search( '--find_new_companies', opts )
+	if find_new_companies:
+		Fetcher.run_arguments['find_new_companies'] = True
+	else:
+		Fetcher.run_arguments['find_new_companies'] = False
+
+	update_companies = __opt_search( '--update_companies', opts )
+	if update_companies:
+		Fetcher.run_arguments['update_companies'] = True
+	else:
+		Fetcher.run_arguments['update_companies'] = False
+
+	update_people = __opt_search( '--update_people', opts )
+	if find_new_companies:
+		Fetcher.run_arguments['update_people'] = True
+	else:
+		Fetcher.run_arguments['update_people'] = False				
+
+	fetch_company_articles = __opt_search( '--fetch_company_articles', opts )
+	if find_new_companies:
+		Fetcher.run_arguments['fetch_company_articles'] = True
+	else:
+		Fetcher.run_arguments['fetch_company_articles'] = False
+
+	evaluate_company_articles = __opt_search( '--evaluate_company_articles', opts )
+	if evaluate_company_articles:
+		Fetcher.run_arguments['evaluate_company_articles'] = True
+	else:
+		Fetcher.run_arguments['evaluate_company_articles'] = False
+
+	update_source_counts = __opt_search( '--update_source_counts', opts )
+	if update_source_counts:
+		Fetcher.run_arguments['update_source_counts'] = True
+	else:
+		Fetcher.run_arguments['update_source_counts'] = False											
+	
+	Fetcher.go()
 
 # End File: data/fetcher.py 
