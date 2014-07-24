@@ -245,7 +245,7 @@ createTable_articles_sources = """
     `name`          VARCHAR(255) DEFAULT NULL,
     `url`           TEXT DEFAULT NULL,
     `article_count` INT(10) DEFAULT 0,
-    `date_updated`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,    
+    `date_updated`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,    
     PRIMARY KEY(`id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
@@ -268,24 +268,24 @@ createTable_people = """
   CREATE TABLE `%s`.`people` (
     `id`            INT(10) NOT NULL AUTO_INCREMENT,
     `name`          VARCHAR(255) DEFAULT NULL,
-    `slug`            VARCHAR(255) DEFAULT NULL,
-    `wikipedia`       VARCHAR(255) DEFAULT NULL,
-    `display`         INT(1) DEFAULT 1,
-    `record_status`   INT(10) DEFAULT 0,
-    `date_updated`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `slug`          VARCHAR(255) DEFAULT NULL,
+    `wikipedia`     VARCHAR(255) DEFAULT NULL,
+    `display`       INT(1) DEFAULT 1,
+    `record_status` INT(10) DEFAULT 0,
+    `date_updated`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
   )
   DEFAULT CHARSET = utf8; """ % MVC.db['name']
 
 createTable_people_meta = """
   CREATE TABLE `%s`.`people_meta` (
-    `meta_id`     INT(10) NOT NULL AUTO_INCREMENT,
-    `id`          INT(10) NOT NULL,
-    `meta_type`   VARCHAR(100) NOT NULL,    
-    `meta_key`    VARCHAR(255) NOT NULL,
-    `meta_value`  VARCHAR(255) NOT NULL,
-    `pretty_name` VARCHAR(255) DEFAULT NULL,
-    `help_text`   VARCHAR(255) DEFAULT NULL,
+    `meta_id`      INT(10) NOT NULL AUTO_INCREMENT,
+    `id`           INT(10) NOT NULL,
+    `meta_type`    VARCHAR(100) NOT NULL,    
+    `meta_key`     VARCHAR(255) NOT NULL,
+    `meta_value`   VARCHAR(255) NOT NULL,
+    `pretty_name`  VARCHAR(255) DEFAULT NULL,
+    `help_text`    VARCHAR(255) DEFAULT NULL,
     `date_updated` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`meta_id`) 
   )
