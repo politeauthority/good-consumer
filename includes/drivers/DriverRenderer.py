@@ -1,7 +1,12 @@
 #!/usr/bin/python                                                   
 """
   Renderer Driver 
-  This driver helps build an html page 
+  This driver helps build an html page.
+  It supports two different methods of creating an HTML page.
+  1. A single layout file approach
+      see DriverRenderer.build( )
+  2. A header, content, footer model.
+      see DriverRenderer.make( )
 """
 
 import sys
@@ -24,6 +29,14 @@ class DriverRenderer( object ):
     self.env = Environment( loader=FileSystemLoader( MVC.web_dir + 'views') )
 
   def build( self, view, data = None, layout = None ):
+    """
+      Renders an html page with requested data available to the template as d['requested_var']
+      If layout is supplied 
+      @params:
+        view   : str( )  ex: 'admin/index.html'
+        data   : dict{ } ex { 'website_stuff' : [ 'thing', 'thing'] }
+        layout : str( )  ex 'frontend_layout.html' 
+    """
     html_source = self.__draw( view, data )
     if layout:
       self.layout = layout
@@ -61,6 +74,13 @@ class DriverRenderer( object ):
     return view.render( d = data )
   
   def __parse_html( self, source ):
+    """
+      If enabled this will search through the source and relocate
+      items in a template using the <_h> or <_b> tags to the appropriate 
+      location in the rendered HTML document
+      @params:
+        source: Bs4 soup Obj
+    """
     if self.parse_html:
       if '<_h>' in source or '<_b>' in source:
         from bs4 import BeautifulSoup
@@ -97,4 +117,4 @@ class DriverRenderer( object ):
         return source.prettify()
     return source
 
-# End File: driver/DriverRenderer.py
+# End File: includes/driver/DriverRenderer.py
