@@ -119,7 +119,7 @@ class HelperMetaStore( object ):
 
     for u_meta in update_meta:
       meta_value = u_meta['meta_value']
-        meta_type = entity_meta[ u_meta['meta_key'] ]['type']
+      meta_type = entity_meta[ u_meta['meta_key'] ]['type']
       if 'action' in u_meta:
         if u_meta['action'] == 'append':
           if u_meta['meta_type'] == 'comma':
