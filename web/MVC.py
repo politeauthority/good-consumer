@@ -7,8 +7,11 @@
 import sys
 from sys import path
 import os
-from config.webserver_config import settings as cherrypy_config
-from config.app_config import settings as app_config
+import os.path
+sys.path.append( os.path.abspath( os.path.join( os.path.dirname(__file__), os.path.pardir ) ) )
+
+from configs.webserver_config import settings as cherrypy_config
+from configs.app_config import settings as app_config
 
 class MVC( object ):
 

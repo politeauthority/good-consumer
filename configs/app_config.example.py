@@ -9,10 +9,13 @@ settings = {
         'production'     : False,
         'debug'          : True
     },
+    'data_fetch' :{
+        'tor'            : False,
+    },
     'database': {
         'host'       : "localhost",
         'user'       : "user",
-        'pass'       : "pass",
+        'pass'       : "password",
         'name'       : "good_consumer",
     }
 }

@@ -4,13 +4,13 @@ import os
 import string
 import cherrypy
 
-current_path = os.path.realpath( __file__ )
-app_path = current_path[:-27]
+current_path =os.path.dirname(os.path.realpath(__file__))
+app_path = current_path[:-7]
 
 settings = { 
     'global': {
         'server.socket_port'          : 9777,
-        'server.socket_host'          : "10.1.10.55",
+        'server.socket_host'          : "192.168.7.72",
         'server.socket_file'          : "",
         'server.socket_queue_size'    : 5,
         'server.protocol_version'     : "HTTP/1.0",
@@ -24,9 +24,9 @@ settings = {
         #'favicon_ico'                 : 'favicon.ico',
         'tools.sessions.on'           : True,
         'tools.sessions.storage_type' : "file",
-        'tools.sessions.storage_path' : app_path + "tmp/sessions",
+        'tools.sessions.storage_path' : app_path + "web/tmp/sessions",
         'tools.sessions.timeout'      : 60,
-        'tools.staticdir.root'        : app_path + "public_html",
+        'tools.staticdir.root'        : app_path + "web/public_html",
         'tools.staticdir.debug'       : True,
     },
     '/css': {
