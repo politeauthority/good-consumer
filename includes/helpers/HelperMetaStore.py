@@ -124,9 +124,12 @@ class HelperMetaStore( object ):
         if u_meta['action'] == 'append':
           if u_meta['meta_type'] == 'comma':
             meta_value = entity_meta[ u_meta['meta_key'] ]['value']
-            meta_value.append( u_meta['meta_value'] )
+            if u_meta['meta_value'] not in meta_value:
+                meta_value.append( u_meta['meta_value'] )
+            else:
+              Debugger.write( 'Skip Adding, it value already existsed')
       values = {
-        'meta_value' : self.__encode_value( meta_type,meta_value )
+        'meta_value' : self.__encode_value( meta_type, meta_value )
       }
       where = {
         'id'       : entity_id,
