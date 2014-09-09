@@ -19,7 +19,7 @@ ModelPeople           = MVC.loadModel('People')
 ModelPerson           = MVC.loadModel('Person')
 Wikipedia             = MVC.loadDriver('Wikipedia')
 GoogleNews            = MVC.loadDriver('GoogleNews')
-
+TorScrape             = MVC.loadDriver('TorScrape')
 Debugger              = MVC.loadHelper('Debug')
 
 class Fetcher( object ):
@@ -34,11 +34,21 @@ class Fetcher( object ):
 			'evaluate_company_articles' : False,
 			'update_source_counts'      : False,
 		}
+		TorScrape.test_tor()
 
 	def go( self ):
 		"""
 			Controls the running of all jobs
 		"""
+		if len( self.run_arguments ) == 0:
+			print '  -- Fetcher Options -- '
+			print ' '
+			print ' --find_new_companies'
+			print ' --update_companies'
+			print ' --update_people'
+			print ' --fetch_company_articles'
+			print ' --evaluate_company_articles'
+			print ' --update_source_counts'
 		if self.run_arguments['find_new_companies']:
 			self.find_new_companies( )
 		if self.run_arguments['update_companies']:
@@ -59,7 +69,7 @@ class Fetcher( object ):
 		subprocess.call( 'python ' + MVC.app_dir + 'data/get_companies_from_wikipedia.py', shell=True)
 		JobLog.stop( job_id )
 
-	def update_companies( self, count = 5 ):
+	def update_companies( self, count = 30 ):
 		if self.verbosity:
 			print 'Updating Current Companies'
 		job_id = JobLog.start( 'update_companies' )			
@@ -262,7 +272,7 @@ if __name__ == "__main__":
 		Fetcher.run_arguments['update_people'] = False				
 
 	fetch_company_articles = __opt_search( '--fetch_company_articles', opts )
-	if find_new_companies:
+	if fetch_company_articles:
 		Fetcher.run_arguments['fetch_company_articles'] = True
 	else:
 		Fetcher.run_arguments['fetch_company_articles'] = False

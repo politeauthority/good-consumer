@@ -119,11 +119,7 @@ class HelperMetaStore( object ):
 
     for u_meta in update_meta:
       meta_value = u_meta['meta_value']
-      try:
-        meta_type = entity_meta[ u_meta['meta_key'] ]['meta_type']
-      except KeyError:
-        Debugger.write( 'KeyERROR line 123 entity_meta, u_meta[meta_key]', ( entity_meta,  u_meta['meta_key'] ) )
-        sys.exit()
+        meta_type = entity_meta[ u_meta['meta_key'] ]['type']
       if 'action' in u_meta:
         if u_meta['action'] == 'append':
           if u_meta['meta_type'] == 'comma':

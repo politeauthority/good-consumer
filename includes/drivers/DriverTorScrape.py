@@ -18,16 +18,12 @@ class DriverTorScrape( object ):
 
   def __init__( self ):
     self.use_tor      = True
-    self.auto_test    = False
     if self.use_tor:
       proxy_support     = urllib2.ProxyHandler({"http" : "localhost:8118"})
       self.torOpener    = urllib2.build_opener( proxy_support )
       self.torOpener.addheaders = [('User-agent', 'Mozilla/5.0')]
-    else:
-      self.auto_test = False      
+    else:  
       self.torOpener = urllib2.build_opener()
-    if self.auto_test:
-      self.test_tor()
 
   def get_soup( self, url, type_of_soup = None ):
     try:
@@ -65,6 +61,17 @@ class DriverTorScrape( object ):
     # except:
     #   print 'Error opening URL.'
 
+    try:
+      opener = urllib2.build_opener()
+      opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+      source = opener.open( url ).read()
+      soup = BeautifulSoup( source )
+      unmasked_outgoing_ip = soup.find('h1').find('span').text
+      print 'Your unmasked IP is: ', unmasked_outgoing_ip
+    except error:
+      print error
+      sys.exit()
+
     try:    
       source = self.torOpener.open( url ).read()
     except urllib2.URLError as error:
@@ -79,7 +86,7 @@ class DriverTorScrape( object ):
       count = count + 1
 
     for ip in outgoing_ips:
-      print ip
+      print 'Your outgoing IP is: ', ip
       # print 'Tor does not seem to be working properly.'
       # if ip == current_ip:
 
